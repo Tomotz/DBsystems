@@ -11,15 +11,16 @@ var DBApp = angular.module('DBApp', [
 
 DBApp.config(function($stateProvider) {
 
+  var a = $.get("view1/view1.html");
   DBApp.$stateProvider = $stateProvider
       .state('view1', {
         url: '/view1',
-        templateURL: 'view1/view1.html',
+        // templateURL: 'view1.html',
+        template: a,
         controller: 'View1Ctrl'
       }).state('view2', {
         url: '/view2',
         templateURL: 'view2/view2.html',
         controller: 'View2Ctrl'
       })
-  
 });

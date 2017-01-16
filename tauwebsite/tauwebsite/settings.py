@@ -118,3 +118,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.environ.get('DBMS_PATH'),
+    # r"C:\Users\liadwg\Desktop\liad\CS\DBMS APP\DBsystems\app",
+)
