@@ -1,5 +1,5 @@
 import MySQLdb as mdb
-DB_QUERY = "SELECT * FROM writer"
+DB_QUERY = "SELECT * FROM Addresses"
 
 
 def connectToDB():
