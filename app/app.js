@@ -6,7 +6,8 @@ var DBApp = angular.module('DBApp', [
     'ui.router',
     'DBApp.view1',
     'DBApp.view2',
-    'DBApp.LoginController'
+    'DBApp.LoginController',
+    'DBApp.LoginService',
 ]);
 
 
@@ -20,15 +21,19 @@ DBApp.config(function($stateProvider) {
             url: '/',
             template: templates[0],
             controller: 'LoginController'
-        }).state('view1', {
+        }).state('main', {
+            url: '/home',
+            template: templates[1],
+            // controller: 'MainController'
+        }).state('main.view1', {
             url: '/view1',
             // templateURL: 'view1.html',
-            template: templates[1],
+            template: templates[2],
             controller: 'View1Ctrl'
-        }).state('view2', {
+        }).state('main.view2', {
             url: '/view2',
             // templateURL: '/view2/view2.html',
-            template: templates[2],
+            template: templates[3],
             controller: 'View2Ctrl'
         });
 
