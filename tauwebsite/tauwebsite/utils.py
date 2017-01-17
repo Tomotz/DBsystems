@@ -6,19 +6,53 @@ from settings import LOCAL_DB_PASS
 import MySQLdb as mdb
 
 
+#(googlePlaceId,)
 getAddrIdQuery = """SELECT idAddr 
 FROM DbMysql17.Addr
 WHERE googlePlaceId = %s"""
 
+#(googlePlaceId, city, street, house_number, lat, lon)
 insertAddrQuery = """INSERT INTO DbMysql17.Addr (googlePlaceId, city, street, house_number, lat, lon)
 VALUES (%s, %s, %s, %s, %s, %s);"""
 
+#(user_name,)
 getUserQuery = """SELECT addr_id, user_name, first_name, last_name
 FROM DbMysql17.User
 WHERE user_name=%s"""
 
+#(idAddr,)
+getAddrQuery = """SELECT city, street, house_number, lat, lon, googlePlaceId
+FROM DbMysql17.Addr
+WHERE idAddr=%s"""
+
+#(addr_id, user_name, first_name, last_name)
 insertUserQuery = """INSERT INTO DbMysql17.User (addr_id, user_name, first_name, last_name)
 VALUES (%s, %s, %s, %s);"""
+
+#(my_lat, my_lat, my_lon, place_type, radius_in_km)
+placesInDistQuery = """SELECT idPlaces, distanceInKM
+FROM
+(
+	SELECT Places.idPlaces, 
+	(
+	 2 * 6367.45 * 
+	    asin(
+			sqrt(
+				POWER((sin(radians((Addr.lat - %s) / 2))),2) + 
+				cos(radians(%s)) * cos(radians(Addr.lat)) * 
+				POWER((sin(radians((Addr.lon - %s) / 2))),2)
+			)
+		)
+	) AS distanceInKM
+	FROM Places, Addr
+	WHERE Places.addr_id = Addr.idAddr
+	AND Places.type = %s
+	AND Addr.lat IS NOT NULL
+	AND Addr.lon IS NOT NULL
+) as sub
+WHERE distanceInKM <= %s
+ORDER BY distanceInKM    
+"""
 
 class DBUtils:
     conn = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
@@ -55,6 +89,18 @@ class DBUtils:
         cls.cursor.execute(insertUserQuery, (idAddr, username, firstName, lastName))
         cls.conn.commit()
         return cls.getUserByUname(username)
+
+    """
+    Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
+    input - a location object returned from google
+    output - the addrId from Addr table matching the given address
+    """
+    @classmethod
+    def getAddrById(cls, idAddr):
+	    cls.cursor.execute(getAddrQuery, (idAddr,))
+	    row = cls.cursor.fetchone()
+
+	    return row
 
     """
     Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
@@ -100,15 +146,3 @@ class DBUtils:
         if type(fetched) in (type(None), long):
             return fetched
         return fetched[0]
-
-
-# """SELECT idAddr FROM Addr a 
-# WHERE 
-# (
-#   acos(
-#   	sin(a.lat * 0.0175) * sin(%s * 0.0175) 
-#     + cos(a.lon * 0.0175) * cos(%s * 0.0175) *    
-#     cos((%s * 0.0175) - (a.lon * 0.0175))
-#   ) * 3959 <= %s
-# )
-# """, (my_lat, my_lat, my_lon, radius)
