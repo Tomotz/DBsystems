@@ -9,7 +9,7 @@ class DBUtils:
     def get_user_by_uname(cls, username):
         with cls.db as db:
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM Users WHERE user_name=%s" % username)
+            cursor.execute("SELECT user_name, first_name, last_name, addr_id FROM Users WHERE user_name=%s" % username)
             row = cursor.fetchone()
 
         return row
