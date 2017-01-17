@@ -29,7 +29,6 @@ CREATE TABLE `User` (
   `first_name` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `last_name` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `birth_date` date DEFAULT NULL,
-  `password` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`idUser`),
   UNIQUE KEY `idUser_UNIQUE` (`idUser`),
   KEY `addr_id_idx` (`addr_id`),
@@ -55,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-17 14:11:38
+-- Dump completed on 2017-01-17 17:47:50
