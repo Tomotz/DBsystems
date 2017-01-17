@@ -6,6 +6,8 @@ from settings import LOCAL_DB_PASS
 import MySQLdb as mdb
 
 
+MAX_RESULTS = 30 #the maximum number of results to return from a query.
+
 #(googlePlaceId,)
 getAddrIdQuery = """SELECT idAddr 
 FROM DbMysql17.Addr
@@ -101,6 +103,20 @@ class DBUtils:
 	    row = cls.cursor.fetchone()
 
 	    return row
+	    
+  	"""
+    Gets all the places around a given location. Sorted by distance from the location.
+    my_lat/my_lon - the latitude and longitude of the given location.
+    place_type - a filter for the results - return only results of the given place type
+    radius_in_km - the maximum distance of the results to return.
+    returns a tuple where each item in the tuple is a tuple itself, containing a line of results.
+    If no results match the query, an empty tuple would be returned
+    """
+    @classmethod
+    def aroundMe(my_lat, my_lon, place_type, radius_in_km):
+		cls.cursor.execute(placesInDistQuery, (my_lat, my_lat, my_lon, place_type, radius_in_km))
+		return cls.cursor.fetchmany(MAX_RESULTS)
+
 
     """
     Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
