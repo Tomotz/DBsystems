@@ -9,6 +9,7 @@
          class="login">
         <input type="text"
                ng-model="username"
+               ng-class="{'input_err' : user_name_err}"
                placeholder="username"
                name="user"><br>
         <input type="password"
@@ -22,16 +23,20 @@
         <h2>WE HAVEN'T MET YET, TELL US WHO YOU ARE</h2>
         <input type="text"
                ng-model="username"
+               ng-class="{'input_err' : user_name_err}"
                placeholder="username"
                name="user"><br>
         <input ng-model="first_name"
                type="text"
+               ng-class="{'input_err' : first_name_err}"
                placeholder="First Name"><br>
         <input ng-model="last_name"
                type="text"
+               ng-class="{'input_err' : last_name_err}"
                placeholder="Last Name"><br>
         <input id="autocomplete_address"
                type="text"
+               ng-class="{'input_err' : addr_err}"
                placeholder="Address">
         <input type="button" value="Submit" ng-click="submit_signup()">
     </div>

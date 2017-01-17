@@ -57,6 +57,10 @@ body{
 	color: #5379fa !important;
 }
 
+.input_err{
+	border-color: red !important;
+}
+
 .login{
 	position: absolute;
 	top: calc(50% - 75px);
