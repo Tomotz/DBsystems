@@ -1,4 +1,4 @@
-from tauwebsite.tauwebsite.settings import LOCAL_DB_PASS
+from tauwebsite.settings import LOCAL_DB_PASS
 import MySQLdb as mdb
 
 

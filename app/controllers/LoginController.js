@@ -31,11 +31,14 @@ View1Ctrl.controller('LoginController', ['$scope', '$state', '$rootScope', 'Logi
     };
 
     $scope.submit_signup = function () {
+        var address = autocomplete.getPlace();
+        address.lat = address.geometry.location.lat();
+        address.lng = address.geometry.location.lng();
         var user_details = {
             "user_name"  : $scope.username,
             "first_name" : $scope.first_name,
             "last_name"  : $scope.last_name,
-            "address"    : autocomplete.getPlace(),
+            "address"    : address
         };
         console.log("HOLA! ", user_details);
         LoginService.user_signup(user_details).then(function(user) {

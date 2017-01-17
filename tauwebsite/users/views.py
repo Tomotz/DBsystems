@@ -1,8 +1,9 @@
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
-from rest_framework import serializers, permissions
-from rest_framework.views import APIView
-from tauwebsite.tauwebsite.utils import DBUtils
+# -*- coding: utf-8 -*-
 
+from django.http import HttpResponse, HttpResponseBadRequest
+from rest_framework import permissions
+from rest_framework.views import APIView
+from tauwebsite.utils import DBUtils
 
 class LoginView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -14,6 +15,7 @@ class LoginView(APIView):
             return HttpResponseBadRequest()
         else:
             return HttpResponse(user)
+        # return HttpResponseBadRequest()
 
     # create new user
     def post(self, request, *args, **kwargs):
@@ -21,6 +23,5 @@ class LoginView(APIView):
         first_name = request.data.get("first_name")
         last_name = request.data.get("last_name")
         address = request.data.get("address")
-
-        print( "Got data for new user: first name '%s', last name '%s', address %s" % (first_name, last_name, address))
+        print "Got data for new user: username '%s', first name '%s', last name '%s', address %s" % (user_name, first_name, last_name, address)
         return HttpResponse("Hello, world. FNAME - %s" % first_name)
