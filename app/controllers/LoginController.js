@@ -19,12 +19,16 @@ View1Ctrl.controller('LoginController', ['$scope', '$state', 'LoginService', fun
 
     $scope.submit_login = function (username) {
         console.log(username);
-        var res = LoginService.user_login(username);
-        if (res){
-        //     $state.go("main");
-        // } else {
-            $scope.show_signup_form = true;
-        }
+        LoginService.user_login(username).then(function(result) {
+            console.log(result);
+            
+        });
+        // var res = LoginService.user_login(username);
+        // if (res){
+        // //     $state.go("main");
+        // // } else {
+        //     $scope.show_signup_form = true;
+        // }
     };
 
     $scope.submit_signup = function () {
