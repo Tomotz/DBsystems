@@ -5,6 +5,7 @@ from rest_framework import permissions
 from rest_framework.views import APIView
 from tauwebsite.utils import DBUtils
 from tauwebsite.serializers import Serializers
+from rest_framework.response import Response
 
 class LoginView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -28,7 +29,7 @@ class LoginView(APIView):
         if user is None:
             return HttpResponseBadRequest()
         else:
-            return HttpResponse(Serializers.UserSerizlizer(user))
+            return Response(Serializers.UserSerizlizer(user))
 
 
 class FoodView(APIView):

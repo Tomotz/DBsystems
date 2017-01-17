@@ -1,19 +1,20 @@
 from utils import DBUtils
+import json
 
 class Serializers:
     @classmethod
     def UserSerizlizer(cls, user_row):
         obj = {
-            "address"    : cls.AddressSerializer(DBUtils.getAddrById(user_row[0])),
+            "address"    : cls.AddressSerializer(DBUtils.getAddrById(user_row[0]), False),
             "username"   : user_row[1],
             "first_name" : user_row[2],
             "last_name"  : user_row[3],
         }
 
-        return obj
+        return json.dumps(obj)
 
     @classmethod
-    def AddressSerializer(cls, addr_row):
+    def AddressSerializer(cls, addr_row, stringify=True):
         obj = {
             "city"     : addr_row[0],
             "street"   : addr_row[1],
@@ -25,7 +26,10 @@ class Serializers:
             },
         }
 
-        return obj
+        if stringify:
+            return json.dumps(obj)
+        else:
+            return obj
 
     # @classmethod
     # def PlaceSerializer(cls, place_row):
