@@ -17,7 +17,7 @@ getUserQuery = """SELECT addr_id, user_name, first_name, last_name
 FROM Users 
 WHERE user_name=%s"""
 
-addUserQuery = """INSERT INTO DbMysql17.User (addr_id, user_name, first_name, last_name)
+insertUserQuery = """INSERT INTO DbMysql17.User (addr_id, user_name, first_name, last_name)
 VALUES (%s, %s, %s, %s);"""
 
 class DBUtils:
@@ -55,7 +55,7 @@ class DBUtils:
         	if None == idAddr:
         		#failed to add user!
         		return None
-        	cursor.execute(addUserQuery, (idAddr, username, firstName, lastName))
+        	cursor.execute(insertUserQuery, (idAddr, username, firstName, lastName))
 			cls.conn.commit()
         return getUserByUname(cls, username)
 
@@ -83,8 +83,12 @@ class DBUtils:
 					return fetched
 				return fetched[0]
 
-			lat = None
-			lon = None
+			if "lat" in address and "lng" in address:
+				lat = address["lat"]
+				lon = address["lng"]
+			else:
+				#user have no lat/lng which is bad.
+				return None
 
 			street = None
 			house = None
