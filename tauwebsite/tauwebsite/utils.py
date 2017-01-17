@@ -108,13 +108,13 @@ class DBUtils:
 			return fetched[0]
 
 
-"""SELECT idAddr FROM Addr a 
-WHERE 
-(
-  acos(
-  	sin(a.lat * 0.0175) * sin(%s * 0.0175) 
-    + cos(a.lon * 0.0175) * cos(%s * 0.0175) *    
-    cos((%s * 0.0175) - (a.lon * 0.0175))
-  ) * 3959 <= %s
-)
-""", (my_lat, my_lat, my_lon, radius)
+# """SELECT idAddr FROM Addr a 
+# WHERE 
+# (
+#   acos(
+#   	sin(a.lat * 0.0175) * sin(%s * 0.0175) 
+#     + cos(a.lon * 0.0175) * cos(%s * 0.0175) *    
+#     cos((%s * 0.0175) - (a.lon * 0.0175))
+#   ) * 3959 <= %s
+# )
+# """, (my_lat, my_lat, my_lon, radius)
