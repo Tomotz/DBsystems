@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views.generic.base import TemplateView
+import settings
 
 urlpatterns = [
-    url(r'^polls/', include('polls.urls')), 
+    url(r'^polls/', include('polls.urls')),
     url(r'^users/', include('users.urls')),
     url(r'^admin/', admin.site.urls),
 ]
