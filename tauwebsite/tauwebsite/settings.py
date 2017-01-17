@@ -76,12 +76,12 @@ WSGI_APPLICATION = 'tauwebsite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', #django.db.backends.mysql',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'), #DbMysql7'),
-       # 'USER': 'DbMysql7',
-       # 'PASSWORD': 'DbMysql7',
-       # 'HOST': '127.0.0.1',
-       # 'PORT': '3305',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'DbMysql17',
+        'USER': 'root',
+        'PASSWORD': 'Ru30299008012061989',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
