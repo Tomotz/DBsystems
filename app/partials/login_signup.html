@@ -1,33 +1,35 @@
-<div ng-show="!show_signup_form">
-    <h2>LOGIN / SIGNUP</h2>
-    <div>
+<div>
+    <div class="body"></div>
+    <div class="grad"></div>
+    <div class="header">
+        <div>Hangou<span>TLV</span></div>
+    </div>
+    <br>
+    <div ng-show="!show_signup_form"
+         class="login">
         <input type="text"
                ng-model="username"
-               placeholder="Enter Your UserName Here">
-        <button ng-click="submit_login(username)">SUBMIT</button>
+               placeholder="username"
+               name="user"><br>
+        <input type="password"
+               ng-model="password"
+               placeholder="password"
+               name="password"><br>
+        <input type="button" value="Login" ng-click="submit_login(username)">
+    </div>
+    <div ng-show="show_signup_form"
+         class="login">
+        <h2>ENTER YOUR DETAILS</h2>
+        <input ng-model="first_name"
+               type="text"
+               placeholder="First Name"><br>
+        <input ng-model="last_name"
+               type="text"
+               placeholder="Last Name"><br>
+        <input id="autocomplete_address"
+               type="text"
+               placeholder="Address">
+        <input type="button" value="Submit" ng-click="submit_signup()">
     </div>
 </div>
 
-<div ng-show="show_signup_form">
-    <h2>ENTER YOUR DETAILS</h2>
-    <div>
-        <div>
-            <input ng-model="first_name"
-                   type="text"
-                   placeholder="Enter Your First Name Here">
-        </div>
-        <div>
-            <input ng-model="last_name"
-                   type="text"
-                   placeholder="Enter Your Last Name Here">
-        </div>
-        <div>
-            <input id="autocomplete_address"
-                   type="text"
-                   placeholder="Enter Your Address Here">
-        </div>
-        <div>
-            <button ng-click="submit_signup()">SUBMIT</button>
-        </div>
-    </div>
-</div>

@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'polls.apps.PollsConfig',
+    'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,15 +74,15 @@ WSGI_APPLICATION = 'tauwebsite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-
+LOCAL_DB_PASS = os.environ.get('LOCAL_DB_PASS')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'DbMysql17',
         'USER': 'root',
-        'PASSWORD': 'Ru30299008012061989',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'PASSWORD': LOCAL_DB_PASS,
+        'HOST': 'localhost',
+        'PORT': '3306'
     }
 }
 
@@ -110,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC+02:00'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 

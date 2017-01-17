@@ -32,9 +32,10 @@ View1Ctrl.controller('LoginController', ['$scope', '$state', '$rootScope', 'Logi
 
     $scope.submit_signup = function () {
         var user_details = {
-          "first_name" : $scope.first_name,
-          "last_name"  : $scope.last_name,
-          "address"    : autocomplete.getPlace(),
+            "user_name"  : $scope.username,
+            "first_name" : $scope.first_name,
+            "last_name"  : $scope.last_name,
+            "address"    : autocomplete.getPlace(),
         };
         console.log("HOLA! ", user_details);
         LoginService.user_signup(user_details).then(function(user) {
