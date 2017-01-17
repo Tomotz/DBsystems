@@ -2,7 +2,7 @@
 
 var View1Ctrl = angular.module('DBApp.LoginController', ['ngRoute']);
 
-View1Ctrl.controller('LoginController', ['$scope', '$state', 'LoginService', function($scope, $state, LoginService) {
+View1Ctrl.controller('LoginController', ['$scope', '$state', '$rootScope', 'LoginService', function($scope, $state, $rootScope, LoginService) {
     console.log("hello LoginController");
     $scope.show_signup_form = false;
 
@@ -22,17 +22,12 @@ View1Ctrl.controller('LoginController', ['$scope', '$state', 'LoginService', fun
         LoginService.user_login(username).then(function(user) {
             if (user){
                 console.log(user);
-                $state.go("main");
+                $rootScope.my_user = user;
+                $state.go("main.home");
             } else{
                 $scope.show_signup_form = true;
             }
         });
-        // var res = LoginService.user_login(username);
-        // if (res){
-        // //     $state.go("main");
-        // // } else {
-        //     $scope.show_signup_form = true;
-        // }
     };
 
     $scope.submit_signup = function () {
@@ -45,7 +40,8 @@ View1Ctrl.controller('LoginController', ['$scope', '$state', 'LoginService', fun
         LoginService.user_signup(user_details).then(function(user) {
             if (user){
                 console.log("User signed up, going to main view");
-                $state.go("main");
+                $rootScope.my_user = user;
+                $state.go("main.home");
             }
         });
     }

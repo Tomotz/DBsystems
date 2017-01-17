@@ -32,7 +32,7 @@ LoginService.service('LoginService', ['$http', '$q', function($http, $q) {
     };
 
     this.get_my_user = function () {
-     return current_user;
+        return current_user;
     };
     
 }]);

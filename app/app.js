@@ -25,15 +25,19 @@ DBApp.config(function($stateProvider) {
             url: '/home',
             template: templates[1],
             // controller: 'MainController'
+        }).state('main.home', {
+            url: '/',
+            template: templates[2],
+            // controller: 'MainController'
         }).state('main.view1', {
             url: '/view1',
             // templateURL: 'view1.html',
-            template: templates[2],
+            template: templates[3],
             controller: 'View1Ctrl'
         }).state('main.view2', {
             url: '/view2',
             // templateURL: '/view2/view2.html',
-            template: templates[3],
+            template: templates[4],
             controller: 'View2Ctrl'
         });
 
