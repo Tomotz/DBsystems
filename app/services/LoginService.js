@@ -2,10 +2,10 @@
 
 var LoginService = angular.module('DBApp.LoginService', ['ngRoute']);
 
-LoginService.service('LoginService', function() {
+LoginService.service('LoginService', ['$http', function($http) {
     this.user_login = function (username) {
         console.log("LoginService logging in - ", username);
-        return true;
+        return $http.get('/users/login/' + username + '/');
     };
 
     this.user_signup = function (details) {
@@ -13,4 +13,4 @@ LoginService.service('LoginService', function() {
         return true;
     };
 
-});
+}]);
