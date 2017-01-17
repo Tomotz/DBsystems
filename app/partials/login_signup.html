@@ -1,0 +1,33 @@
+<div ng-show="!show_signup_form">
+    <h2>LOGIN / SIGNUP</h2>
+    <div>
+        <input type="text"
+               ng-model="username"
+               placeholder="Enter Your UserName Here">
+        <button ng-click="submit_login(username)">SUBMIT</button>
+    </div>
+</div>
+
+<div ng-show="show_signup_form">
+    <h2>ENTER YOUR DETAILS</h2>
+    <div>
+        <div>
+            <input ng-model="first_name"
+                   type="text"
+                   placeholder="Enter Your First Name Here">
+        </div>
+        <div>
+            <input ng-model="last_name"
+                   type="text"
+                   placeholder="Enter Your Last Name Here">
+        </div>
+        <div>
+            <input id="autocomplete_address"
+                   type="text"
+                   placeholder="Enter Your Address Here">
+        </div>
+        <div>
+            <button ng-click="submit_signup()">SUBMIT</button>
+        </div>
+    </div>
+</div>
