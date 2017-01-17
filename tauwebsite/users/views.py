@@ -10,12 +10,11 @@ class LoginView(APIView):
 
     # get user by username
     def get(self, request, user_name):
-        user = DBUtils.get_user_by_uname(user_name)
+        user = DBUtils.getUserByUname(user_name)
         if user is None:
             return HttpResponseBadRequest()
         else:
             return HttpResponse(user)
-        # return HttpResponseBadRequest()
 
     # create new user
     def post(self, request, *args, **kwargs):
@@ -24,4 +23,8 @@ class LoginView(APIView):
         last_name = request.data.get("last_name")
         address = request.data.get("address")
         print "Got data for new user: username '%s', first name '%s', last name '%s', address %s" % (user_name, first_name, last_name, address)
-        return HttpResponse("Hello, world. FNAME - %s" % first_name)
+        user = DBUtils.createNewUser(user_name, first_name, last_name, address)
+        if user is None:
+            return HttpResponseBadRequest()
+        else:
+            return HttpResponse(user)

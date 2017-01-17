@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from tauwebsite.tauwebsite.settings import LOCAL_DB_PASS
+from settings import LOCAL_DB_PASS
 import MySQLdb as mdb
 
 
@@ -14,7 +14,7 @@ insertAddrQuery = """INSERT INTO DbMysql17.Addr (googlePlaceId, city, street, ho
 VALUES (%s, %s, %s, %s, %s, %s);"""
 
 getUserQuery = """SELECT addr_id, user_name, first_name, last_name
-FROM Users 
+FROM DbMysql17.User
 WHERE user_name=%s"""
 
 insertUserQuery = """INSERT INTO DbMysql17.User (addr_id, user_name, first_name, last_name)
@@ -24,18 +24,16 @@ class DBUtils:
     conn = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
     cursor = conn.cursor()
 
-    @classmethod
     '''
     Queries the DB about a specific user.
     Returns the full row matching the user if user was found. Otherwise returns None
     '''
+    @classmethod
     def getUserByUname(cls, username):
-        with cls.cursor as cursor:
-            cursor.execute(getUserQuery, (username,))
-            row = cursor.fetchone()
+        cls.cursor.execute(getUserQuery, (username,))
+        row = cls.cursor.fetchone()
 
         return row
-
 
     '''
     Adds a new user to the DB.
@@ -45,71 +43,63 @@ class DBUtils:
     '''
     @classmethod
     def createNewUser(cls, username, firstName, lastName, address):
-    	userRow = getUserByUname(cls, username):
-    	if userRow != None:
-            #user already exists! 
+        userRow = cls.getUserByUname(username)
+        if userRow != None:
+            #user already exists!
             return userRow
 
-        with cls.cursor as cursor:
-        	idAddr = getOrCreateAddrId(cls, address)
-        	if None == idAddr:
-        		#failed to add user!
-        		return None
-        	cursor.execute(insertUserQuery, (idAddr, username, firstName, lastName))
-			cls.conn.commit()
-        return getUserByUname(cls, username)
+        idAddr = cls.getOrCreateAddrId(address)
+        if None == idAddr:
+            #failed to add user!
+            return None
+        cls.cursor.execute(insertUserQuery, (idAddr, username, firstName, lastName))
+        cls.conn.commit()
+        return cls.getUserByUname(username)
 
-
-       
-
-
-
-
+    """
+    Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
+    input - a location object returned from google
+    output - the addrId from Addr table matching the given address
+    """
     @classmethod
-	"""
-	Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
-	input - a location object returned from google
-	output - the addrId from Addr table matching the given address
-	"""
-	def getOrCreateAddrId(cls, address):
-        with cls.cursor as cursor:
-			googlePlaceId = address["place_id"]
+    def getOrCreateAddrId(cls, address):
+        googlePlaceId = address["place_id"]
 
-			cursor.execute(getAddrIdQuery, (googlePlaceId,))
-			fetched = cursor.fetchone()
-			if fetched != None:
-				#address was found in the DB. Return it.
-				if type(fetched) == long:
-					return fetched
-				return fetched[0]
+        cls.cursor.execute(getAddrIdQuery, (googlePlaceId,))
+        fetched = cls.cursor.fetchone()
+        if fetched != None:
+            #address was found in the DB. Return it.
+            if type(fetched) == long:
+                return fetched
+            return fetched[0]
 
-			if "lat" in address and "lng" in address:
-				lat = address["lat"]
-				lon = address["lng"]
-			else:
-				#user have no lat/lng which is bad.
-				return None
+        if "lat" in address and "lng" in address:
+            lat = address["lat"]
+            lon = address["lng"]
+        else:
+            #user have no lat/lng which is bad.
+            return None
 
-			street = None
-			house = None
-			city = None
-			if "formatted_address" in jasonData:
-				addr = address["formatted_address"]
-				for field in addr.split(","):
-					if " St " in field:
-						street = field.split(" St ")[0]
-						house = field.split(" St ")[1]
-						if not house.isdigit():
-							house = None
-					if "Tel Aviv-Yafo" in field:
-						city = "Tel Aviv-Yafo"
-			cursor.execute(insertAddrQuery, (googlePlaceId, city, street, house, lat, lon))
-			cls.conn.commit()
-			cursor.execute(getAddrIdQuery, (googlePlaceId,))
-			fetched = cursor.fetchone()[0]
-			if type(fetched) in (type(None), long):
-				return fetched
-			return fetched[0]
+        street = None
+        house = None
+        city = None
+        if "formatted_address" in address:
+            addr = address["formatted_address"]
+            for field in addr.split(","):
+                if " St " in field:
+                    street = field.split(" St ")[0]
+                    house = field.split(" St ")[1]
+                    if not house.isdigit():
+                        house = None
+                if "Tel Aviv-Yafo" in field:
+                    city = "Tel Aviv-Yafo"
+        cls.cursor.execute(insertAddrQuery, (googlePlaceId, city, street, house, lat, lon))
+        cls.conn.commit()
+        cls.cursor.execute(getAddrIdQuery, (googlePlaceId,))
+        fetched = cls.cursor.fetchone()[0]
+        if type(fetched) in (type(None), long):
+            return fetched
+        return fetched[0]
 
 
 # """SELECT idAddr FROM Addr a 
