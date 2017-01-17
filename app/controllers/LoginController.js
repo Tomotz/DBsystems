@@ -19,12 +19,20 @@ View1Ctrl.controller('LoginController', ['$scope', '$state', 'LoginService', fun
 
     $scope.submit_login = function (username) {
         console.log(username);
-        var res = LoginService.user_login(username);
-        if (res){
-        //     $state.go("main");
-        // } else {
-            $scope.show_signup_form = true;
-        }
+        LoginService.user_login(username).then(function(user) {
+            if (user){
+                console.log(user);
+                $state.go("main");
+            } else{
+                $scope.show_signup_form = true;
+            }
+        });
+        // var res = LoginService.user_login(username);
+        // if (res){
+        // //     $state.go("main");
+        // // } else {
+        //     $scope.show_signup_form = true;
+        // }
     };
 
     $scope.submit_signup = function () {
@@ -34,11 +42,11 @@ View1Ctrl.controller('LoginController', ['$scope', '$state', 'LoginService', fun
           "address"    : autocomplete.getPlace(),
         };
         console.log("HOLA! ", user_details);
-        var res = LoginService.user_signup(user_details);
-        if (res){
-            $state.go("main");
-        } else {
-            console.log("ERROR during user signup - ")
-        }
+        LoginService.user_signup(user_details).then(function(user) {
+            if (user){
+                console.log("User signed up, going to main view");
+                $state.go("main");
+            }
+        });
     }
 }]);
