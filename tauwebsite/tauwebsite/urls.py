@@ -20,5 +20,6 @@ import settings
 
 urlpatterns = [
     url(r'^polls/', include('polls.urls')),
+    url(r'^users/', include('users.urls')),
     url(r'^admin/', admin.site.urls),
 ]
