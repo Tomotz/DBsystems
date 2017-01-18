@@ -72,7 +72,7 @@ class BarView(APIView):
     def get(self, request, user_name):
         pass
 
-class ShopView(APIView):
+class ClubView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     # get user by username
