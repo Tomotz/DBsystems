@@ -57,6 +57,10 @@ body{
 	color: #5379fa !important;
 }
 
+.input_err{
+	border-color: red !important;
+}
+
 .login{
 	position: absolute;
 	top: calc(50% - 75px);
@@ -78,6 +82,7 @@ body{
 	font-size: 16px;
 	font-weight: 400;
 	padding: 4px;
+	margin-bottom: 10px;
 }
 
 .login input[type=password]{
@@ -91,7 +96,7 @@ body{
 	font-size: 16px;
 	font-weight: 400;
 	padding: 4px;
-	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .login input[type=button]{
@@ -106,7 +111,6 @@ body{
 	font-size: 16px;
 	font-weight: 400;
 	padding: 6px;
-	margin-top: 10px;
 }
 
 .login input[type=button]:hover{
