@@ -4,6 +4,8 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from rest_framework import permissions
 from rest_framework.views import APIView
 from tauwebsite.utils import DBUtils
+from tauwebsite.serializers import Serializers
+from rest_framework.response import Response
 
 class LoginView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -14,7 +16,7 @@ class LoginView(APIView):
         if user is None:
             return HttpResponseBadRequest()
         else:
-            return HttpResponse(user)
+            return HttpResponse(Serializers.UserSerizlizer(user))
 
     # create new user
     def post(self, request, *args, **kwargs):
@@ -27,4 +29,33 @@ class LoginView(APIView):
         if user is None:
             return HttpResponseBadRequest()
         else:
-            return HttpResponse(user)
+            return Response(Serializers.UserSerizlizer(user))
+
+
+class FoodView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    # get user by username
+    def get(self, request, user_name):
+        pass
+
+class BarView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    # get user by username
+    def get(self, request, user_name):
+        pass
+
+class ClubView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    # get user by username
+    def get(self, request, user_name):
+        pass
+
+class HotelView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    # get user by username
+    def get(self, request, user_name):
+        pass
