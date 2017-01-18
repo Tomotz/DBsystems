@@ -41,10 +41,20 @@ VALUES (%s, %s, %s, %s);"""
 
 ######Complex Queries - including full text search query############
 
+placeAndPics = """(SELECT idPlaces, addr_id, name, rating, Places.googleId, type, url
+FROM Places
+JOIN
+(
+	SELECT googleId, MAX(url) as url
+	FROM Pics
+	GROUP BY googleId
+) as q2
+ON Places.googleId = q2.googleId)
+"""
 
 #input - (my_lat, my_lat, my_lon, place_type, radius_in_km)
 #This query gets all the places around a given location. Sorted by distance from the location.
-placesInDistQuery = """SELECT idPlaces, distanceInKM
+placesInDistQuery = """SELECT placePic.idPlaces, addr_id, name, rating, Places.googleId, type, url, distanceInKM
 FROM
 (
 	SELECT Places.idPlaces,
@@ -63,8 +73,9 @@ FROM
 	AND Places.type = %s
 	AND Addr.lat IS NOT NULL
 	AND Addr.lon IS NOT NULL
-) as sub
-WHERE distanceInKM <= %s
+) as sub, """+placeAndPics+""" as placePic
+WHERE placePic.idPlaces = sub.idPlaces
+AND distanceInKM <= %s
 ORDER BY distanceInKM	
 """
 
