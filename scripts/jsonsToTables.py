@@ -153,8 +153,8 @@ def parseReview(jsonData, cur):
 	return numReviews
 
 def getAddrById(cur, idAddr):
-    cur.execute(getAddrQuery, (idAddr,))
-    return cur.fetchone()
+	cur.execute(getAddrQuery, (idAddr,))
+	return cur.fetchone()
 
 def parseAddr(jsonData, cur):
 	googlePlaceId = jsonData["place_id"]
@@ -209,28 +209,28 @@ def addFromJsons(conn):
 	countPhoto = 0
 	countAddr = 0
 	for root, dirs, files in os.walk(JSON_DIR):
-	    for name in files:
-	    	FILE_NAME = os.path.join(root, name)
-	        print("working on", FILE_NAME)
-	        with open(FILE_NAME) as jsonFile:
-		        cur = conn.cursor()
-	        	#jsonData = json.load(jsonFile)
-	        	for line in jsonFile.read().replace("false", "False").replace("true", "True").split("\n"):
-	        		if line == "": 
-	        			continue
-	        		jsonData = eval(line)
-	        		if areAllInJson(jsonData, ["reviews", "place_id"]) and len(jsonData["reviews"])>0:
-	        			#reviews record
-	        			countReviews += parseReview(jsonData, cur)
-	        		elif areAllInJson(jsonData, ["name", "types", "id", "place_id"]):
-	        			#place record.
-		        		for table in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
-		        			countPlace += parsePlace(table, jsonData, cur)
-		        	elif areAllInJson(jsonData, ["photo_reference", "id"]):
-		        		#photo record
-		        		countPhoto += parsePhoto(jsonData, cur)
-		        	elif areAllInJson(jsonData, ["place_id", "city"]):
-		        		countAddr += parseAddr(jsonData, cur)
+		for name in files:
+			FILE_NAME = os.path.join(root, name)
+			print("working on", FILE_NAME)
+			with open(FILE_NAME) as jsonFile:
+				cur = conn.cursor()
+				#jsonData = json.load(jsonFile)
+				for line in jsonFile.read().replace("false", "False").replace("true", "True").split("\n"):
+					if line == "": 
+						continue
+					jsonData = eval(line)
+					if areAllInJson(jsonData, ["reviews", "place_id"]) and len(jsonData["reviews"])>0:
+						#reviews record
+						countReviews += parseReview(jsonData, cur)
+					elif areAllInJson(jsonData, ["name", "types", "id", "place_id"]):
+						#place record.
+						for table in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
+							countPlace += parsePlace(table, jsonData, cur)
+					elif areAllInJson(jsonData, ["photo_reference", "id"]):
+						#photo record
+						countPhoto += parsePhoto(jsonData, cur)
+					elif areAllInJson(jsonData, ["place_id", "city"]):
+						countAddr += parseAddr(jsonData, cur)
 
 	print "Added", countPlace, "places,", countPhoto, "photos and ", countReviews, "reviews"
 	print "Added or Updated", countAddr, "addresses"

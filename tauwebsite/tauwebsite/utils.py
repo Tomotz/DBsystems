@@ -8,6 +8,13 @@ import MySQLdb as mdb
 
 MAX_RESULTS = 30 #the maximum number of results to return from a query.
 
+######Simple Queries - including insert and update queries############
+
+#input - (idAddr,)
+getAddrQuery = """SELECT city, street, house_number, lat, lon, googlePlaceId
+FROM Addr
+WHERE idAddr=%s"""
+
 #input - (googlePlaceId,)
 getAddrIdQuery = """SELECT idAddr 
 FROM Addr
@@ -18,25 +25,29 @@ insertAddrQuery = """INSERT INTO Addr (googlePlaceId, city, street, house_number
 VALUES (%s, %s, %s, %s, %s, %s);"""
 
 #input - (user_name,)
-getUserQuery = """SELECT addr_id, user_name, first_name, last_name
+getUserQuery = """SELECT idUser, addr_id, user_name, first_name, last_name
 FROM User
 WHERE user_name=%s"""
 
-#input - (idAddr,)
-getAddrQuery = """SELECT city, street, house_number, lat, lon, googlePlaceId
-FROM Addr
-WHERE idAddr=%s"""
+#input - (addr_id, user_name, first_name, last_name, idUser)
+updateUserQuery = """UPDATE User
+SET addr_id=%s, user_name=%s, first_name=%s, last_name=%S
+WHERE idUser=%s;"""
 
 #input - (addr_id, user_name, first_name, last_name)
 insertUserQuery = """INSERT INTO User (addr_id, user_name, first_name, last_name)
 VALUES (%s, %s, %s, %s);"""
+
+
+######Complex Queries - including full text search query############
+
 
 #input - (my_lat, my_lat, my_lon, place_type, radius_in_km)
 #This query gets all the places around a given location. Sorted by distance from the location.
 placesInDistQuery = """SELECT idPlaces, distanceInKM
 FROM
 (
-	SELECT Places.idPlaces, 
+	SELECT Places.idPlaces,
 	(
 	 2 * 6367.45 * 
 	    asin(
@@ -58,7 +69,7 @@ ORDER BY distanceInKM
 """
 
 #input - (review_text,)
-#this query allows the user to search freely for review text
+#FULL TEXT SEARCH QUERY - this query allows the user to search freely for review text
 searchInReviewsQuery = """SELECT Places.name, Addr.idAddr, Reviews.text, Reviews.rating 
 FROM Reviews, Places, Addr
 WHERE Places.addr_id = Addr.idAddr
@@ -112,7 +123,7 @@ class DBUtils:
 
         idAddr = cls.getOrCreateAddrId(address)
         if None == idAddr:
-            #failed to add user!
+            #failed to add the address of the user!
             return None
         try:
             cursor.execute(insertUserQuery, (idAddr, username, firstName, lastName))
@@ -122,6 +133,32 @@ class DBUtils:
             return None
         cls.conn.commit()
         return cls.getUserByUname(username)
+
+    '''
+    Updates an existing user in the DB.
+    returns None of failure, otherwise returns the row of the user in the DB.
+    address - a google location object matching the user location.
+    '''
+    @classmethod
+    def updateUser(cls, username, firstName, lastName, address):
+        cursor = cls.conn.cursor()
+        userRow = getUserByUname(username)
+        if userRow == None or len(userRow) < 1:
+            return None
+        idUser = userRow[0]
+        idAddr = cls.getOrCreateAddrId(address)
+        if None == idAddr:
+            #failed to add the address of the user!
+            return None
+        try:
+            cursor.execute(updateUserQuery, (idAddr, username, firstName, lastName, idUser))
+        except Exception, e:
+            print "There was an unsupported character in the input"
+            print str(e)
+            return None
+        cls.conn.commit()
+        return cls.getUserByUname(username)
+
 
     """
     Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
@@ -147,8 +184,8 @@ class DBUtils:
             print str(e)
             return None
         return cursor.fetchmany(MAX_RESULTS)
-	    
-    """
+
+  	"""
     Gets all the places around a given location. Sorted by distance from the location.
     my_lat/my_lon - the latitude and longitude of the given location.
     place_type - a filter for the results - return only results of the given place type
@@ -157,15 +194,24 @@ class DBUtils:
     If no results match the query, an empty tuple would be returned
     """
     @classmethod
-    def aroundMe(cls, my_lat, my_lon, place_type, radius_in_km):
+    def aroundMe(my_lat, my_lon, place_type, radius_in_km):
         cursor = cls.conn.cursor()
         try:
-            cursor.execute(placesInDistQuery, (my_lat, my_lon, place_type, radius_in_km))
+            cursor.execute(placesInDistQuery, (my_lat, my_lat, my_lon, place_type, radius_in_km))
         except Exception, e:
             print "There was an unsupported character in the input"
             print str(e)
             return tuple()
         return cursor.fetchmany(MAX_RESULTS)
+
+    """
+    Gets all the photos from restaurants who have min_num_pics or more pictures
+    """
+    @classmethod
+    def photographicPlaces(min_num_pics):
+        cursor = cls.conn.cursor()
+        cursor.execute(getPictures, (min_num_pics, ))
+        return cursor.fetchall() #we would like to get more than 30 pictures
 
 
 
