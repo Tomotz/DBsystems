@@ -11,7 +11,7 @@ MAX_RESULTS = 30 #the maximum number of results to return from a query.
 ######Simple Queries - including insert and update queries############
 
 #input - (idAddr,)
-getAddrQuery = """SELECT city, street, house_number, lat, lon, googlePlaceId
+getAddrQuery = """SELECT idAddr, city, street, house_number, lat, lon, googlePlaceId
 FROM Addr
 WHERE idAddr=%s"""
 
