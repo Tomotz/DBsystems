@@ -76,7 +76,7 @@ class DBUtils:
     '''
     @classmethod
     def getUserByUname(cls, username):
-        cursor = conn.cursor()
+        cursor = cls.conn.cursor()
         cursor.execute(getUserQuery, (username,))
         row = cursor.fetchone()
 
@@ -90,7 +90,7 @@ class DBUtils:
     '''
     @classmethod
     def createNewUser(cls, username, firstName, lastName, address):
-        cursor = conn.cursor()
+        cursor = cls.conn.cursor()
         userRow = cls.getUserByUname(username)
         if userRow != None:
             #user already exists!
@@ -116,7 +116,7 @@ class DBUtils:
     """
     @classmethod
     def getAddrById(cls, idAddr):
-        cursor = conn.cursor()
+        cursor = cls.conn.cursor()
         cursor.execute(getAddrQuery, (idAddr,))
         row = cursor.fetchone()
 
@@ -127,7 +127,7 @@ class DBUtils:
     """
     @classmethod
     def getReviewByText(cls, review_text):
-        cursor = conn.cursor()
+        cursor = cls.conn.cursor()
         try:
             cursor.execute(searchInReviewsQuery, (review_text,))
         except Exception, e:
@@ -146,7 +146,7 @@ class DBUtils:
     """
     @classmethod
     def aroundMe(my_lat, my_lon, place_type, radius_in_km):
-        cursor = conn.cursor()
+        cursor = cls.conn.cursor()
         try:
 		  cursor.execute(placesInDistQuery, (my_lat, my_lat, my_lon, place_type, radius_in_km))
         except Exception, e:
@@ -164,7 +164,7 @@ class DBUtils:
     """
     @classmethod
     def getOrCreateAddrId(cls, address):
-        cursor = conn.cursor()
+        cursor = cls.conn.cursor()
         googlePlaceId = address["place_id"]
 
         cursor.execute(getAddrIdQuery, (googlePlaceId,))
