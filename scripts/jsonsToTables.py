@@ -5,7 +5,7 @@ import json
 import os
 import MySQLdb as mdb
 from sys import argv
-JSON_DIR = r"C:\Users\tom\Downloads\jasons"
+JSON_DIR = r"C:\Users\tom\Desktop\jasons"
 #JSON_DIR = r"C:\Users\tom\Downloads\jasons"
 allTables = ("Details", "Pics", "User", "Places",  "OpenHours", "Addr")
 
@@ -26,6 +26,12 @@ VALUES (%s, %s, %s, %s, %s);"""
 
 insetReviewQuery = """INSERT INTO Reviews (rating, text, googlePlaceId)
 VALUES (%s, %s, %s);"""
+
+getOpenHoursQuery = """SELECT *
+FROM OpenHours
+WHERE dayOfWeek = %s
+AND googlePlaceId = %s
+"""
 
 insetOpenHoursQuery = """INSERT INTO OpenHours (dayOfWeek, hourOpen, hourClose, googlePlaceId)
 VALUES (%s, %s, %s, %s);"""
@@ -207,6 +213,9 @@ WHERE idAddr=%s;"""
 def parseOpenHours(jsonData, cur):
 	googlePlaceId = jsonData["place_id"]
 	day = jsonData["day"]
+	cur.execute(getOpenHoursQuery, (day, googlePlaceId))
+	if (cur.fetchone()):
+		return 0 #record already exists
 	open_hour = jsonData["open_hour"]+"00"
 	close_hour = jsonData["close_hour"]+"00"
 	cur.execute(insetOpenHoursQuery, (day, open_hour, close_hour, googlePlaceId))
@@ -293,7 +302,3 @@ if __name__ == "__main__":
 	disconnectDB(conn)
 
 
-
-
-# DELETE FROM Rests
-# WHERE Rests.idRest = 0

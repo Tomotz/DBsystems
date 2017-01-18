@@ -122,10 +122,53 @@ WHERE Pics.googlePlaceId = Places.googlePlaceId
 AND sub.googlePlaceId = Pics.googlePlaceId
 ORDER BY sub.num_pictures desc"""
 
+dayOfWeek = {0:"Monday", 1:"Tuesday", 2:"Wednesday", 3:"Thursday", 4:"Friday", 5:"Saturday", 6:"Sunday"}
+
+#input - (day_of_week, googlePlaceId, time_now, time_now, time_now, time_now, time_now, time_now)
+#this query checks if a place is currently open. Matches places using googlePlaceId
+#now time should be in format of HHMMSS, and dayOfWeek should be one of the dayOfWeek dict
+isOpenQuery = """SELECT googlePlaceId
+FROM OpenHours
+WHERE dayOfWeek = %s
+AND googlePlaceId = %s
+AND (%s > hourOpen
+	OR %s < "60000")
+AND
+(
+	hourClose > "60000"
+	AND
+	(
+		%s < hourClose
+		AND %s > "60000"
+	)
+OR
+(
+	hourClose < "60000"
+	AND
+	(
+		%s > "60000"
+		OR %s < hourClose
+	)
+)
+)
+"""
+
 
 
 class DBUtils:
     conn = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
+
+    @classmethod
+    def openNow(cls, curDay, curHHMMSS, googlePlaceId):
+        """Gets all places that are open now
+        curDay should be a key for dayOfWeek dictionary (0 for monday and so on)
+        cur HHMMSS should be a string in the format HHMMSS"""
+        cursor = cls.conn.cursor()
+        if type(curDay) is not int or curDay > 6:
+            return None
+        openPlaces = cursor.execute(getOpenQuery, (dayOfWeek[curDay], googlePlaceId, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS))
+        return None != cursor.fetchone()
+
 
 
     @classmethod
