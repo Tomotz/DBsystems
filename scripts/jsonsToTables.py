@@ -5,10 +5,9 @@ import json
 import os
 import MySQLdb as mdb
 from sys import argv
-#JSON_DIR = r"C:\Users\tom\Downloads\170117-20170117T132541Z\170117"
-#JSON_DIR = r"C:\Users\tom\Downloads\170117-20170117T132541Z\photos_170117"
 JSON_DIR = r"C:\Users\tom\Downloads\jasons"
-allTables = ("Details", "Pics", "User", "Places", "Addr")
+#JSON_DIR = r"C:\Users\tom\Downloads\jasons"
+allTables = ("Details", "Pics", "User", "Places",  "OpenHours", "Addr")
 
 
 insertAddrQuery = """INSERT INTO DbMysql17.Addr (googlePlaceId, city, street, house_number, lat, lon)
@@ -19,13 +18,19 @@ getAddrIdQuery = """SELECT idAddr
 FROM Addr
 WHERE googlePlaceId = %s"""
 
-insetPhotoQuery = """INSERT INTO Pics (googleId, url, width, height)
+insetPhotoQuery = """INSERT INTO Pics (googlePlaceId, url, width, height)
 VALUES (%s, %s, %s, %s);"""
 
 insertPlaceQuery = """INSERT INTO Places (addr_id, name, rating, googleId, type)
 VALUES (%s, %s, %s, %s, %s);"""
 
 insetReviewQuery = """INSERT INTO Reviews (rating, text, googlePlaceId)
+VALUES (%s, %s, %s);"""
+
+insetOpenHoursQuery = """INSERT INTO OpenHours (dayOfWeek, hourOpen, hourClose, googlePlaceId)
+VALUES (%s, %s, %s, %s);"""
+
+insetDetailsQuery = """INSERT INTO Details (phone, website, googlePlaceId)
 VALUES (%s, %s, %s);"""
 
 checkGoogleIdQuery = """SELECT googleId 
@@ -127,7 +132,7 @@ def parsePlace(placeType, jsonData, cur):
 	return 1
 
 def parsePhoto(jsonData, cur):
-	googleId = jsonData["id"]
+	googlePlaceId = jsonData["place_id"]
 	url = jsonData["photo_reference"]
 	width = None
 	height = None
@@ -135,7 +140,7 @@ def parsePhoto(jsonData, cur):
 		width = jsonData["width"]
 	if "height" in jsonData:
 		height = jsonData["height"]
-	cur.execute(insetPhotoQuery, (googleId, url, width, height))
+	cur.execute(insetPhotoQuery, (googlePlaceId, url, width, height))
 	return 1
 
 def parseReview(jsonData, cur):
@@ -199,6 +204,27 @@ WHERE idAddr=%s;"""
 		return 1
 	return 0; #probably didn't add a record
 
+def parseOpenHours(jsonData, cur):
+	googlePlaceId = jsonData["place_id"]
+	day = jsonData["day"]
+	open_hour = jsonData["open_hour"]+"00"
+	close_hour = jsonData["close_hour"]+"00"
+	cur.execute(insetOpenHoursQuery, (day, open_hour, close_hour, googlePlaceId))
+	return 1
+
+def parseDetails(jsonData, cur):
+	googlePlaceId = jsonData["place_id"]
+	phone = None
+	if "phone" in jsonData:
+		phone = jsonData["phone"]
+	website = None
+	if "website" in jsonData:
+		website = jsonData["website"]
+	cur.execute(insetDetailsQuery, (phone, website, googlePlaceId))
+	return 1
+
+
+
 #returns true iff all the keys given are in the jsonData
 def areAllInJson(jsonData, keys):
 	return not (False in [i in jsonData for i in keys])
@@ -208,6 +234,8 @@ def addFromJsons(conn):
 	countPlace = 0
 	countPhoto = 0
 	countAddr = 0
+	countHours = 0
+	countDetails = 0
 	for root, dirs, files in os.walk(JSON_DIR):
 		for name in files:
 			FILE_NAME = os.path.join(root, name)
@@ -222,17 +250,21 @@ def addFromJsons(conn):
 					if areAllInJson(jsonData, ["reviews", "place_id"]) and len(jsonData["reviews"])>0:
 						#reviews record
 						countReviews += parseReview(jsonData, cur)
-					elif areAllInJson(jsonData, ["name", "types", "id", "place_id"]):
+					if areAllInJson(jsonData, ["name", "types", "id", "place_id"]):
 						#place record.
 						for table in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
 							countPlace += parsePlace(table, jsonData, cur)
-					elif areAllInJson(jsonData, ["photo_reference", "id"]):
+					if areAllInJson(jsonData, ["photo_reference", "place_id"]):
 						#photo record
 						countPhoto += parsePhoto(jsonData, cur)
-					elif areAllInJson(jsonData, ["place_id", "city"]):
+					if areAllInJson(jsonData, ["place_id", "city"]):
 						countAddr += parseAddr(jsonData, cur)
+					if areAllInJson(jsonData, ["place_id", "day", "open_hour", "close_hour"]):
+						countHours += parseOpenHours(jsonData, cur)
+					if areAllInJson(jsonData, ["place_id", "phone"]) or areAllInJson(jsonData, ["place_id", "website"]):
+						countDetails += parseDetails(jsonData, cur)
 
-	print "Added", countPlace, "places,", countPhoto, "photos and ", countReviews, "reviews"
+	print "Added", countPlace, "places,", countHours, "hours,", countDetails, "details,", countPhoto, "photos and ", countReviews, "reviews"
 	print "Added or Updated", countAddr, "addresses"
 
 def resetAllTables(conn):
