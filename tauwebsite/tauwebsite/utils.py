@@ -126,7 +126,17 @@ ORDER BY sub.num_pictures desc"""
 
 class DBUtils:
     conn = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
-    
+
+
+    @classmethod
+    def chooseWhatIWantToDo(cls, my_lat, my_lon):
+        """This functions gives the user all the results around him from the type of place with the highest rating"""
+        placeType = cursor.execute(bestAvgTypeQuery)
+        if placeType == None:
+            return None
+        best = placeType[0]
+        return cls.aroundMe(my_lat, my_lon, placeType, 3)
+
 
     '''
     Queries the DB about a specific user.
@@ -173,7 +183,7 @@ class DBUtils:
     @classmethod
     def updateUser(cls, username, firstName, lastName, address):
         cursor = cls.conn.cursor()
-        userRow = getUserByUname(username)
+        userRow = cls.getUserByUname(username)
         if userRow == None or len(userRow) < 1:
             return None
         idUser = userRow[0]
