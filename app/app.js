@@ -15,8 +15,9 @@ var DBApp = angular.module('DBApp', [
 
 DBApp.config(function($stateProvider) {
     console.log("DBApp Running!");
-    var templates = get_templates();
 
+    var templates = get_templates();
+    // get_templates_async().then(function(templates) {
     console.log("DBApp: got templates - ", templates);
     return DBApp.$stateProvider = $stateProvider
         .state('landing_page', {
@@ -31,31 +32,22 @@ DBApp.config(function($stateProvider) {
             url: '/',
             template: templates[2],
             controller: 'PlacesController'
-        }).state('main.bars', {
-            url: '/bars',
-            // templateURL: 'view1.html',
-            template: templates[3],
-            controller: 'PlacesController'
         }).state('main.rests', {
             url: '/rests',
-            // templateURL: '/view2/view2.html',
-            template: templates[4],
+            template: templates[3],
+            controller: 'PlacesController'
+        }).state('main.bars', {
+            url: '/bars',
+            template: templates[3],
+            controller: 'PlacesController'
+        }).state('main.clubs', {
+            url: '/clubs',
+            template: templates[3],
+            controller: 'PlacesController'
+        }).state('main.hotels', {
+            url: '/hotels',
+            template: templates[3],
             controller: 'PlacesController'
         });
-
-    // get_templates_async().then(function(templates) {
-    //     console.log("DBApp: got templates - ", templates);
-    //     return DBApp.$stateProvider = $stateProvider
-    //         .state('view1', {
-    //             url: '/view1',
-    //             // templateURL: 'view1.html',
-    //             template: templates[0],
-    //             controller: 'View1Ctrl'
-    //         }).state('view2', {
-    //             url: '/view2',
-    //             // templateURL: '/view2/view2.html',
-    //             template: templates[1],
-    //             controller: 'View2Ctrl'
-    //         })
-    // });
+    
 });

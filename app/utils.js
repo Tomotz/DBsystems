@@ -3,8 +3,7 @@ var paths = [
     "partials/login_signup.html",
     "partials/main.html",
     "partials/home.html",
-    "partials/view1.html",
-    "partials/view2.html"
+    "partials/tab_content.html"
 ];
 
 function get_templates_async() {
@@ -32,6 +31,7 @@ function get_autocomplete(element_id) {
     var addr_input = document.getElementById(element_id);
     var options = {
         bounds: defaultBounds,
+        types: ['address']
     };
 
     return new google.maps.places.Autocomplete(addr_input, options);
