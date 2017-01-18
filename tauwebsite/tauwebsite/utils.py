@@ -8,30 +8,30 @@ import MySQLdb as mdb
 
 MAX_RESULTS = 30 #the maximum number of results to return from a query.
 
-#(googlePlaceId,)
+#input - (googlePlaceId,)
 getAddrIdQuery = """SELECT idAddr 
-FROM DbMysql17.Addr
+FROM Addr
 WHERE googlePlaceId = %s"""
 
-#(googlePlaceId, city, street, house_number, lat, lon)
-insertAddrQuery = """INSERT INTO DbMysql17.Addr (googlePlaceId, city, street, house_number, lat, lon)
+#input - (googlePlaceId, city, street, house_number, lat, lon)
+insertAddrQuery = """INSERT INTO Addr (googlePlaceId, city, street, house_number, lat, lon)
 VALUES (%s, %s, %s, %s, %s, %s);"""
 
-#(user_name,)
+#input - (user_name,)
 getUserQuery = """SELECT addr_id, user_name, first_name, last_name
-FROM DbMysql17.User
+FROM User
 WHERE user_name=%s"""
 
-#(idAddr,)
+#input - (idAddr,)
 getAddrQuery = """SELECT city, street, house_number, lat, lon, googlePlaceId
-FROM DbMysql17.Addr
+FROM Addr
 WHERE idAddr=%s"""
 
-#(addr_id, user_name, first_name, last_name)
-insertUserQuery = """INSERT INTO DbMysql17.User (addr_id, user_name, first_name, last_name)
+#input - (addr_id, user_name, first_name, last_name)
+insertUserQuery = """INSERT INTO User (addr_id, user_name, first_name, last_name)
 VALUES (%s, %s, %s, %s);"""
 
-#(my_lat, my_lat, my_lon, place_type, radius_in_km)
+#input - (my_lat, my_lat, my_lon, place_type, radius_in_km)
 #This query gets all the places around a given location. Sorted by distance from the location.
 placesInDistQuery = """SELECT idPlaces, distanceInKM
 FROM
@@ -57,13 +57,29 @@ WHERE distanceInKM <= %s
 ORDER BY distanceInKM    
 """
 
-#(review_text,)
+#input - (review_text,)
+#this query allows the user to search freely for review text
 searchInReviewsQuery = """SELECT Places.name, Addr.idAddr, Reviews.text, Reviews.rating 
 FROM Reviews, Places, Addr
 WHERE Places.addr_id = Addr.idAddr
 AND Reviews.googlePlaceId = Addr.googlePlaceId
 AND match(Reviews.text) Against('%s' IN BOOLEAN MODE)
 """
+
+#input - (min_num_of_pictures,)
+#this query gets all the pictures from places that has more than a given number of pictures
+getPictures = """SELECT DISTINCT Places.name, Pics.googleId, Pics.url, Pics.width, Pics.height
+FROM Pics, Places, 
+(
+    SELECT Pics.googleId, Count(Pics.googleId) as num_pictures
+    FROM Pics
+    GROUP BY Pics.googleId
+    HAVING Count(Pics.googleId) > %s
+) as sub
+WHERE Pics.googleId = Places.googleId
+AND sub.googleId = Pics.googleId
+ORDER BY sub.num_pictures desc"""
+
 
 
 class DBUtils:
@@ -78,9 +94,7 @@ class DBUtils:
     def getUserByUname(cls, username):
         cursor = cls.conn.cursor()
         cursor.execute(getUserQuery, (username,))
-        row = cursor.fetchone()
-
-        return row
+        return cursor.fetchone()
 
     '''
     Adds a new user to the DB.
@@ -118,9 +132,7 @@ class DBUtils:
     def getAddrById(cls, idAddr):
         cursor = cls.conn.cursor()
         cursor.execute(getAddrQuery, (idAddr,))
-        row = cursor.fetchone()
-
-        return row
+        return cursor.fetchone()
 
     """
     Gets all the places that has given input words in their text.
