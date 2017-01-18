@@ -4,10 +4,11 @@
 var DBApp = angular.module('DBApp', [
     'ngRoute',
     'ui.router',
-    'DBApp.view1',
+    'DBApp.PlacesController',
     'DBApp.view2',
     'DBApp.LoginController',
     'DBApp.LoginService',
+    'DBApp.PlacesService'
 ]);
 
 
@@ -29,16 +30,16 @@ DBApp.config(function($stateProvider) {
             url: '/',
             template: templates[2],
             // controller: 'MainController'
-        }).state('main.view1', {
-            url: '/view1',
+        }).state('main.bars', {
+            url: '/bars',
             // templateURL: 'view1.html',
             template: templates[3],
-            controller: 'View1Ctrl'
-        }).state('main.view2', {
-            url: '/view2',
+            controller: 'PlacesController'
+        }).state('main.rests', {
+            url: '/rests',
             // templateURL: '/view2/view2.html',
             template: templates[4],
-            controller: 'View2Ctrl'
+            controller: 'PlacesController'
         });
 
     // get_templates_async().then(function(templates) {
