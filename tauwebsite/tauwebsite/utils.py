@@ -136,7 +136,7 @@ class DBUtils:
             return None
         return cursor.fetchmany(MAX_RESULTS)
 	    
-  	"""
+    """
     Gets all the places around a given location. Sorted by distance from the location.
     my_lat/my_lon - the latitude and longitude of the given location.
     place_type - a filter for the results - return only results of the given place type
@@ -145,10 +145,10 @@ class DBUtils:
     If no results match the query, an empty tuple would be returned
     """
     @classmethod
-    def aroundMe(my_lat, my_lon, place_type, radius_in_km):
+    def aroundMe(cls, my_lat, my_lon, place_type, radius_in_km):
         cursor = cls.conn.cursor()
         try:
-		  cursor.execute(placesInDistQuery, (my_lat, my_lat, my_lon, place_type, radius_in_km))
+            cursor.execute(placesInDistQuery, (my_lat, my_lon, place_type, radius_in_km))
         except Exception, e:
             print "There was an unsupported character in the input"
             print str(e)
