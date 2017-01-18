@@ -17,9 +17,19 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic.base import TemplateView
 import settings
+from users.views import LoginView
+from places.views import FoodView, BarView, ShopView, HotelView
 
 urlpatterns = [
-    url(r'^polls/', include('polls.urls')),
-    url(r'^users/', include('users.urls')),
+    # url(r'^users/', include('users.urls')),
+    # url(r'^places/', include('places.urls')),
     url(r'^admin/', admin.site.urls),
+
+    url(r'^users/login/(?P<user_name>\w+)/$', LoginView.as_view()),
+    url(r'^users/signup/$', LoginView.as_view()),
+
+    url(r'^places/food/$', FoodView.as_view()),
+    url(r'^places/bars/$', BarView.as_view()),
+    url(r'^places/hotles/$', HotelView.as_view()),
+    url(r'^places/shops/$', ShopView.as_view()),
 ]

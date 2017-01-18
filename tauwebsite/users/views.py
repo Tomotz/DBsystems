@@ -30,32 +30,3 @@ class LoginView(APIView):
             return HttpResponseBadRequest()
         else:
             return Response(Serializers.UserSerizlizer(user))
-
-
-class FoodView(APIView):
-    permission_classes = (permissions.AllowAny,)
-
-    # get user by username
-    def get(self, request, user_name):
-        pass
-
-class BarView(APIView):
-    permission_classes = (permissions.AllowAny,)
-
-    # get user by username
-    def get(self, request, user_name):
-        pass
-
-class ClubView(APIView):
-    permission_classes = (permissions.AllowAny,)
-
-    # get user by username
-    def get(self, request, user_name):
-        pass
-
-class HotelView(APIView):
-    permission_classes = (permissions.AllowAny,)
-
-    # get user by username
-    def get(self, request, user_name):
-        pass
