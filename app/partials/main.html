@@ -1,8 +1,4 @@
-
-<div
-        class="main_class"
-        id="main_id">
-    <div id="menu_bar">
+    <div class="menu_bar">
         <ul id="menu">
           <!--li><a ui-sref=".rests" ui-sref-active="active">EAT</a></li-->
           <li ng-class="{'selected': state.includes('**.home.**')}"><a ui-sref=".home">HOME</a></li>
@@ -12,7 +8,19 @@
           <li ng-class="{'selected': state.includes('**.hotels.**')}"><a ui-sref=".hotels">SLEEP</a></li>
         </ul>
     </div>
-
+    <div class="search_input">
+        <div class="whereto">Where to?
+            <span>
+                TLV
+            </span>
+        </div>
+            <!--input class="button" placeholder="Search..." />
+            <script src='http://use.edgefonts.net/amaranth.js'></script-->
+        <input class="button" placeholder="Search..." id="autocomplete_address_inner"
+               type="text"
+               ng-class="{'input_err' : addr_err}"
+               placeholder="Search address...">
+    </div>
     <ui-view></ui-view>
 
-</div>
+
