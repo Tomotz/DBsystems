@@ -45,7 +45,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
     get_places(params).then(function (data) {
         console.log("PlacesController: got places - ", data);
         all_places = data;
-        // $scope.places = all_places.slice(0, 10);
+        $scope.places = all_places.slice(0, 10);
         $scope.data_loaded = true;
     });
 
@@ -61,7 +61,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
         get_places(params).then(function (data) {
             console.log("PlacesController: got places - ", data);
             all_places = data;
-            // $scope.places = all_places.slice(0, 10);
+            $scope.places = all_places.slice(0, 10);
             $scope.data_loaded = true;
         });
     });
