@@ -5,10 +5,11 @@ class Serializers:
     @classmethod
     def UserSerizlizer(cls, user_row):
         obj = {
-            "address"    : cls.AddressSerializer(DBUtils.getAddrById(user_row[0]), stringify=False),
-            "username"   : user_row[1],
-            "first_name" : user_row[2],
-            "last_name"  : user_row[3],
+            "id"         : user_row[0],
+            "address"    : cls.AddressSerializer(DBUtils.getAddrById(user_row[1]), stringify=False),
+            "username"   : user_row[2],
+            "first_name" : user_row[3],
+            "last_name"  : user_row[4],
         }
 
         return json.dumps(obj)
@@ -16,14 +17,15 @@ class Serializers:
     @classmethod
     def AddressSerializer(cls, addr_row, stringify=True):
         obj = {
-            "city"     : addr_row[0],
-            "street"   : addr_row[1],
-            "number"   : addr_row[2],
-            "place_id" : addr_row[5],
+            "id"       : addr_row[0],
+            "city"     : addr_row[1],
+            "street"   : addr_row[2],
+            "number"   : addr_row[3],
             "location" : {
-                "lat": addr_row[3],
-                "lng": addr_row[4],
+                "lat": addr_row[4],
+                "lng": addr_row[5],
             },
+            "place_id" : addr_row[6],
         }
 
         if stringify:
