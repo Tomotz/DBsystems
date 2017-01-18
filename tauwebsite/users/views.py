@@ -4,7 +4,6 @@ import MySQLdb as mdb
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
 from rest_framework import serializers, permissions
 from rest_framework.views import APIView
-
 #from django.db import connection
 
 
@@ -30,7 +29,6 @@ class LoginView(APIView):
     # get user by username
     def get(self, request, user_name):
         row = my_custom_sql()
-        print row
         return HttpResponseBadRequest()
         return HttpResponseForbidden()
         return HttpResponse("Hello, world.  %s" % row)
