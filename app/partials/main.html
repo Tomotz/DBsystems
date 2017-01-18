@@ -1,8 +1,15 @@
-<div>
-    <ul class="menu">
-      <li><a ui-sref=".bars" ui-sref-active="active">drink</a></li>
-      <li><a ui-sref=".rests" ui-sref-active="active">eat</a></li>
-    </ul>
 
+<div>
+
+    <div id="menubar">
+        <ul id="menu">
+          <!-- put class="selected" in the li tag for the selected page - to highlight which page you're on -->
+          <li class="selected"><a href="index.html">HOME</a></li>
+          <li><a ui-sref=".rests" ui-sref-active="active">EAT</a></li>
+          <li><a ui-sref=".bars" ui-sref-active="active">DRINK</a></li>
+          <li><a href="index.html">DANCE</a></li>
+          <li><a href="index.html">SLEEP</a></li>
+        </ul>
+    </div>
     <ui-view></ui-view>
 </div>
