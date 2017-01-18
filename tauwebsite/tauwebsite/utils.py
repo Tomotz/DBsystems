@@ -75,7 +75,7 @@ ON Places.googleId = q2.googleId)
 
 #input - (my_lat, my_lat, my_lon, place_type, radius_in_km)
 #This query gets all the places around a given location.
-placesInDistQuery = """SELECT placePic.idPlaces, addr_id, name, rating, Places.googleId, type, url, distanceInKM
+placesInDistQuery = """SELECT placePic.idPlaces, addr_id, name, rating, placePic.googleId, type, url, distanceInKM
 FROM
 (
 	SELECT Places.idPlaces,

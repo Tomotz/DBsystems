@@ -40,6 +40,19 @@ class PLACE_TYPES:
     CLUB  = "Club"
     HOTEL = "Hotel"
 
+class GeneralPlacesView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        lat = request.data.get("lat")
+        lng = request.data.get("lng")
+        radius = request.data.get("radius")
+
+        # TODO - put general query here (no PLACE_TYPE needed)
+        data = DBUtils.aroundMe(lat, lng, PLACE_TYPES.FOOD, radius)
+
+        return HttpResponse(Serializers.PlaceSerializer(data))
+
 class FoodView(APIView):
     permission_classes = (permissions.AllowAny,)
 
