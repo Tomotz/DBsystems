@@ -7,7 +7,7 @@ from rest_framework import permissions
 from rest_framework.views import APIView
 from tauwebsite.utils import DBUtils
 from tauwebsite.serializers import Serializers
-from rest_framework.response import Response
+
 
 # class LoginView(APIView):
 #     permission_classes = (permissions.AllowAny,)
@@ -50,7 +50,7 @@ class FoodView(APIView):
 
         data = DBUtils.aroundMe(lat, lng, PLACE_TYPES.FOOD, radius)
 
-        return Response(Serializers.PlaceSerializer(data))
+        return HttpResponse(Serializers.PlaceSerializer(data))
 
 class BarView(APIView):
     permission_classes = (permissions.AllowAny,)
