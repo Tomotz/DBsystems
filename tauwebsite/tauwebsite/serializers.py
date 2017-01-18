@@ -35,6 +35,7 @@ class Serializers:
 
     @classmethod
     def PlaceSerializer(cls, data):
+        # TODO - implement light places serializer and full single place serializer
         if type(data) != list:
             data = [data]
 

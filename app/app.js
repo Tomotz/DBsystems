@@ -30,7 +30,7 @@ DBApp.config(function($stateProvider) {
         }).state('main.home', {
             url: '/',
             template: templates[2],
-            // controller: 'MainController'
+            controller: 'PlacesController'
         }).state('main.bars', {
             url: '/bars',
             // templateURL: 'view1.html',

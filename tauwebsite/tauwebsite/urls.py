@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.views.generic.base import TemplateView
 import settings
 from users.views import LoginView
-from places.views import FoodView, BarView, ShopView, HotelView
+from places.views import FoodView, BarView, ShopView, HotelView, GeneralPlacesView
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^users/signup/$', LoginView.as_view()),
 
     # Places API
+    url(r'^places/general/$', GeneralPlacesView.as_view()),
     url(r'^places/food/$', FoodView.as_view()),
     url(r'^places/bars/$', BarView.as_view()),
     url(r'^places/hotels/$', HotelView.as_view()),
