@@ -30,6 +30,6 @@ urlpatterns = [
 
     url(r'^places/food/$', FoodView.as_view()),
     url(r'^places/bars/$', BarView.as_view()),
-    url(r'^places/hotles/$', HotelView.as_view()),
+    url(r'^places/hotels/$', HotelView.as_view()),
     url(r'^places/shops/$', ShopView.as_view()),
 ]
