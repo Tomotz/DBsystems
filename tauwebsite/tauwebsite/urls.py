@@ -21,13 +21,13 @@ from users.views import LoginView
 from places.views import FoodView, BarView, ShopView, HotelView
 
 urlpatterns = [
-    # url(r'^users/', include('users.urls')),
-    # url(r'^places/', include('places.urls')),
-    url(r'^admin/', admin.site.urls),
+    # url(r'^admin/', admin.site.urls),
 
+    # Users API
     url(r'^users/login/(?P<user_name>\w+)/$', LoginView.as_view()),
     url(r'^users/signup/$', LoginView.as_view()),
 
+    # Places API
     url(r'^places/food/$', FoodView.as_view()),
     url(r'^places/bars/$', BarView.as_view()),
     url(r'^places/hotels/$', HotelView.as_view()),
