@@ -5,8 +5,7 @@ import json
 import os
 import MySQLdb as mdb
 from sys import argv
-JSON_DIR = r"C:\Users\tom\Desktop\jasons"
-#JSON_DIR = r"C:\Users\tom\Downloads\jasons"
+JSON_DIR = r"C:\Users\tom\Downloads\TDBS"
 allTables = ("Details", "Pics", "User", "Places",  "OpenHours", "Addr")
 
 

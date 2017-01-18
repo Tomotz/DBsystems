@@ -170,7 +170,6 @@ class DBUtils:
         return None != cursor.fetchone()
 
 
-
     @classmethod
     def chooseWhatIWantToDo(cls, my_lat, my_lon):
         """This functions gives the user all the results around him from the type of place with the highest rating"""
@@ -190,6 +189,7 @@ class DBUtils:
         cursor = cls.conn.cursor()
         cursor.execute(getUserQuery, (username,))
         return cursor.fetchone()
+
 
     @classmethod
     def createNewUser(cls, username, firstName, lastName, address):
@@ -217,6 +217,7 @@ class DBUtils:
             return None
         cls.conn.commit()
         return cls.getUserByUname(username)
+
 
     @classmethod
     def updateUser(cls, username, firstName, lastName, address):
@@ -255,6 +256,7 @@ class DBUtils:
         cursor.execute(getAddrQuery, (idAddr,))
         return cursor.fetchone()
 
+
     @classmethod
     def getReviewByText(cls, review_text):
         """
@@ -268,6 +270,7 @@ class DBUtils:
             print str(e)
             return None
         return cursor.fetchmany(MAX_RESULTS)
+
 
     @classmethod
     def aroundMe(cls, my_lat, my_lon, place_type, radius_in_km):
@@ -288,6 +291,7 @@ class DBUtils:
             print str(e)
             return tuple()
         return cursor.fetchmany(MAX_RESULTS)
+
 
     @classmethod
     def topNotch(cls, my_lat, my_lon):
@@ -313,7 +317,6 @@ class DBUtils:
         cursor = cls.conn.cursor()
         cursor.execute(getPictures, (min_num_pics, ))
         return cursor.fetchall() #we would like to get more than 30 pictures
-
 
 
     @classmethod
