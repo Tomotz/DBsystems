@@ -25,12 +25,12 @@ DROP TABLE IF EXISTS `User`;
 CREATE TABLE `User` (
   `idUser` int(11) NOT NULL AUTO_INCREMENT,
   `addr_id` int(11) DEFAULT NULL,
-  `user_name` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `user_name` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
   `first_name` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `last_name` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `birth_date` date DEFAULT NULL,
   PRIMARY KEY (`idUser`),
   UNIQUE KEY `idUser_UNIQUE` (`idUser`),
+  UNIQUE KEY `user_name_UNIQUE` (`user_name`),
   KEY `addr_id_idx` (`addr_id`),
   CONSTRAINT `addr_id` FOREIGN KEY (`addr_id`) REFERENCES `Addr` (`idAddr`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-17 17:47:50
+-- Dump completed on 2017-01-18  7:28:49

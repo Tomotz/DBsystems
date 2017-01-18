@@ -6,8 +6,8 @@ import os
 import MySQLdb as mdb
 from sys import argv
 #JSON_DIR = r"C:\Users\tom\Downloads\170117-20170117T132541Z\170117"
-JSON_DIR = r"C:\Users\tom\Downloads\170117-20170117T132541Z\photos_170117"
-
+#JSON_DIR = r"C:\Users\tom\Downloads\170117-20170117T132541Z\photos_170117"
+JSON_DIR = r"C:\Users\tom\Downloads\170117-20170117T132541Z\reviews"
 allTables = ("Details", "Pics", "User", "Places", "Addr")
 
 
@@ -22,9 +22,11 @@ WHERE googlePlaceId = %s"""
 insetPhotoQuery = """INSERT INTO DbMysql17.Pics (googleId, url, width, height)
 VALUES (%s, %s, %s, %s);"""
 
-
 insertPlaceQuery = """INSERT INTO DbMysql17.Places (addr_id, name, rating, googleId, type)
 VALUES (%s, %s, %s, %s, %s);"""
+
+insetReviewQuery = """INSERT INTO DbMysql17.Reviews (rating, text, googlePlaceId)
+VALUES (%s, %s, %s);"""
 
 checkGoogleIdQuery = """SELECT googleId 
 FROM DbMysql17.Places
@@ -33,12 +35,12 @@ AND type = %s"""
 
 
 """
-input - a row from the jason data file as a dictionary.
-output - the addrId from Addr table matching the point in the jason row. if no point is found, returns None.
+input - a row from the Json data file as a dictionary.
+output - the addrId from Addr table matching the point in the Json row. if no point is found, returns None.
 	If the point is found, but does not yet exist in the DB, it is created, and the AddrId given to it is returned.
 """
-def getOrCreateAddrId(jasonData, cur):
-	googlePlaceId = jasonData["place_id"]
+def getOrCreateAddrId(JsonData, cur):
+	googlePlaceId = JsonData["place_id"]
 
 	cur.execute(getAddrIdQuery, (googlePlaceId,))
 	fetched = cur.fetchone()
@@ -49,8 +51,8 @@ def getOrCreateAddrId(jasonData, cur):
 
 	lat = None
 	lon = None
-	if "location" in jasonData:
-		loc = jasonData["location"]
+	if "location" in JsonData:
+		loc = JsonData["location"]
 		if "lat" in loc and "lng" in loc:
 			lat = loc["lat"]
 			lon = loc["lng"]
@@ -61,8 +63,8 @@ def getOrCreateAddrId(jasonData, cur):
 	street = None
 	house = None
 	city = None
-	if "formatted_address" in jasonData:
-		addr = jasonData["formatted_address"]
+	if "formatted_address" in JsonData:
+		addr = JsonData["formatted_address"]
 		for field in addr.split(","):
 			if " St " in field:
 				street = field.split(" St ")[0]
@@ -115,6 +117,16 @@ def parsePhoto(jsonData, cur):
 		height = jsonData["height"]
 	cur.execute(insetPhotoQuery, (googleId, url, width, height))
 
+def parseReview(jsonData, cur):
+	googlePlaceId = jsonData["place_id"]
+	for review in jsonData["reviews"]:
+		if "rating" not in review:
+			continue #not indexing a review without a rating
+		rating = review["rating"]
+		text = None
+		if "text" in review:
+			text = review["text"].replace("\xF0\x9F\x98\x89", "")
+		cur.execute(insetReviewQuery, (rating, text, googlePlaceId))
 
 def addFromJsons(conn):
 	for root, dirs, files in os.walk(JSON_DIR):
@@ -128,8 +140,9 @@ def addFromJsons(conn):
 	        		if line == "": 
 	        			continue
 	        		jsonData = eval(line)
-	        		#TODO: should we add the hebrew names as well?
-	        		if "name" in jsonData and "types" in jsonData and "id" in jsonData and "place_id" in jsonData:
+	        		if "reviews" in jsonData and len(jsonData["reviews"])>0 and "place_id" in jsonData:
+	        			parseReview(jsonData, cur)
+	        		elif "name" in jsonData and "types" in jsonData and "id" in jsonData and "place_id" in jsonData:
 	        			#this is a place record.
 		        		for table in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
 		        			parsePlace(table, jsonData, cur)

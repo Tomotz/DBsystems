@@ -32,6 +32,7 @@ insertUserQuery = """INSERT INTO DbMysql17.User (addr_id, user_name, first_name,
 VALUES (%s, %s, %s, %s);"""
 
 #(my_lat, my_lat, my_lon, place_type, radius_in_km)
+#This query gets all the places around a given location. Sorted by distance from the location.
 placesInDistQuery = """SELECT idPlaces, distanceInKM
 FROM
 (
@@ -56,9 +57,18 @@ WHERE distanceInKM <= %s
 ORDER BY distanceInKM    
 """
 
+#(review_text,)
+searchInReviewsQuery = """SELECT Places.name, Addr.idAddr, Reviews.text, Reviews.rating 
+FROM Reviews, Places, Addr
+WHERE Places.addr_id = Addr.idAddr
+AND Reviews.googlePlaceId = Addr.googlePlaceId
+AND match(Reviews.text) Against('%s' IN BOOLEAN MODE)
+"""
+
+
 class DBUtils:
     conn = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
-    cursor = conn.cursor()
+    
 
     '''
     Queries the DB about a specific user.
@@ -66,8 +76,9 @@ class DBUtils:
     '''
     @classmethod
     def getUserByUname(cls, username):
-        cls.cursor.execute(getUserQuery, (username,))
-        row = cls.cursor.fetchone()
+        cursor = conn.cursor()
+        cursor.execute(getUserQuery, (username,))
+        row = cursor.fetchone()
 
         return row
 
@@ -79,6 +90,7 @@ class DBUtils:
     '''
     @classmethod
     def createNewUser(cls, username, firstName, lastName, address):
+        cursor = conn.cursor()
         userRow = cls.getUserByUname(username)
         if userRow != None:
             #user already exists!
@@ -88,7 +100,12 @@ class DBUtils:
         if None == idAddr:
             #failed to add user!
             return None
-        cls.cursor.execute(insertUserQuery, (idAddr, username, firstName, lastName))
+        try:
+            cursor.execute(insertUserQuery, (idAddr, username, firstName, lastName))
+        except Exception, e:
+            print "There was an unsupported character in the input"
+            print str(e)
+            return None
         cls.conn.commit()
         return cls.getUserByUname(username)
 
@@ -99,10 +116,25 @@ class DBUtils:
     """
     @classmethod
     def getAddrById(cls, idAddr):
-	    cls.cursor.execute(getAddrQuery, (idAddr,))
-	    row = cls.cursor.fetchone()
+        cursor = conn.cursor()
+        cursor.execute(getAddrQuery, (idAddr,))
+        row = cursor.fetchone()
 
-	    return row
+        return row
+
+    """
+    Gets all the places that has given input words in their text.
+    """
+    @classmethod
+    def getReviewByText(cls, review_text):
+        cursor = conn.cursor()
+        try:
+            cursor.execute(searchInReviewsQuery, (review_text,))
+        except Exception, e:
+            print "There was an unsupported character in the input"
+            print str(e)
+            return None
+        return cursor.fetchmany(MAX_RESULTS)
 	    
   	"""
     Gets all the places around a given location. Sorted by distance from the location.
@@ -114,8 +146,15 @@ class DBUtils:
     """
     @classmethod
     def aroundMe(my_lat, my_lon, place_type, radius_in_km):
-		cls.cursor.execute(placesInDistQuery, (my_lat, my_lat, my_lon, place_type, radius_in_km))
-		return cls.cursor.fetchmany(MAX_RESULTS)
+        cursor = conn.cursor()
+        try:
+		  cursor.execute(placesInDistQuery, (my_lat, my_lat, my_lon, place_type, radius_in_km))
+        except Exception, e:
+            print "There was an unsupported character in the input"
+            print str(e)
+            return tuple()
+        return cursor.fetchmany(MAX_RESULTS)
+
 
 
     """
@@ -125,10 +164,11 @@ class DBUtils:
     """
     @classmethod
     def getOrCreateAddrId(cls, address):
+        cursor = conn.cursor()
         googlePlaceId = address["place_id"]
 
-        cls.cursor.execute(getAddrIdQuery, (googlePlaceId,))
-        fetched = cls.cursor.fetchone()
+        cursor.execute(getAddrIdQuery, (googlePlaceId,))
+        fetched = cursor.fetchone()
         if fetched != None:
             #address was found in the DB. Return it.
             if type(fetched) == long:
@@ -155,10 +195,15 @@ class DBUtils:
                         house = None
                 if "Tel Aviv-Yafo" in field:
                     city = "Tel Aviv-Yafo"
-        cls.cursor.execute(insertAddrQuery, (googlePlaceId, city, street, house, lat, lon))
+        try:
+            cursor.execute(insertAddrQuery, (googlePlaceId, city, street, house, lat, lon))
+        except Exception, e:
+            print "There was an unsupported character in the input"
+            print str(e)
+            return None
         cls.conn.commit()
-        cls.cursor.execute(getAddrIdQuery, (googlePlaceId,))
-        fetched = cls.cursor.fetchone()[0]
+        cursor.execute(getAddrIdQuery, (googlePlaceId,))
+        fetched = cursor.fetchone()[0]
         if type(fetched) in (type(None), long):
             return fetched
         return fetched[0]
