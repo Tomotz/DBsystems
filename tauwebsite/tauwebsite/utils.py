@@ -138,24 +138,24 @@ class DBUtils:
         return cls.aroundMe(my_lat, my_lon, placeType, 3)
 
 
-    '''
-    Queries the DB about a specific user.
-    Returns the full row matching the user if user was found. Otherwise returns None
-    '''
     @classmethod
     def getUserByUname(cls, username):
+        '''
+        Queries the DB about a specific user.
+        Returns the full row matching the user if user was found. Otherwise returns None
+        '''
         cursor = cls.conn.cursor()
         cursor.execute(getUserQuery, (username,))
         return cursor.fetchone()
 
-    '''
-    Adds a new user to the DB.
-    If the user already exist, the input will be ignored, and the existing user will be returned.
-    returns None of failure, otherwise returns the row of the user in the DB.
-    address - a google location object matching the user location.
-    '''
     @classmethod
     def createNewUser(cls, username, firstName, lastName, address):
+        '''
+        Adds a new user to the DB.
+        If the user already exist, the input will be ignored, and the existing user will be returned.
+        returns None of failure, otherwise returns the row of the user in the DB.
+        address - a google location object matching the user location.
+        '''
         cursor = cls.conn.cursor()
         userRow = cls.getUserByUname(username)
         if userRow != None:
@@ -175,13 +175,13 @@ class DBUtils:
         cls.conn.commit()
         return cls.getUserByUname(username)
 
-    '''
-    Updates an existing user in the DB.
-    returns None of failure, otherwise returns the row of the user in the DB.
-    address - a google location object matching the user location.
-    '''
     @classmethod
     def updateUser(cls, username, firstName, lastName, address):
+        '''
+        Updates an existing user in the DB.
+        returns None of failure, otherwise returns the row of the user in the DB.
+        address - a google location object matching the user location.
+        '''
         cursor = cls.conn.cursor()
         userRow = cls.getUserByUname(username)
         if userRow == None or len(userRow) < 1:
@@ -201,22 +201,22 @@ class DBUtils:
         return cls.getUserByUname(username)
 
 
-    """
-    Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
-    input - a location object returned from google
-    output - the addrId from Addr table matching the given address
-    """
     @classmethod
     def getAddrById(cls, idAddr):
+        """
+        Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
+        input - a location object returned from google
+        output - the addrId from Addr table matching the given address
+        """
         cursor = cls.conn.cursor()
         cursor.execute(getAddrQuery, (idAddr,))
         return cursor.fetchone()
 
-    """
-    Gets all the places that has given input words in their text.
-    """
     @classmethod
     def getReviewByText(cls, review_text):
+        """
+        Gets all the places that has given input words in their text.
+        """
         cursor = cls.conn.cursor()
         try:
             cursor.execute(searchInReviewsQuery, (review_text,))
@@ -226,16 +226,16 @@ class DBUtils:
             return None
         return cursor.fetchmany(MAX_RESULTS)
 
-    """
-    Gets all the places around a given location. Sorted by distance from the location.
-    my_lat/my_lon - the latitude and longitude of the given location.
-    place_type - a filter for the results - return only results of the given place type
-    radius_in_km - the maximum distance of the results to return.
-    returns a tuple where each item in the tuple is a tuple itself, containing a line of results.
-    If no results match the query, an empty tuple would be returned
-    """
     @classmethod
     def aroundMe(cls, my_lat, my_lon, place_type, radius_in_km):
+        """
+        Gets all the places around a given location. Sorted by distance from the location.
+        my_lat/my_lon - the latitude and longitude of the given location.
+        place_type - a filter for the results - return only results of the given place type
+        radius_in_km - the maximum distance of the results to return.
+        returns a tuple where each item in the tuple is a tuple itself, containing a line of results.
+        If no results match the query, an empty tuple would be returned
+        """
         cursor = cls.conn.cursor()
         placesInDistQuery_orderedByDist = placesInDistQuery + "\nORDER BY distanceInKM"
         try:
@@ -246,11 +246,11 @@ class DBUtils:
             return tuple()
         return cursor.fetchmany(MAX_RESULTS)
 
-    """
-    Gets the best result of each type in radius 3km around the user
-    """
     @classmethod
     def topNotch(cls, my_lat, my_lon):
+        """
+        Gets the best result of each type in radius 3km around the user
+        """
         cursor = cls.conn.cursor()
         places = []
         for place_type in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
@@ -262,24 +262,24 @@ class DBUtils:
         return places
 
 
-    """
-    Gets all the photos from restaurants who have min_num_pics or more pictures
-    """
     @classmethod
     def photographicPlaces(cls, min_num_pics):
+        """
+        Gets all the photos from restaurants who have min_num_pics or more pictures
+        """
         cursor = cls.conn.cursor()
         cursor.execute(getPictures, (min_num_pics, ))
         return cursor.fetchall() #we would like to get more than 30 pictures
 
 
 
-    """
-    Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
-    input - a location object returned from google
-    output - the addrId from Addr table matching the given address
-    """
     @classmethod
     def getOrCreateAddrId(cls, address):
+        """
+        Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
+        input - a location object returned from google
+        output - the addrId from Addr table matching the given address
+        """
         cursor = cls.conn.cursor()
         googlePlaceId = address["place_id"]
 
