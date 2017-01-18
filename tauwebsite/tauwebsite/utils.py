@@ -41,6 +41,27 @@ VALUES (%s, %s, %s, %s);"""
 
 ######Complex Queries - including full text search query############
 
+#this query gets the type of place (Bar/Restaurant/Club/Hotel/Shop) with the highest average rating
+bestAvgTypeQuery = """SELECT type
+FROM
+	(
+	SELECT type, avg(rating) as avg_rating
+	FROM Places
+	GROUP BY type
+	) as sub
+WHERE avg_rating =
+(
+	SELECT MAX(avg_rating)
+	FROM
+	(
+		SELECT avg(rating) as avg_rating
+		FROM Places
+		GROUP BY type
+	) as sub2
+)
+"""
+
+#this is a subquery for placesInDist. This query gets one picture url for each place in the Places table.
 placeAndPics = """(SELECT idPlaces, addr_id, name, rating, Places.googleId, type, url
 FROM Places
 JOIN
@@ -53,7 +74,7 @@ ON Places.googleId = q2.googleId)
 """
 
 #input - (my_lat, my_lat, my_lon, place_type, radius_in_km)
-#This query gets all the places around a given location. Sorted by distance from the location.
+#This query gets all the places around a given location.
 placesInDistQuery = """SELECT placePic.idPlaces, addr_id, name, rating, Places.googleId, type, url, distanceInKM
 FROM
 (
@@ -76,7 +97,6 @@ FROM
 ) as sub, """+placeAndPics+""" as placePic
 WHERE placePic.idPlaces = sub.idPlaces
 AND distanceInKM <= %s
-ORDER BY distanceInKM	
 """
 
 #input - (review_text,)
@@ -90,16 +110,16 @@ AND match(Reviews.text) Against('%s' IN BOOLEAN MODE)
 
 #input - (min_num_of_pictures,)
 #this query gets all the pictures from places that has more than a given number of pictures
-getPictures = """SELECT DISTINCT Places.name, Pics.googleId, Pics.url, Pics.width, Pics.height
+getPictures = """SELECT DISTINCT Places.name, Pics.googlePlaceId, Pics.url, Pics.width, Pics.height
 FROM Pics, Places, 
 (
-	SELECT Pics.googleId, Count(Pics.googleId) as num_pictures
+	SELECT Pics.googlePlaceId, Count(Pics.googlePlaceId) as num_pictures
 	FROM Pics
-	GROUP BY Pics.googleId
-	HAVING Count(Pics.googleId) > %s
+	GROUP BY Pics.googlePlaceId
+	HAVING Count(Pics.googlePlaceId) > %s
 ) as sub
-WHERE Pics.googleId = Places.googleId
-AND sub.googleId = Pics.googleId
+WHERE Pics.googlePlaceId = Places.googlePlaceId
+AND sub.googlePlaceId = Pics.googlePlaceId
 ORDER BY sub.num_pictures desc"""
 
 
@@ -205,10 +225,11 @@ class DBUtils:
 	If no results match the query, an empty tuple would be returned
 	"""
 	@classmethod
-	def aroundMe(my_lat, my_lon, place_type, radius_in_km):
+	def aroundMe(cls, my_lat, my_lon, place_type, radius_in_km):
 		cursor = cls.conn.cursor()
+		placesInDistQuery_orderedByDist = placesInDistQuery + "\nORDER BY distanceInKM"
 		try:
-			cursor.execute(placesInDistQuery, (my_lat, my_lat, my_lon, place_type, radius_in_km))
+			cursor.execute(placesInDistQuery_orderedByDist, (my_lat, my_lat, my_lon, place_type, radius_in_km))
 		except Exception, e:
 			print "There was an unsupported character in the input"
 			print str(e)
@@ -216,10 +237,23 @@ class DBUtils:
 		return cursor.fetchmany(MAX_RESULTS)
 
 	"""
+	Gets the best result of each type in radius 3km around the user
+	"""
+	@classmethod
+	def topNotch(cls, my_lat, my_lon):
+		cursor = cls.conn.cursor()
+		places = []
+		for place_type in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
+		placesInDistQuery_orderedByDist = placesInDistQuery + "\nORDER BY rating"
+		cursor.execute(placesInDistQuery_orderedByDist, (my_lat, my_lat, my_lon, place_type, 3))
+		return cursor.fetchone() 
+
+
+	"""
 	Gets all the photos from restaurants who have min_num_pics or more pictures
 	"""
 	@classmethod
-	def photographicPlaces(min_num_pics):
+	def photographicPlaces(cls, min_num_pics):
 		cursor = cls.conn.cursor()
 		cursor.execute(getPictures, (min_num_pics, ))
 		return cursor.fetchall() #we would like to get more than 30 pictures

@@ -19,7 +19,7 @@ getAddrIdQuery = """SELECT idAddr
 FROM Addr
 WHERE googlePlaceId = %s"""
 
-insetPhotoQuery = """INSERT INTO Pics (googleId, url, width, height)
+insetPhotoQuery = """INSERT INTO Pics (googlePlaceId, url, width, height)
 VALUES (%s, %s, %s, %s);"""
 
 insertPlaceQuery = """INSERT INTO Places (addr_id, name, rating, googleId, type)
@@ -127,7 +127,7 @@ def parsePlace(placeType, jsonData, cur):
 	return 1
 
 def parsePhoto(jsonData, cur):
-	googleId = jsonData["id"]
+	googlePlaceId = jsonData["place_id"]
 	url = jsonData["photo_reference"]
 	width = None
 	height = None
@@ -135,7 +135,7 @@ def parsePhoto(jsonData, cur):
 		width = jsonData["width"]
 	if "height" in jsonData:
 		height = jsonData["height"]
-	cur.execute(insetPhotoQuery, (googleId, url, width, height))
+	cur.execute(insetPhotoQuery, (googlePlaceId, url, width, height))
 	return 1
 
 def parseReview(jsonData, cur):
@@ -226,7 +226,7 @@ def addFromJsons(conn):
 						#place record.
 						for table in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
 							countPlace += parsePlace(table, jsonData, cur)
-					elif areAllInJson(jsonData, ["photo_reference", "id"]):
+					elif areAllInJson(jsonData, ["photo_reference", "place_id"]):
 						#photo record
 						countPhoto += parsePhoto(jsonData, cur)
 					elif areAllInJson(jsonData, ["place_id", "city"]):
