@@ -52,10 +52,10 @@ PlacesService.service('PlacesService', ['$http', '$q', function($http, $q) {
         return deferred.promise;
     };
 
-    this.get_places_shops = function (params) {
-        console.log("PlacesService get_places_shops params - ", params);
+    this.get_places_clubs = function (params) {
+        console.log("PlacesService get_places_clubs params - ", params);
         var deferred = $q.defer();
-        $http.post('/places/shops/', params).then(function (result) {
+        $http.post('/places/clubs/', params).then(function (result) {
             deferred.resolve(result.data);
         }, function (result) {
             console.log("Error getting shops!", result);
