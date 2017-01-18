@@ -7,7 +7,7 @@ from rest_framework import permissions
 from rest_framework.views import APIView
 from tauwebsite.utils import DBUtils
 from tauwebsite.serializers import Serializers
-from rest_framework.response import Response
+
 
 # class LoginView(APIView):
 #     permission_classes = (permissions.AllowAny,)
@@ -40,6 +40,19 @@ class PLACE_TYPES:
     CLUB  = "Club"
     HOTEL = "Hotel"
 
+class GeneralPlacesView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        lat = request.data.get("lat")
+        lng = request.data.get("lng")
+        radius = request.data.get("radius")
+
+        # TODO - put general query here (no PLACE_TYPE needed)
+        data = DBUtils.aroundMe(lat, lng, PLACE_TYPES.FOOD, radius)
+
+        return HttpResponse(Serializers.PlaceSerializer(data))
+
 class FoodView(APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -50,7 +63,7 @@ class FoodView(APIView):
 
         data = DBUtils.aroundMe(lat, lng, PLACE_TYPES.FOOD, radius)
 
-        return Response(Serializers.PlaceSerializer(data))
+        return HttpResponse(Serializers.PlaceSerializer(data))
 
 class BarView(APIView):
     permission_classes = (permissions.AllowAny,)

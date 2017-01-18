@@ -2,16 +2,17 @@
 <div
         class="main_class"
         id="main_id">
-
     <div id="menu_bar">
         <ul id="menu">
-          <!-- put class="selected" in the li tag for the selected page - to highlight which page you're on -->
-          <li class="selected"><a href="index.html">HOME</a></li>
-          <li><a ui-sref=".rests" ui-sref-active="active">EAT</a></li>
-          <li><a ui-sref=".bars" ui-sref-active="active">DRINK</a></li>
-          <li><a href="index.html">DANCE</a></li>
-          <li><a href="index.html">SLEEP</a></li>
+          <!--li><a ui-sref=".rests" ui-sref-active="active">EAT</a></li-->
+          <li ng-class="{'selected': state.includes('**.home.**')}"><a ui-sref=".home">HOME</a></li>
+          <li ng-class="{'selected': state.includes('**.rests.**')}"><a ui-sref=".rests">EAT</a></li>
+          <li ng-class="{'selected': state.includes('**.bars.**')}"><a ui-sref=".bars">DRINK</a></li>
+          <li ng-class="{'selected': state.includes('**.clubs.**')}"><a ui-sref=".clubs">DANCE</a></li>
+          <li ng-class="{'selected': state.includes('**.hotels.**')}"><a ui-sref=".hotels">SLEEP</a></li>
         </ul>
     </div>
+
     <ui-view></ui-view>
+
 </div>

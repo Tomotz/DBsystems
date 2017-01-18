@@ -4,6 +4,7 @@
 var DBApp = angular.module('DBApp', [
     'ngRoute',
     'ui.router',
+    'DBApp.MainController',
     'DBApp.PlacesController',
     'DBApp.view2',
     'DBApp.LoginController',
@@ -25,11 +26,11 @@ DBApp.config(function($stateProvider) {
         }).state('main', {
             url: '/home',
             template: templates[1],
-            // controller: 'MainController'
+            controller: 'MainController'
         }).state('main.home', {
             url: '/',
             template: templates[2],
-            // controller: 'MainController'
+            controller: 'PlacesController'
         }).state('main.bars', {
             url: '/bars',
             // templateURL: 'view1.html',

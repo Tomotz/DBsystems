@@ -16,31 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `Pics`
+-- Table structure for table `OpenHours`
 --
 
-DROP TABLE IF EXISTS `Pics`;
+DROP TABLE IF EXISTS `OpenHours`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Pics` (
-  `idPics` int(11) NOT NULL AUTO_INCREMENT,
-  `googleId` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  `url` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
-  `width` int(11) DEFAULT NULL,
-  `height` int(11) DEFAULT NULL,
-  PRIMARY KEY (`idPics`),
-  UNIQUE KEY `idPics_UNIQUE` (`idPics`),
-  KEY `googleId_index` (`googleId`)
-) ENGINE=InnoDB AUTO_INCREMENT=20989 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE TABLE `OpenHours` (
+  `idOpenHours` int(11) NOT NULL AUTO_INCREMENT,
+  `dayOfWeek` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `hourOpen` time DEFAULT NULL,
+  `hourClose` time DEFAULT NULL,
+  `googlePlaceId` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`idOpenHours`),
+  UNIQUE KEY `idOpenHours_UNIQUE` (`idOpenHours`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `Pics`
+-- Dumping data for table `OpenHours`
 --
 
-LOCK TABLES `Pics` WRITE;
-/*!40000 ALTER TABLE `Pics` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Pics` ENABLE KEYS */;
+LOCK TABLES `OpenHours` WRITE;
+/*!40000 ALTER TABLE `OpenHours` DISABLE KEYS */;
+INSERT INTO `OpenHours` VALUES (1,NULL,'10:30:00',NULL,'asdasd');
+/*!40000 ALTER TABLE `OpenHours` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -52,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-18 19:12:18
+-- Dump completed on 2017-01-18 19:12:11

@@ -9,29 +9,20 @@
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="css/style_main.css">
     <link rel="stylesheet" href="css/style.css">
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmNli_ISnmyJxWcPYjCPLB2P8Rbm5dUAQ&libraries=places"></script>
 </head>
     <body ng-app="DBApp">
 
-        <!--ul class="menu">
-    <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
-    <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/main.css">
-    <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
-          <li><a ui-sref="view1" ui-sref-active="active">V 1</a></li>
-          <li><a ui-sref="view2" ui-sref-active="active">V 2</a></li>
-        </ul-->
-
         <ui-view></ui-view>
 
-        <!-- In production use:
-        <script src="bower_components/angular/angular.js"></script>
-        -->
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.js"></script>
         <script src="node_modules/angular-route/angular-route.js"></script>
         <script src="node_modules/angular-ui-router/release/angular-ui-router.js"></script>
-        <script src="templates_loader.js"></script>
+        <script src="utils.js"></script>
         <script src="app.js"></script>
+        <script src="controllers/MainController.js"></script>
         <script src="controllers/PlacesController.js"></script>
         <script src="controllers/view2.js"></script>
         <script src="controllers/LoginController.js"></script>
