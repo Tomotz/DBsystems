@@ -6,7 +6,7 @@ from settings import LOCAL_DB_PASS
 import MySQLdb as mdb
 
 
-MAX_RESULTS = 30 #the maximum number of results to return from a query.
+MAX_RESULTS = 1000 #the maximum number of results to return from a query.
 
 ######Simple Queries - including insert and update queries############
 
@@ -16,7 +16,7 @@ FROM Addr
 WHERE idAddr=%s"""
 
 #input - (googlePlaceId,)
-getAddrIdQuery = """SELECT idAddr 
+getAddrIdQuery = """SELECT idAddr
 FROM Addr
 WHERE googlePlaceId = %s"""
 

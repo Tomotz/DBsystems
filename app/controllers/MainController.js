@@ -6,6 +6,6 @@ MainController.controller('MainController', ['$scope', '$state', 'PlacesService'
     console.log("MainController init");
 
     $scope.state = $state;
-
+    
 
 }]);

@@ -4,6 +4,8 @@ var PlacesController = angular.module('DBApp.PlacesController', ['ngRoute']);
 
 PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state', 'PlacesService', function($scope, $rootScope, $state, PlacesService) {
     console.log("PlacesController init");
+    
+    var autocomplete = get_autocomplete('autocomplete_address_inner');
 
     var get_places = null;
     if ($state.includes("**.home.**")) {
@@ -23,10 +25,18 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
         radius : 3
     };
 
+    var all_places;
     $scope.places = [];
     get_places(params).then(function (data) {
         console.log("PlacesController: got places - ", data);
-        $scope.places = data;
+        all_places = data;
+        $scope.places = all_places.slice(0, 10);
         $scope.data_loaded = true;
     });
+
+
+    $scope.show_more_clicked = function () {
+        $scope.places = $scope.places.concat(all_places.slice($scope.places.length, $scope.places.length + 10));
+    };
+
 }]);
