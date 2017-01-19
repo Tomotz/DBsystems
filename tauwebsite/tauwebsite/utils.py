@@ -149,6 +149,7 @@ dayOfWeek = {0:"Monday", 1:"Tuesday", 2:"Wednesday", 3:"Thursday", 4:"Friday", 5
 #input - (day_of_week, googlePlaceId, time_now, time_now, time_now, time_now, time_now, time_now)
 #this query checks if a place is currently open. Matches places using googlePlaceId
 #now time should be in format of HHMMSS, and dayOfWeek should be one of the dayOfWeek dict
+#hours before 6am count as the previous day.
 isOpenQuery = """SELECT googlePlaceId
 FROM OpenHours
 WHERE dayOfWeek = %s

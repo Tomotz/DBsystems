@@ -6,7 +6,7 @@ import os
 import MySQLdb as mdb
 from sys import argv
 JSON_DIR = r"C:\Users\tom\Downloads\TDBS"
-allTables = ("Details", "Pics", "User", "Places",  "OpenHours", "Addr")
+allTables = ("Details", "Pics", "User", "Places",  "OpenHours", "Addr", "Reviews")
 
 
 insertAddrQuery = """INSERT INTO DbMysql17.Addr (googlePlaceId, city, street, house_number, lat, lon)
