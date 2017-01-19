@@ -190,20 +190,19 @@ SELECT DISTINCT p.googlePlaceId,
         o.hourClose,
         rating,
         r.reviews_rating
-FROM Places p
-WHERE googlePlaceId =  "ChIJ-4EMAWRLHRUR2jwEYdnSUpE"
+FROM (SELECT * FROM Places WHERE googlePlaceId =  %s) as p
 LEFT JOIN Addr a
 ON      a.idAddr = p.addr_id
 LEFT JOIN Details d
 ON      d.googlePlaceId = p.googlePlaceId
 LEFT JOIN OpenHours o
 ON      o.googlePlaceId = p.googlePlaceId AND
-        o.dayOfWeek = "Monday"
+        o.dayOfWeek = %s
 LEFT JOIN(
             SELECT  googlePlaceId,
                     avg(rating) AS reviews_rating
             FROM Reviews
-            WHERE googlePlaceId = "ChIJ-4EMAWRLHRUR2jwEYdnSUpE"
+            WHERE googlePlaceId = %s
             GROUP BY googlePlaceId) r
 ON      r.googlePlaceId = p.googlePlaceId
 """
