@@ -83,20 +83,20 @@ WHERE avg_rating =
 """
 
 #this is a subquery for placesInDist. This query gets one picture url for each place in the Places table.
-placeAndPics = """(SELECT idPlaces, addr_id, name, rating, Places.googleId, type, url
+placeAndPics = """(SELECT idPlaces, addr_id, name, rating, Places.googlePlaceId, type, url
 FROM Places
 JOIN
 (
-    SELECT googleId, MAX(url) as url
+    SELECT googlePlaceId, MAX(url) as url
     FROM Pics
-    GROUP BY googleId
+    GROUP BY googlePlaceId
 ) as q2
-ON Places.googleId = q2.googleId)
+ON Places.googlePlaceId = q2.googlePlaceId)
 """
 
 #input - (my_lat, my_lat, my_lon, place_type, radius_in_km)
 #This query gets all the places around a given location.
-placesInDistQuery = """SELECT placePic.idPlaces, addr_id, name, rating, placePic.googleId, type, url, distanceInKM
+placesInDistQuery = """SELECT placePic.idPlaces, addr_id, name, rating, placePic.googlePlaceId, type, url, distanceInKM
 FROM
 (
     SELECT Places.idPlaces,
@@ -177,7 +177,7 @@ OR
 #input - (googlePlaceId, day_of_week, googlePlaceId)
 #this query returns full details about place, using multiple tables.
 getTopDetails = """
-SELECT  googleId,
+SELECT DISTINCT p.googlePlaceId,
         name,
         a.city,
         a.street,
@@ -189,23 +189,23 @@ SELECT  googleId,
         o.hourOpen,
         o.hourClose,
         rating,
-        r.reviews_rating,
+        r.reviews_rating
 FROM Places p
 LEFT JOIN Addr a
-ON      a.addr_id = p.addr_id AND
-        p.googleId =  %s
+ON      a.idAddr = p.addr_id AND
+		p.googlePlaceId =  "ChIJ-4EMAWRLHRUR2jwEYdnSUpE"
 LEFT JOIN Details d
-ON      d.googlePlaceId = p.googleId
+ON      d.googlePlaceId = p.googlePlaceId
 LEFT JOIN OpenHours o
-ON      o.googlePlaceId = p.googleId AND
-        o.dayOfWeek = %s
+ON      o.googlePlaceId = p.googlePlaceId AND
+        o.dayOfWeek = "Monday"
 LEFT JOIN(
             SELECT  googlePlaceId,
                     avg(rating) AS reviews_rating
             FROM Reviews
-            WHERE googlePlaceId = %s
+            WHERE googlePlaceId = "ChIJ-4EMAWRLHRUR2jwEYdnSUpE"
             GROUP BY googlePlaceId) r
-ON      r.googlePlaceId = p.googleId
+ON      r.googlePlaceId = p.googlePlaceId
 """
 
 
