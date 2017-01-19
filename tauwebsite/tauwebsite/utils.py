@@ -20,23 +20,23 @@ getAddrIdQuery = """SELECT idAddr
 FROM Addr
 WHERE googlePlaceId = %s"""
 
-#input - (googlePlaceId)
+#input - (googlePlaceId,)
 getOpenHours = """
-SELECT *
+SELECT idOpenHours, dayOfWeek, hourOpen, HourClose, googlePlaceId
 FROM OpenHours
 WHERE googlePlaceId = %s
 """
 
-#input - (googlePlaceId)
+#input - (googlePlaceId,)
 getReviews = """
-SELECT *
+SELECT idReviews, rating, text, googlePlaceId
 FROM OpenHours
 WHERE googlePlaceId = %s
 """
 
-#input - (googlePlaceId)
+#input - (googlePlaceId,)
 getPhotos = """
-SELECT *
+SELECT idPics, googlePlaceId, url, width, height
 FROM Pics
 WHERE googlePlaceId = %s
 """
@@ -190,7 +190,11 @@ SELECT DISTINCT p.googlePlaceId,
         o.hourClose,
         rating,
         r.reviews_rating
-FROM (SELECT * FROM Places WHERE googlePlaceId =  %s) as p
+FROM (
+  SELECT idPlaces, addr_id, name, rating, googlePlaceId, type
+  FROM Places
+  WHERE googlePlaceId =  %s
+  ) as p
 LEFT JOIN Addr a
 ON      a.idAddr = p.addr_id
 LEFT JOIN Details d
