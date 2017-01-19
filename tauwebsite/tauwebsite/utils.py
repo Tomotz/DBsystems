@@ -4,6 +4,7 @@
 
 from settings import LOCAL_DB_PASS
 import MySQLdb as mdb
+import time
 
 
 MAX_RESULTS = 1000 #the maximum number of results to return from a query.
@@ -215,6 +216,36 @@ ON      r.googlePlaceId = p.googlePlaceId
 class DBUtils:
     conn = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
 
+
+    @classmethod
+    def getAllDetails(cls, googlePlaceId):
+        """
+        Gets all the details we have on a certain place
+        Returns a tuple of (isOpen, topDetails, photos, reviews, openHours) where
+        isOpen - boolean that is true iff the place is currently open
+        topDetails - a tuple of results about the place from getTopDetails query. googlePlaceId,
+            name, city, street, house_number, lat, lon, phone, website, hourOpen, hourClose, rating, reviews_rating
+        photos - all the photos of the given place
+        reviews - all the reviews about the given place
+        openHours - all the places's opening hours.
+        """
+        cursor = cls.conn.cursor()
+        curHour = (time.strftime("%H%M%S"))
+        curDay = (time.strftime("%A"))
+        isOpen = cls.openNow(curDay, curHour, googlePlaceId)
+        cursor.execute(getTopDetails, (googlePlaceId, curDay, googlePlaceId))
+        topDetails = cursor.fetchone()
+        cursor.execute(getPhotos, (googlePlaceId, ))
+        photos = cursor.fetchmany(MAX_RESULTS)
+        cursor.execute(getReviews, (googlePlaceId, ))
+        reviews = cursor.fetchmany(MAX_RESULTS)
+        cursor.execute(getOpenHours, (googlePlaceId, ))
+        openHours = cursor.fetchmany(MAX_RESULTS)
+
+
+        return (isOpen, topDetails, photos, reviews, openHours)
+
+
     @classmethod
     def openNow(cls, curDay, curHHMMSS, googlePlaceId):
         """Gets all places that are open now
@@ -223,18 +254,18 @@ class DBUtils:
         cursor = cls.conn.cursor()
         if type(curDay) is not int or curDay > 6:
             return None
-        openPlaces = cursor.execute(getOpenQuery, (dayOfWeek[curDay], googlePlaceId, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS))
+        cursor.execute(getOpenQuery, (dayOfWeek[curDay], googlePlaceId, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS))
         return None != cursor.fetchone()
 
 
     @classmethod
     def chooseWhatIWantToDo(cls, my_lat, my_lon):
         """This functions gives the user all the results around him from the type of place with the highest rating"""
-        placeType = cursor.execute(bestAvgTypeQuery)
+        cursor.execute(bestAvgTypeQuery)
+        placeType = cursor.fetchone()
         if placeType == None:
             return None
-        best = placeType[0]
-        return cls.aroundMe(my_lat, my_lon, placeType, 3)
+        return cls.aroundMe(my_lat, my_lon, placeType[0], 3)
 
 
     @classmethod
