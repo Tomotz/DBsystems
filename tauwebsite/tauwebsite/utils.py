@@ -20,6 +20,27 @@ getAddrIdQuery = """SELECT idAddr
 FROM Addr
 WHERE googlePlaceId = %s"""
 
+#input - (googlePlaceId)
+getOpenHours = """
+SELECT *
+FROM OpenHours
+WHERE googlePlaceId = %s
+"""
+
+#input - (googlePlaceId)
+getReviews = """
+SELECT *
+FROM OpenHours
+WHERE googlePlaceId = %s
+"""
+
+#input - (googlePlaceId)
+getPhotos = """
+SELECT *
+FROM Pics
+WHERE googlePlaceId = %s
+"""
+
 #input - (googlePlaceId, city, street, house_number, lat, lon)
 insertAddrQuery = """INSERT INTO Addr (googlePlaceId, city, street, house_number, lat, lon)
 VALUES (%s, %s, %s, %s, %s, %s);"""
@@ -153,6 +174,39 @@ OR
 )
 """
 
+#input - (googlePlaceId, day_of_week, googlePlaceId)
+#this query returns full details about place, using multiple tables.
+getTopDetails = """
+SELECT  googleId,
+        name,
+        a.city,
+        a.street,
+        a.house_number,
+        a.lat,
+        a.lon,
+        d.phone,
+        d.website,
+        o.hourOpen,
+        o.hourClose,
+        rating,
+        r.reviews_rating,
+FROM Places p
+LEFT JOIN Addr a
+ON      a.addr_id = p.addr_id AND
+        p.googleId =  %s
+LEFT JOIN Details d
+ON      d.googlePlaceId = p.googleId
+LEFT JOIN OpenHours o
+ON      o.googlePlaceId = p.googleId AND
+        o.dayOfWeek = %s
+LEFT JOIN(
+            SELECT  googlePlaceId,
+                    avg(rating) AS reviews_rating
+            FROM Reviews
+            WHERE googlePlaceId = %s
+            GROUP BY googlePlaceId) r
+ON      r.googlePlaceId = p.googleId
+"""
 
 
 class DBUtils:
