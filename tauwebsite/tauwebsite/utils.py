@@ -191,9 +191,9 @@ SELECT DISTINCT p.googlePlaceId,
         rating,
         r.reviews_rating
 FROM Places p
+WHERE googlePlaceId =  "ChIJ-4EMAWRLHRUR2jwEYdnSUpE"
 LEFT JOIN Addr a
-ON      a.idAddr = p.addr_id AND
-		p.googlePlaceId =  "ChIJ-4EMAWRLHRUR2jwEYdnSUpE"
+ON      a.idAddr = p.addr_id
 LEFT JOIN Details d
 ON      d.googlePlaceId = p.googlePlaceId
 LEFT JOIN OpenHours o
