@@ -18,7 +18,7 @@ View1Ctrl.controller('LoginController', ['$scope', '$state', '$rootScope', 'Logi
         LoginService.user_login(username).then(function(user) {
             if (user){
                 console.log(user);
-                $rootScope.my_user = user;
+                // $rootScope.my_user = user;
                 $state.go("main.home");
             } else{
                 $scope.show_signup_form = true;
@@ -62,7 +62,7 @@ View1Ctrl.controller('LoginController', ['$scope', '$state', '$rootScope', 'Logi
             LoginService.user_signup(user_details).then(function(user) {
                 if (user){
                     console.log("User signed up, going to main view");
-                    $rootScope.my_user = user;
+                    // $rootScope.my_user = user;
                     $state.go("main.home");
                 }
             });

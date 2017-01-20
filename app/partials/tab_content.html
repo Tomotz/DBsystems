@@ -19,7 +19,7 @@
 
 <div>
     <ul id = "listObjects">
-        <li ng-repeat="place in places">
+        <li ng-repeat="place in places" ng-click="open_place(place)">
             <img ng-src="{{ place.image_url }}">
             <h3>{{ place.name }}</h3>
             <p>{{ place.type }}, {{ place.rating}}</p>

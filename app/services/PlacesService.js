@@ -58,6 +58,18 @@ PlacesService.service('PlacesService', ['$http', '$q', function($http, $q) {
         $http.post('/places/clubs/', params).then(function (result) {
             deferred.resolve(result.data);
         }, function (result) {
+            console.log("Error getting clubs!", result);
+            deferred.resolve(false);
+        });
+        return deferred.promise;
+    };
+
+    this.get_places_shops = function (params) {
+        console.log("PlacesService get_places_shops params - ", params);
+        var deferred = $q.defer();
+        $http.post('/places/shops/', params).then(function (result) {
+            deferred.resolve(result.data);
+        }, function (result) {
             console.log("Error getting shops!", result);
             deferred.resolve(false);
         });

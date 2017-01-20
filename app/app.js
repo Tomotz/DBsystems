@@ -44,6 +44,10 @@ DBApp.config(function($stateProvider) {
             url: '/clubs',
             template: templates[3],
             controller: 'PlacesController'
+        }).state('main.shops', {
+            url: '/shops',
+            template: templates[3],
+            controller: 'PlacesController'
         }).state('main.hotels', {
             url: '/hotels',
             template: templates[3],

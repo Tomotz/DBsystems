@@ -2,14 +2,16 @@
 
 var LoginService = angular.module('DBApp.LoginService', ['ngRoute']);
 
-LoginService.service('LoginService', ['$http', '$q', function($http, $q) {
-    var current_user = {};
+LoginService.service('LoginService', ['$http', '$q', '$rootScope', function($http, $q, $rootScope) {
+    var current_user = null;
 
     this.user_login = function (username) {
         console.log("LoginService logging in - ", username);
         var deferred = $q.defer();
         $http.get('/users/login/' + username + '/').then(function (result) {
             current_user = result.data;
+            $rootScope.my_user = current_user;
+            window.localStorage.setItem("my_user_name", current_user.username);
             deferred.resolve(current_user);
         }, function (result) {
             console.log("no user");
@@ -23,6 +25,8 @@ LoginService.service('LoginService', ['$http', '$q', function($http, $q) {
         var deferred = $q.defer();
         $http.post('/users/signup/', details).then(function (result) {
             current_user = result.data;
+            $rootScope.my_user = current_user;
+            window.localStorage.setItem("my_user_name", current_user.username);
             deferred.resolve(current_user);
         }, function (result) {
             console.log("Error in signup! ", result);
@@ -32,7 +36,11 @@ LoginService.service('LoginService', ['$http', '$q', function($http, $q) {
     };
 
     this.get_my_user = function () {
-        return current_user;
+        if (current_user == null && window.localStorage.getItem("my_user_name")){
+            return this.user_login(window.localStorage.getItem("my_user_name"));
+        }
+        $rootScope.my_user = current_user;
+        return $q.when(current_user);
     };
-    
+
 }]);

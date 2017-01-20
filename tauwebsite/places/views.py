@@ -9,30 +9,6 @@ from tauwebsite.utils import DBUtils
 from tauwebsite.serializers import Serializers
 
 
-# class LoginView(APIView):
-#     permission_classes = (permissions.AllowAny,)
-#
-#     # get user by username
-#     def get(self, request, user_name):
-#         user = DBUtils.getUserByUname(user_name)
-#         if user is None:
-#             return HttpResponseBadRequest()
-#         else:
-#             return HttpResponse(Serializers.UserSerizlizer(user))
-#
-#     # create new user
-#     def post(self, request, *args, **kwargs):
-#         user_name = request.data.get("user_name")
-#         first_name = request.data.get("first_name")
-#         last_name = request.data.get("last_name")
-#         address = request.data.get("address")
-#         print "Got data for new user: username '%s', first name '%s', last name '%s', address %s" % (user_name, first_name, last_name, address)
-#         user = DBUtils.createNewUser(user_name, first_name, last_name, address)
-#         if user is None:
-#             return HttpResponseBadRequest()
-#         else:
-#             return Response(Serializers.UserSerizlizer(user))
-
 class PLACE_TYPES:
     FOOD  = "Restaurant"
     BAR   = "Bar"
@@ -46,10 +22,8 @@ class GeneralPlacesView(APIView):
     def post(self, request, *args, **kwargs):
         lat = request.data.get("lat")
         lng = request.data.get("lng")
-        radius = request.data.get("radius")
 
-        # TODO - put general query here (no PLACE_TYPE needed)
-        data = DBUtils.aroundMe(lat, lng, PLACE_TYPES.FOOD, radius)
+        data = DBUtils.topNotch(lat, lng)
 
         return HttpResponse(Serializers.PlaceSerializer(data))
 
@@ -65,23 +39,55 @@ class FoodView(APIView):
 
         return HttpResponse(Serializers.PlaceSerializer(data))
 
+
 class BarView(APIView):
     permission_classes = (permissions.AllowAny,)
 
-    # get user by username
-    def get(self, request, user_name):
-        pass
+    def post(self, request, *args, **kwargs):
+        lat = request.data.get("lat")
+        lng = request.data.get("lng")
+        radius = request.data.get("radius")
+
+        data = DBUtils.aroundMe(lat, lng, PLACE_TYPES.BAR, radius)
+
+        return HttpResponse(Serializers.PlaceSerializer(data))
+
 
 class ClubView(APIView):
     permission_classes = (permissions.AllowAny,)
 
-    # get user by username
-    def get(self, request, user_name):
-        pass
+    def post(self, request, *args, **kwargs):
+        lat = request.data.get("lat")
+        lng = request.data.get("lng")
+        radius = request.data.get("radius")
+
+        data = DBUtils.aroundMe(lat, lng, PLACE_TYPES.CLUB, radius)
+
+        return HttpResponse(Serializers.PlaceSerializer(data))
+
 
 class HotelView(APIView):
     permission_classes = (permissions.AllowAny,)
 
-    # get user by username
-    def get(self, request, user_name):
-        pass
+    def post(self, request, *args, **kwargs):
+        lat = request.data.get("lat")
+        lng = request.data.get("lng")
+        radius = request.data.get("radius")
+
+        data = DBUtils.aroundMe(lat, lng, PLACE_TYPES.HOTEL, radius)
+
+        return HttpResponse(Serializers.PlaceSerializer(data))
+
+
+class ShopView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        lat = request.data.get("lat")
+        lng = request.data.get("lng")
+        radius = request.data.get("radius")
+
+        data = DBUtils.aroundMe(lat, lng, PLACE_TYPES.SHOP, radius)
+
+        return HttpResponse(Serializers.PlaceSerializer(data))
+
