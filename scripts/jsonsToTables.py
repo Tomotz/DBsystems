@@ -5,7 +5,7 @@ import json
 import os
 import MySQLdb as mdb
 from sys import argv
-JSON_DIR = r"C:\Users\tom\Downloads\TDBS"
+JSON_DIR = r"C:\Users\tom\Downloads\TDBS-20"
 allTables = ("Details", "Pics", "User", "Places",  "OpenHours", "Addr", "Reviews")
 
 
@@ -273,6 +273,7 @@ def addFromJsons(conn):
 						countDetails += parseDetails(jsonData, cur)
 
 	print "Added", countPlace, "places,", countHours, "hours,", countDetails, "details,", countPhoto, "photos and ", countReviews, "reviews"
+	print "Sum records:", countReviews+countDetails+countPhoto+countPlace+countHours
 	print "Added or Updated", countAddr, "addresses"
 
 def resetAllTables(conn):
