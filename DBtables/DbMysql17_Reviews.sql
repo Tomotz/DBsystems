@@ -26,7 +26,7 @@ CREATE TABLE `Reviews` (
   `idReviews` int(11) NOT NULL AUTO_INCREMENT,
   `rating` int(11) NOT NULL,
   `text` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `googlePlaceId` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `googlePlaceId` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`idReviews`),
   UNIQUE KEY `idReviews_UNIQUE` (`idReviews`),
   KEY `googlePlace` (`googlePlaceId`),
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-20  8:31:06
+-- Dump completed on 2017-01-20 11:31:16

@@ -27,7 +27,7 @@ CREATE TABLE `OpenHours` (
   `dayOfWeek` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `hourOpen` time DEFAULT NULL,
   `hourClose` time DEFAULT NULL,
-  `googlePlaceId` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  `googlePlaceId` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`idOpenHours`),
   UNIQUE KEY `idOpenHours_UNIQUE` (`idOpenHours`)
 ) ENGINE=InnoDB AUTO_INCREMENT=38975 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -52,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-20  8:31:08
+-- Dump completed on 2017-01-20 11:31:18

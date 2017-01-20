@@ -300,11 +300,11 @@ class DBUtils:
             return None
         try:
             cursor.execute(insertUserQuery, (idAddr, username, firstName, lastName))
+            cls.conn.commit()
         except Exception, e:
             print "There was an unsupported character in the input"
             print str(e)
             return None
-        cls.conn.commit()
         return cls.getUserByUname(username)
 
 

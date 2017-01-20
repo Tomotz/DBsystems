@@ -29,7 +29,7 @@ CREATE TABLE `Addr` (
   `house_number` int(11) DEFAULT NULL,
   `lat` double DEFAULT NULL,
   `lon` double DEFAULT NULL,
-  `googlePlaceId` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  `googlePlaceId` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`idAddr`),
   UNIQUE KEY `idAddresses_UNIQUE` (`idAddr`),
   UNIQUE KEY `googlePlaceId_UNIQUE` (`googlePlaceId`)
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-20  8:31:09
+-- Dump completed on 2017-01-20 11:31:20
