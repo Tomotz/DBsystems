@@ -392,9 +392,10 @@ class DBUtils:
         for place_type in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
             placesInDistQuery_orderedByDist = placesInDistQuery + "\nORDER BY rating desc"
             cursor.execute(placesInDistQuery_orderedByDist, (my_lat, my_lat, my_lon, place_type, 3))
-            topCatagory = cursor.fetchone()
-            if topCatagory != None:
-                places.append(topCatagory)
+            for i in range(2):
+                topCatagory = cursor.fetchone()
+                if topCatagory != None:
+                    places.append(topCatagory)
         return places
 
 
