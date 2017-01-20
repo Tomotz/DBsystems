@@ -1,14 +1,10 @@
+<div class="item_photo">
+    <ul>
+        <li ng-repeat="place in places">
+            <img ng-src="{{ place.image_url }}">
+            <h3>{{ place.name }}</h3>
+            <p>{{ place.type }}, {{ place.rating}}</p>
+        </li>
+    </ul>
+</div>
 
-
-
-    <div class="list_photos">
-        <div id="item_photo">
-        <ul >
-            <li ng-repeat="place in places">
-                <img ng-src="{{ place.image_url }}">
-                <h3>{{ place.name }}</h3>
-                <p>{{ place.type }}, {{ place.rating}}</p>
-            </li>
-        </ul>
-        </div>
-    </div>

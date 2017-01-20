@@ -11,14 +11,15 @@
   height: 35px;
   margin-top: auto;
   border: 2px transparent;
-
   padding: 0 20px;
   overflow: hidden;
   -webkit-border-radius: 21px;
   border-radius:15px;
   font: normal 20px/normal "Antic", Helvetica, sans-serif;
   color: rgba(140, 140, 140, 1);
+  /*
   text-decoration: normal;
+  */
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   background: rgba(40, 40, 40, 0.4);
@@ -31,7 +32,7 @@
 }
 
 .button:hover {
-  width: 350px;
+  width: 310px;
   opacity: 0.82;
   color: rgba(181, 181, 181, 1);
   background: rgba(0, 0, 0, 0.4);
@@ -54,8 +55,8 @@
 */
 .search_input {
   position: absolute;
-  top: 10%;
-  left: 40%;
+  top: 2%;
+  left: 50%;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
@@ -72,7 +73,7 @@
 	float: left;
 	color: #fff;
 	font-family: 'Exo', sans-serif;
-	font-size: 50px;
+	font-size: 30px;
 	font-weight: 400;
 }
 .search_input div span{
@@ -83,7 +84,9 @@
   position: fixed;
   right: 10%;
   top: 2%;
+  /*
   margin-left: -300px;
+  */
 }
 input:focus {
   outline: none;
@@ -94,17 +97,21 @@ input:focus {
   background-size:cover;
   background-attachment: fixed;
 }
-#content-main{
+/*#content-main{
   background-image: url("http://spasique.com/wp-content/uploads/2015/10/132210_1.jpg");
   background-size:cover;
   background-attachment: fixed;
-}
+}*/
 .menu_bar{
   height: 46px;
+  /*
   width: 950px;
+  */
+  /*
   margin: 1px auto 0 auto;
+  */
   background: transparent }
-
+/*
 .list{
   height: auto;
 position: absolute;
@@ -124,34 +131,38 @@ float: left;
 ul#list_item li{
 float: left;
   list-style: disc;
-}
+}*/
 
 ul#menu
 { float: left;
-  margin: 0;
   position: fixed;
-  padding: 0;}
+  padding: 0;
+}
 
 ul#menu li
 { float: left;
   padding: 0 0 0 2px;
   list-style: none;
-  margin: 0px 0px 50px 5px;}
+  margin: 0px 12px 12px 5px;}
 
 ul#menu li a
-{ font: normal 100% 'trebuchet ms', sans-serif;
+{
+  font: normal 100% 'trebuchet ms', sans-serif;
+  font-size: 18px;
+
   display: block;
   float: left;
   height: 27px;
-  padding: 12px 28px 5px 22px;
+  padding: 12px 28px 12px 22px;
   text-align: center;
   color: #FFF;
   border-right: 1px solid #636363;
   text-decoration: none;}
 
 ul#menu li.tab_selected a
-{ height: 27px;
-  padding: 6px 28px 5px 22px;}
+{
+  padding: 6px 28px 5px 22px;
+}
 
 ul#menu li.selected a, ul#menu li.selected a:hover
 { color: #ECEF01;}
@@ -169,69 +180,121 @@ a:hover
 { text-decoration: none;
   color: #5D5D5D;}
 
-ul
-{ margin: 2px 0 22px 17px;}
+/*ul
+{ margin: 2px 0px 22px 17px;}*/
 
-ul li
+/*ul li
 { list-style-type: circle;
   margin: 0 0 6px 0;
-  padding: 0 0 4px 5px;}
+  padding: 0 0 4px 5px;}*/
 /********************************************/
 
+/*
 
-list_photos{
+.list_photos{
  -webkit-column-width: 100px;
     -moz-column-width: 100px;
     column-width: 100px;
 
 
 
-  /*width: 200px;*/
-  /*position: absolute;*/
-  /*top:calc(50%);*/
-  /*left: calc(20%);*/
+  !*width: 200px;*!
+  !*position: absolute;*!
+  !*top:calc(50%);*!
+  !*left: calc(20%);*!
+}
+*/
+
+.item_photo{
+  position: absolute;
+  top: 30%;
+  left: 5%;
+
+  /*
+  max-width: 60em; !* 960 px *!
+  */
+  /*
+  margin: 0 auto;
+  */
+  /*
+  margin-bottom: 5px;
+  */
+  width: 85%;
 }
 
-ul#item_photo{
 
-  vertical-align: top;
-  margin-bottom: 20px;
-}
-ul#item_photo li{
-background:  transparent
-}
+/*
 * {margin: 0; padding: 0;}
+*/
+.item_photo ul {
+    width: 100%;
+    overflow: hidden;
+    -webkit-column-count: 5;
+    -webkit-column-gap: 30px ;
+    -webkit-column-fill: auto;
 
-
-
-ul {
+    column-count: 5;
+    column-gap: 30px ;
+    column-fill: auto;
+  /*-webkit-column-count: 4; !* Chrome, Safari, Opera *!
+    -moz-column-count: 4; !* Firefox *!
+    column-count: 4;*/
+  /*
+  column-width: 100px;
+  */
   list-style-type: none;
 }
+.item_photo li {
+/*  position: absolute;
+  top: 50%;*/
+      margin-bottom: 30px ;
 
-h3 {
-  font: bold 25px/1.5 Helvetica, Verdana, sans-serif;
+  background: rgba(101,97,48,0.64);
+  margin-left: 15px ;
+  margin-bottom: 30px ;
+}
+.item_photo h3 {
+  color: #000000;
+font: normal 100% 'trebuchet ms', sans-serif;
+  font-size: 20px;
 }
 
-li img {
+.item_photo li img {
   float: left;
   display: block;
   max-width:230px;
-  max-height:300px;
+  min-height:200px;
+  margin: 0 1.515% 1.875em; /* 15px 30px */
+
   width: auto;
   height: auto;
-  margin: 0 15px 0 0;
+  /*
+  margin: 0  5px 5px 5px;
+  */
 }
 
-li p {
-  font: 200 18px/1.5 Helvetica, Verdana, sans-serif;
+.item_photo li p {
+    color: #000000;
+font: normal 100% 'trebuchet ms', sans-serif;
+  font-size: 18px;
 }
 
-li {
-  padding: 10px;
+.item_photo li {
+  display: inline-block;
+  float: left;
+  /*
+  margin: 0 5px;
+  */
+
+  /*
+  padding: 5px;
+  */
+  /*
   overflow: auto;
+  */
 }
 
-li:hover {
-  background: transparent;
+.item_photo li:hover {
+  background: rgba(101,101,67,0.64);
   cursor: pointer;
 }
