@@ -56,7 +56,10 @@
 .search_input {
   position: absolute;
   top: 2%;
-  left: 50%;
+  left: 80%;
+  /*
+  width: 20%;
+  */
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
@@ -91,7 +94,6 @@
 input:focus {
   outline: none;
 }
-
 .main_class{
   background-image: url("http://spasique.com/wp-content/uploads/2015/10/132210_1.jpg");
   background-size:cover;
@@ -103,6 +105,7 @@ input:focus {
   background-attachment: fixed;
 }*/
 .menu_bar{
+
   height: 46px;
   /*
   width: 950px;
