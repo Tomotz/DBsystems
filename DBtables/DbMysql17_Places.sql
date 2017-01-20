@@ -27,7 +27,7 @@ CREATE TABLE `Places` (
   `addr_id` int(11) DEFAULT NULL,
   `name` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `rating` double DEFAULT NULL,
-  `googlePlaceId` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  `googlePlaceId` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   `type` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`idPlaces`),
   UNIQUE KEY `idRest_UNIQUE` (`idPlaces`),
@@ -57,4 +57,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-20  8:31:11
+-- Dump completed on 2017-01-20 11:31:21

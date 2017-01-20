@@ -300,11 +300,11 @@ class DBUtils:
             return None
         try:
             cursor.execute(insertUserQuery, (idAddr, username, firstName, lastName))
+            cls.conn.commit()
         except Exception, e:
             print "There was an unsupported character in the input"
             print str(e)
             return None
-        cls.conn.commit()
         return cls.getUserByUname(username)
 
 
@@ -390,11 +390,12 @@ class DBUtils:
         cursor = cls.conn.cursor()
         places = []
         for place_type in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
-            placesInDistQuery_orderedByDist = placesInDistQuery + "\nORDER BY rating"
+            placesInDistQuery_orderedByDist = placesInDistQuery + "\nORDER BY rating desc"
             cursor.execute(placesInDistQuery_orderedByDist, (my_lat, my_lat, my_lon, place_type, 3))
-            topCatagory = cursor.fetchone()
-            if topCatagory != None:
-                places.append(topCatagory)
+            for i in range(2):
+                topCatagory = cursor.fetchone()
+                if topCatagory != None:
+                    places.append(topCatagory)
         return places
 
 

@@ -26,7 +26,7 @@ CREATE TABLE `Details` (
   `idDetails` int(11) NOT NULL AUTO_INCREMENT,
   `phone` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `website` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `googlePlaceId` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  `googlePlaceId` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`idDetails`),
   UNIQUE KEY `idDetails_UNIQUE` (`idDetails`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24568 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-20  8:31:12
+-- Dump completed on 2017-01-20 11:31:23
