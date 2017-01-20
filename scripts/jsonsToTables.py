@@ -5,9 +5,8 @@ import json
 import os
 import MySQLdb as mdb
 from sys import argv
-JSON_DIR = r"C:\Users\tom\Desktop\jasons"
-#JSON_DIR = r"C:\Users\tom\Downloads\jasons"
-allTables = ("Details", "Pics", "User", "Places",  "OpenHours", "Addr")
+JSON_DIR = r"C:\Users\tom\Downloads\TDBS-20"
+allTables = ("Details", "Pics", "User", "Places",  "OpenHours", "Addr", "Reviews")
 
 
 insertAddrQuery = """INSERT INTO DbMysql17.Addr (googlePlaceId, city, street, house_number, lat, lon)
@@ -21,7 +20,7 @@ WHERE googlePlaceId = %s"""
 insetPhotoQuery = """INSERT INTO Pics (googlePlaceId, url, width, height)
 VALUES (%s, %s, %s, %s);"""
 
-insertPlaceQuery = """INSERT INTO Places (addr_id, name, rating, googleId, type)
+insertPlaceQuery = """INSERT INTO Places (addr_id, name, rating, googlePlaceId, type)
 VALUES (%s, %s, %s, %s, %s);"""
 
 insetReviewQuery = """INSERT INTO Reviews (rating, text, googlePlaceId)
@@ -39,9 +38,9 @@ VALUES (%s, %s, %s, %s);"""
 insetDetailsQuery = """INSERT INTO Details (phone, website, googlePlaceId)
 VALUES (%s, %s, %s);"""
 
-checkGoogleIdQuery = """SELECT googleId 
+checkGooglePlaceIdQuery = """SELECT googlePlaceId 
 FROM Places
-WHERE googleId = %s
+WHERE googlePlaceId = %s
 AND type = %s"""
 
 #(idAddr,)
@@ -109,8 +108,8 @@ def getOrCreateAddrId(jsonData, cur):
 		return fetched
 	return fetched[0]
 	
-def isPlaceIndexed(placeType, googleId, cur):
-	cur.execute(checkGoogleIdQuery, (googleId,placeType))
+def isPlaceIndexed(placeType, googlePlaceId, cur):
+	cur.execute(checkGooglePlaceIdQuery, (googlePlaceId,placeType))
 	return cur.fetchone() != None
 
 googleNames = {"Restaurant":["food", "restaurant", "meal_delivery"], 
@@ -128,13 +127,13 @@ def parsePlace(placeType, jsonData, cur):
 	name = jsonData["name"]
 	if name.startswith("JAPANIKA"):
 		open(r"C:\Users\tom\Desktop\test.txt", "wb").write(name)
-	googleId = jsonData["id"]
-	if isPlaceIndexed(placeType, googleId, cur):
+	googlePlaceId = jsonData["place_id"]
+	if isPlaceIndexed(placeType, googlePlaceId, cur):
 		return 0 #this place is already in the DB
 	rating = None
 	if "rating" in jsonData:
 		rating = jsonData["rating"]
-	cur.execute(insertPlaceQuery, (addrId, name, rating, googleId, placeType))
+	cur.execute(insertPlaceQuery, (addrId, name, rating, googlePlaceId, placeType))
 	return 1
 
 def parsePhoto(jsonData, cur):
@@ -259,7 +258,7 @@ def addFromJsons(conn):
 					if areAllInJson(jsonData, ["reviews", "place_id"]) and len(jsonData["reviews"])>0:
 						#reviews record
 						countReviews += parseReview(jsonData, cur)
-					if areAllInJson(jsonData, ["name", "types", "id", "place_id"]):
+					if areAllInJson(jsonData, ["name", "types",  "place_id"]):
 						#place record.
 						for table in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
 							countPlace += parsePlace(table, jsonData, cur)
@@ -274,6 +273,7 @@ def addFromJsons(conn):
 						countDetails += parseDetails(jsonData, cur)
 
 	print "Added", countPlace, "places,", countHours, "hours,", countDetails, "details,", countPhoto, "photos and ", countReviews, "reviews"
+	print "Sum records:", countReviews+countDetails+countPhoto+countPlace+countHours
 	print "Added or Updated", countAddr, "addresses"
 
 def resetAllTables(conn):

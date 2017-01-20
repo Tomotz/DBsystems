@@ -4,6 +4,7 @@
 
 from settings import LOCAL_DB_PASS
 import MySQLdb as mdb
+import time
 
 
 MAX_RESULTS = 1000 #the maximum number of results to return from a query.
@@ -19,6 +20,27 @@ WHERE idAddr=%s"""
 getAddrIdQuery = """SELECT idAddr
 FROM Addr
 WHERE googlePlaceId = %s"""
+
+#input - (googlePlaceId,)
+getOpenHours = """
+SELECT idOpenHours, dayOfWeek, hourOpen, HourClose, googlePlaceId
+FROM OpenHours
+WHERE googlePlaceId = %s
+"""
+
+#input - (googlePlaceId,)
+getReviews = """
+SELECT idReviews, rating, text, googlePlaceId
+FROM OpenHours
+WHERE googlePlaceId = %s
+"""
+
+#input - (googlePlaceId,)
+getPhotos = """
+SELECT idPics, googlePlaceId, url, width, height
+FROM Pics
+WHERE googlePlaceId = %s
+"""
 
 #input - (googlePlaceId, city, street, house_number, lat, lon)
 insertAddrQuery = """INSERT INTO Addr (googlePlaceId, city, street, house_number, lat, lon)
@@ -62,20 +84,20 @@ WHERE avg_rating =
 """
 
 #this is a subquery for placesInDist. This query gets one picture url for each place in the Places table.
-placeAndPics = """(SELECT idPlaces, addr_id, name, rating, Places.googleId, type, url
+placeAndPics = """(SELECT idPlaces, addr_id, name, rating, Places.googlePlaceId, type, url
 FROM Places
 JOIN
 (
-    SELECT googleId, MAX(url) as url
+    SELECT googlePlaceId, MAX(url) as url
     FROM Pics
-    GROUP BY googleId
+    GROUP BY googlePlaceId
 ) as q2
-ON Places.googleId = q2.googleId)
+ON Places.googlePlaceId = q2.googlePlaceId)
 """
 
 #input - (my_lat, my_lat, my_lon, place_type, radius_in_km)
 #This query gets all the places around a given location.
-placesInDistQuery = """SELECT placePic.idPlaces, addr_id, name, rating, placePic.googleId, type, url, distanceInKM
+placesInDistQuery = """SELECT placePic.idPlaces, addr_id, name, rating, placePic.googlePlaceId, type, url, distanceInKM
 FROM
 (
     SELECT Places.idPlaces,
@@ -127,6 +149,7 @@ dayOfWeek = {0:"Monday", 1:"Tuesday", 2:"Wednesday", 3:"Thursday", 4:"Friday", 5
 #input - (day_of_week, googlePlaceId, time_now, time_now, time_now, time_now, time_now, time_now)
 #this query checks if a place is currently open. Matches places using googlePlaceId
 #now time should be in format of HHMMSS, and dayOfWeek should be one of the dayOfWeek dict
+#hours before 6am count as the previous day.
 isOpenQuery = """SELECT googlePlaceId
 FROM OpenHours
 WHERE dayOfWeek = %s
@@ -153,10 +176,76 @@ OR
 )
 """
 
+#input - (googlePlaceId, day_of_week, googlePlaceId)
+#this query returns full details about place, using multiple tables.
+getTopDetails = """
+SELECT DISTINCT p.googlePlaceId,
+        name,
+        a.city,
+        a.street,
+        a.house_number,
+        a.lat,
+        a.lon,
+        d.phone,
+        d.website,
+        o.hourOpen,
+        o.hourClose,
+        rating,
+        r.reviews_rating
+FROM (
+  SELECT idPlaces, addr_id, name, rating, googlePlaceId, type
+  FROM Places
+  WHERE googlePlaceId =  %s
+  ) as p
+LEFT JOIN Addr a
+ON      a.idAddr = p.addr_id
+LEFT JOIN Details d
+ON      d.googlePlaceId = p.googlePlaceId
+LEFT JOIN OpenHours o
+ON      o.googlePlaceId = p.googlePlaceId AND
+        o.dayOfWeek = %s
+LEFT JOIN(
+            SELECT  googlePlaceId,
+                    avg(rating) AS reviews_rating
+            FROM Reviews
+            WHERE googlePlaceId = %s
+            GROUP BY googlePlaceId) r
+ON      r.googlePlaceId = p.googlePlaceId
+"""
 
 
 class DBUtils:
     conn = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
+
+
+    @classmethod
+    def getAllDetails(cls, googlePlaceId):
+        """
+        Gets all the details we have on a certain place
+        Returns a tuple of (isOpen, topDetails, photos, reviews, openHours) where
+        isOpen - boolean that is true iff the place is currently open
+        topDetails - a tuple of results about the place from getTopDetails query. googlePlaceId,
+            name, city, street, house_number, lat, lon, phone, website, hourOpen, hourClose, rating, reviews_rating
+        photos - all the photos of the given place
+        reviews - all the reviews about the given place
+        openHours - all the places's opening hours.
+        """
+        cursor = cls.conn.cursor()
+        curHour = (time.strftime("%H%M%S"))
+        curDay = (time.strftime("%A"))
+        isOpen = cls.openNow(curDay, curHour, googlePlaceId)
+        cursor.execute(getTopDetails, (googlePlaceId, curDay, googlePlaceId))
+        topDetails = cursor.fetchone()
+        cursor.execute(getPhotos, (googlePlaceId, ))
+        photos = cursor.fetchmany(MAX_RESULTS)
+        cursor.execute(getReviews, (googlePlaceId, ))
+        reviews = cursor.fetchmany(MAX_RESULTS)
+        cursor.execute(getOpenHours, (googlePlaceId, ))
+        openHours = cursor.fetchmany(MAX_RESULTS)
+
+
+        return (isOpen, topDetails, photos, reviews, openHours)
+
 
     @classmethod
     def openNow(cls, curDay, curHHMMSS, googlePlaceId):
@@ -166,19 +255,18 @@ class DBUtils:
         cursor = cls.conn.cursor()
         if type(curDay) is not int or curDay > 6:
             return None
-        openPlaces = cursor.execute(getOpenQuery, (dayOfWeek[curDay], googlePlaceId, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS))
+        cursor.execute(getOpenQuery, (dayOfWeek[curDay], googlePlaceId, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS))
         return None != cursor.fetchone()
-
 
 
     @classmethod
     def chooseWhatIWantToDo(cls, my_lat, my_lon):
         """This functions gives the user all the results around him from the type of place with the highest rating"""
-        placeType = cursor.execute(bestAvgTypeQuery)
+        cursor.execute(bestAvgTypeQuery)
+        placeType = cursor.fetchone()
         if placeType == None:
             return None
-        best = placeType[0]
-        return cls.aroundMe(my_lat, my_lon, placeType, 3)
+        return cls.aroundMe(my_lat, my_lon, placeType[0], 3)
 
 
     @classmethod
@@ -190,6 +278,7 @@ class DBUtils:
         cursor = cls.conn.cursor()
         cursor.execute(getUserQuery, (username,))
         return cursor.fetchone()
+
 
     @classmethod
     def createNewUser(cls, username, firstName, lastName, address):
@@ -217,6 +306,7 @@ class DBUtils:
             return None
         cls.conn.commit()
         return cls.getUserByUname(username)
+
 
     @classmethod
     def updateUser(cls, username, firstName, lastName, address):
@@ -255,6 +345,7 @@ class DBUtils:
         cursor.execute(getAddrQuery, (idAddr,))
         return cursor.fetchone()
 
+
     @classmethod
     def getReviewByText(cls, review_text):
         """
@@ -268,6 +359,7 @@ class DBUtils:
             print str(e)
             return None
         return cursor.fetchmany(MAX_RESULTS)
+
 
     @classmethod
     def aroundMe(cls, my_lat, my_lon, place_type, radius_in_km):
@@ -288,6 +380,7 @@ class DBUtils:
             print str(e)
             return tuple()
         return cursor.fetchmany(MAX_RESULTS)
+
 
     @classmethod
     def topNotch(cls, my_lat, my_lon):
@@ -313,7 +406,6 @@ class DBUtils:
         cursor = cls.conn.cursor()
         cursor.execute(getPictures, (min_num_pics, ))
         return cursor.fetchall() #we would like to get more than 30 pictures
-
 
 
     @classmethod
