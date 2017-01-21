@@ -58,7 +58,7 @@ WHERE user_name=%s"""
 
 #input - (addr_id, user_name, first_name, last_name, idUser)
 updateUserQuery = """UPDATE User
-SET addr_id=%s, user_name=%s, first_name=%s, last_name=%S
+SET addr_id=%s, user_name=%s, first_name=%s, last_name=%s
 WHERE idUser=%s;"""
 
 #input - (addr_id, user_name, first_name, last_name)
@@ -441,6 +441,8 @@ class DBUtils:
         output - the addrId from Addr table matching the given address
         """
         cursor = cls.conn.cursor()
+        if "place_id" not in address:
+            return None
         googlePlaceId = address["place_id"]
 
         cursor.execute(getAddrIdQuery, (googlePlaceId,))
