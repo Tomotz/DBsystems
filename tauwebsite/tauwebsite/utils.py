@@ -16,6 +16,11 @@ getAddrQuery = """SELECT idAddr, city, street, house_number, lat, lon, googlePla
 FROM Addr
 WHERE idAddr=%s"""
 
+#input - (idPlaces,)
+getGoogleIdFromPlace = """SELECT googlePlaceId
+FROM Places
+WHERE idPlaces=%s"""
+
 #input - (googlePlaceId,)
 getAddrIdQuery = """SELECT idAddr
 FROM Addr
@@ -264,6 +269,13 @@ class DBUtils:
             return None
         else:
             return answer[1]
+            
+    @classmethod
+    def GooglePlaceIdFromIdPlaces(cls, idPlaces):
+        """translates an idPlaces to a googlePlaceId"""
+        cursor = cls.conn.cursor()
+        cursor.execute(getGoogleIdFromPlace, (idPlaces, ))
+        return cursor.fetchone()
 
 
     @classmethod
