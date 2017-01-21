@@ -281,6 +281,7 @@ class DBUtils:
     @classmethod
     def chooseWhatIWantToDo(cls, my_lat, my_lon):
         """This functions gives the user all the results around him from the type of place with the highest rating"""
+        cursor = cls.conn.cursor()
         cursor.execute(bestAvgTypeQuery)
         placeType = cursor.fetchone()
         if placeType == None:
