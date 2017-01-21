@@ -16,6 +16,11 @@ getAddrQuery = """SELECT idAddr, city, street, house_number, lat, lon, googlePla
 FROM Addr
 WHERE idAddr=%s"""
 
+#input - (idPlaces,)
+getGoogleIdFromPlace = """SELECT googlePlaceId
+FROM Places
+WHERE idPlaces=%s"""
+
 #input - (googlePlaceId,)
 getAddrIdQuery = """SELECT idAddr
 FROM Addr
@@ -146,33 +151,36 @@ ORDER BY sub.num_pictures desc"""
 
 dayOfWeek = {0:"Monday", 1:"Tuesday", 2:"Wednesday", 3:"Thursday", 4:"Friday", 5:"Saturday", 6:"Sunday"}
 
-#input - (day_of_week, googlePlaceId, time_now, time_now, time_now, time_now, time_now, time_now)
+#input - (time_now, time_now, time_now, time_now, time_now, time_now, day_of_week, googlePlaceId)
 #this query checks if a place is currently open. Matches places using googlePlaceId
 #now time should be in format of HHMMSS, and dayOfWeek should be one of the dayOfWeek dict
 #hours before 6am count as the previous day.
-isOpenQuery = """SELECT googlePlaceId
+isOpenQuery = """SELECT DISTINCT googlePlaceId,
+    (
+    (%s > hourOpen
+        OR %s < "60000")
+    AND
+    (
+        hourClose > "60000"
+        AND
+        (
+            %s < hourClose
+            AND %s > "60000"
+        )
+    OR
+    (
+        hourClose < "60000"
+        AND
+        (
+            %s > "60000"
+            OR %s < hourClose
+        )
+    )
+    )
+  )as isOpen
 FROM OpenHours
 WHERE dayOfWeek = %s
 AND googlePlaceId = %s
-AND (%s > hourOpen
-	OR %s < "60000")
-AND
-(
-	hourClose > "60000"
-	AND
-	(
-		%s < hourClose
-		AND %s > "60000"
-	)
-OR
-(
-	hourClose < "60000"
-	AND
-	(
-		%s > "60000"
-		OR %s < hourClose
-	)
-)
 )
 """
 
@@ -223,7 +231,7 @@ class DBUtils:
         """
         Gets all the details we have on a certain place
         Returns a tuple of (isOpen, topDetails, photos, reviews, openHours) where
-        isOpen - boolean that is true iff the place is currently open
+        isOpen - boolean that is true iff the place is currently open. If we don't have the needed openning hours in the DB, None is returned
         topDetails - a tuple of results about the place from getTopDetails query. googlePlaceId,
             name, city, street, house_number, lat, lon, phone, website, hourOpen, hourClose, rating, reviews_rating
         photos - all the photos of the given place
@@ -255,13 +263,25 @@ class DBUtils:
         cursor = cls.conn.cursor()
         if type(curDay) is not int or curDay > 6:
             return None
-        cursor.execute(getOpenQuery, (dayOfWeek[curDay], googlePlaceId, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS))
-        return None != cursor.fetchone()
+        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, dayOfWeek[curDay], googlePlaceId))
+        answer = cursor.fetchone()
+        if answer == None:
+            return None
+        else:
+            return answer[1]
+            
+    @classmethod
+    def GooglePlaceIdFromIdPlaces(cls, idPlaces):
+        """translates an idPlaces to a googlePlaceId"""
+        cursor = cls.conn.cursor()
+        cursor.execute(getGoogleIdFromPlace, (idPlaces, ))
+        return cursor.fetchone()
 
 
     @classmethod
     def chooseWhatIWantToDo(cls, my_lat, my_lon):
         """This functions gives the user all the results around him from the type of place with the highest rating"""
+        cursor = cls.conn.cursor()
         cursor.execute(bestAvgTypeQuery)
         placeType = cursor.fetchone()
         if placeType == None:
