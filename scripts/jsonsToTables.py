@@ -292,6 +292,8 @@ def disconnectDB(conn):
 	conn.commit()
 	conn.close()
 
+
+
 if __name__ == "__main__":
 	conn = connectToDB()
 	if False:
