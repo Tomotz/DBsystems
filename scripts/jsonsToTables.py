@@ -292,15 +292,49 @@ def disconnectDB(conn):
 	conn.commit()
 	conn.close()
 
+#hours before 6am count as the previous day.
+isOpenQuery = """SELECT DISTINCT googlePlaceId,
+    (
+    (%s > hourOpen
+        OR %s < "60000")
+    AND
+    (
+        hourClose > "60000"
+        AND
+        (
+            %s < hourClose
+            AND %s > "60000"
+        )
+    OR
+    (
+        hourClose < "60000"
+        AND
+        (
+            %s > "60000"
+            OR %s < hourClose
+        )
+    )
+    )
+  )as isOpen
+FROM OpenHours
+WHERE dayOfWeek = %s
+"""
+def do_stuff(conn):
+	cur = conn.cursor()	
+	curHHMMSS = "100000"
+	cur.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, "Monday"))
+	print cur.fetchone()
+	print "done"
 
 
 if __name__ == "__main__":
 	conn = connectToDB()
-	if False:
-		print "DELETING ALL TABLES!"
-		resetAllTables(conn)
-	else:
-		addFromJsons(conn)
+	do_stuff(conn)
+	# if False:
+	# 	print "DELETING ALL TABLES!"
+	# 	resetAllTables(conn)
+	# else:
+	# 	addFromJsons(conn)
 	disconnectDB(conn)
 
 

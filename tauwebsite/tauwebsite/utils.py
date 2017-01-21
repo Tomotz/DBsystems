@@ -185,7 +185,6 @@ isOpenQuery = """SELECT DISTINCT googlePlaceId,
 FROM OpenHours
 WHERE dayOfWeek = %s
 AND googlePlaceId = %s
-)
 """
 
 #input - (googlePlaceId, day_of_week, googlePlaceId)
