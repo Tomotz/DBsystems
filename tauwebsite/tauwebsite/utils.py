@@ -100,22 +100,25 @@ JOIN
 ON Places.googlePlaceId = q2.googlePlaceId)
 """
 
+#this is a helper code to calculate distance from a given point
+distances = """(
+     2 * 6367.45 *
+        asin(
+            sqrt(
+                POWER((sin(radians((Addr.lat - %s) / 2))),2) +
+                cos(radians(%s)) * cos(radians(Addr.lat)) *
+                POWER((sin(radians((Addr.lon - %s) / 2))),2)
+            )
+        )
+    )"""
+
 #input - (my_lat, my_lat, my_lon, place_type, radius_in_km)
 #This query gets all the places around a given location.
 placesInDistQuery = """SELECT placePic.idPlaces, addr_id, name, rating, placePic.googlePlaceId, type, url, distanceInKM
 FROM
 (
     SELECT Places.idPlaces,
-    (
-     2 * 6367.45 * 
-        asin(
-            sqrt(
-                POWER((sin(radians((Addr.lat - %s) / 2))),2) + 
-                cos(radians(%s)) * cos(radians(Addr.lat)) * 
-                POWER((sin(radians((Addr.lon - %s) / 2))),2)
-            )
-        )
-    ) AS distanceInKM
+    """+distances+""" AS distanceInKM
     FROM Places, Addr
     WHERE Places.addr_id = Addr.idAddr
     AND Places.type = %s
@@ -137,8 +140,8 @@ AND match(Reviews.text) Against('%s' IN BOOLEAN MODE)
 
 #input - (min_num_of_pictures,)
 #this query gets all the pictures from places that has more than a given number of pictures
-getPictures = """SELECT DISTINCT Places.name, Pics.googlePlaceId, Pics.url, Pics.width, Pics.height
-FROM Pics, Places, 
+getPictures = """SELECT DISTINCT idPlaces, Places.addr_id, Places.name, rating, Places.googlePlaceId, type, url, """+distances+""" AS distanceInKM
+FROM Pics, Places, Addr,
 (
     SELECT Pics.googlePlaceId, Count(Pics.googlePlaceId) as num_pictures
     FROM Pics
@@ -147,6 +150,7 @@ FROM Pics, Places,
 ) as sub
 WHERE Pics.googlePlaceId = Places.googlePlaceId
 AND sub.googlePlaceId = Pics.googlePlaceId
+AND Addr.googlePlaceId = Pics.googlePlaceId
 ORDER BY sub.num_pictures desc"""
 
 dayOfWeek = {0:"Monday", 1:"Tuesday", 2:"Wednesday", 3:"Thursday", 4:"Friday", 5:"Saturday", 6:"Sunday"}
