@@ -9,7 +9,7 @@ JSON_DIR = r"C:\Users\tom\Downloads\TDBS-20"
 allTables = ("Details", "Pics", "User", "Places",  "OpenHours", "Addr", "Reviews")
 
 
-insertAddrQuery = """INSERT INTO DbMysql17.Addr (googlePlaceId, city, street, house_number, lat, lon)
+insertAddrQuery = """INSERT INTO Addr (googlePlaceId, city, street, house_number, lat, lon)
 VALUES (%s, %s, %s, %s, %s, %s);"""
 
 
