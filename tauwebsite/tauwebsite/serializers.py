@@ -40,7 +40,7 @@ class Serializers:
 
         results = []
         for place_row in data:
-            # image_url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&maxheight=1000&photoreference=%s&key=AIzaSyD_nf1ob13G9wRi_cupAAaJ9iun2vcBGgo" % place_row[6]
+            #image_url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&maxheight=1000&photoreference=%s&key=AIzaSyD_nf1ob13G9wRi_cupAAaJ9iun2vcBGgo" % place_row[6]
             image_url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&maxheight=1000&photoreference=%s&key=AIzaSyBmNli_ISnmyJxWcPYjCPLB2P8Rbm5dUAQ" % place_row[6]
             obj = {
                 "id"           : place_row[0],

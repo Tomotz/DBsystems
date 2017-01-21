@@ -1,6 +1,12 @@
 @import url(http://fonts.googleapis.com/css?family=Exo:100,200,400);
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:700,400,300);
+html, body {
+    position: relative;
+    width:100%;
+    height:100%;
 
+    overflow: hidden;
+}
 .button {
   display: inline-block;
   -webkit-box-sizing: border-box;
@@ -57,6 +63,8 @@
   position: absolute;
   top: 2%;
   left: 80%;
+  z-index: 10020;
+
   /*
   width: 20%;
   */
@@ -85,6 +93,7 @@
 }
 .search_input input{
   position: fixed;
+
   right: 10%;
   top: 2%;
   /*
@@ -105,14 +114,20 @@ input:focus {
   background-attachment: fixed;
 }*/
 .menu_bar{
+  float: left;
+    /*
+    position: relative;
+    */
+/*    top: 0;
+    width: 100%;*/
 
+  position: fixed;
+  top: 0;
+  left: 17px;
+  z-index: 1000;
+  width:100%;
   height: 46px;
-  /*
-  width: 950px;
-  */
-  /*
-  margin: 1px auto 0 auto;
-  */
+
   background: transparent }
 /*
 .list{
@@ -137,7 +152,8 @@ float: left;
 }*/
 
 ul#menu
-{ float: left;
+{
+  float: left;
   position: fixed;
   padding: 0;
 }
@@ -146,7 +162,7 @@ ul#menu li
 { float: left;
   padding: 0 0 0 2px;
   list-style: none;
-  margin: 0px 12px 12px 5px;}
+  margin: 0px 12px 17px 0px;}
 
 ul#menu li a
 {
@@ -207,22 +223,30 @@ a:hover
   !*left: calc(20%);*!
 }
 */
+/*.list-wrapper{
+    width: 50%;
+    overflow: hidden;
+}*/
 
 .item_photo{
-  position: absolute;
-  top: 30%;
-  left: 5%;
-
-  /*
-  max-width: 60em; !* 960 px *!
-  */
-  /*
-  margin: 0 auto;
-  */
-  /*
-  margin-bottom: 5px;
-  */
-  width: 85%;
+    position: absolute;
+    top: 10%;
+    bottom: 0;
+    left: -17px;
+    right: -17px; /* Increase/Decrease this value for cross-browser compatibility */
+    overflow-y: scroll;
+    overflow-x: hidden;
+  /*position: absolute;
+     overflow: scroll;
+    overflow-y: scroll;
+    z-index: 2;
+    top: 15%;
+    left: 5%;
+    width: 85%;
+    max-width: 60em; !* 960 px *!
+    margin: 0 auto;
+    margin-bottom: 5px;
+ */
 }
 
 
@@ -230,14 +254,16 @@ a:hover
 * {margin: 0; padding: 0;}
 */
 .item_photo ul {
-    width: 100%;
-    overflow: hidden;
-    -webkit-column-count: 5;
-    -webkit-column-gap: 30px ;
-    -webkit-column-fill: auto;
 
-    column-count: 5;
-    column-gap: 30px ;
+    width: 95%;
+    overflow: visible;
+
+    -webkit-column-fill: auto;
+    -webkit-column-count: 4;
+    -webkit-column-gap: 15px ;
+    column-count: 4;
+    column-gap: 15px ;
+
     column-fill: auto;
   /*-webkit-column-count: 4; !* Chrome, Safari, Opera *!
     -moz-column-count: 4; !* Firefox *!
@@ -245,42 +271,61 @@ a:hover
   /*
   column-width: 100px;
   */
+
   list-style-type: none;
 }
 .item_photo li {
 /*  position: absolute;
   top: 50%;*/
-      margin-bottom: 30px ;
-
-  background: rgba(80, 200, 188, 0.27);
-  margin-left: 15px ;
+  /*
+  min-height: 350px;
+  */
+  display: inline-block;
+  break-inside: avoid-column;
+  -webkit-column-break-inside: avoid;
+  background: rgba(200, 191, 181, 0.7);
+  margin-left:   15px ;
   margin-bottom: 30px ;
 }
 .item_photo h3 {
   color: #000000;
-font: normal 100% 'trebuchet ms', sans-serif;
-  font-size: 20px;
+  font: normal 100% 'trebuchet ms', sans-serif;
+  font-size: 25px;
+  padding-left: 10px;
 }
 
+.item_photo p {
+  color: #000000;
+  font: normal 100% 'trebuchet ms', sans-serif;
+  font-size: 18px;
+  padding-left: 10px;
+}
+/*
+.item_photo p span.stars {
+    display: block;
+    background: url(http://www.ulmanen.fi/stuff/stars.png) 0 -16px repeat-x;
+    width: 80px;
+    height: 16px;
+}
+*/
+
+/*span.stars span {
+    background-position: 0 0;
+}*/
 .item_photo li img {
   float: left;
   display: block;
-  max-width:230px;
+  max-width:300px;
   min-height:200px;
-  margin: 0 1.515% 1.875em; /* 15px 30px */
+  /*
+  margin: 0 1.515% 1.875em; !* 15px 30px *!
+  */
 
   width: auto;
   height: auto;
-  /*
-  margin: 0  5px 5px 5px;
-  */
+
 }
 
-.item_photo li p {
-    color: #000000;
-font: normal 100% 'trebuchet ms', sans-serif;
-  font-size: 18px;
-}
 
 .item_photo li {
   display: inline-block;
