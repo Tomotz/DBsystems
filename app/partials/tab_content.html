@@ -1,31 +1,13 @@
-<!--
-<div align="center">
-
-&lt;!&ndash;    <div class="text">
-        <div>&lt;!&ndash;Where to?&ndash;&gt;
-            <span>
-                &lt;!&ndash;TLV&ndash;&gt;
-            </span>
-        </div>
-    </div>&ndash;&gt;
-
-    &lt;!&ndash;input class="button" placeholder="Search..." />
-    <script src='http://use.edgefonts.net/amaranth.js'></script>
-    <input id="autocomplete_address_inner"
-           type="text"
-           ng-class="{'input_err' : addr_err}"
-           placeholder="Search address..."&ndash;&gt;
-
-</div>
--->
-<link rel="stylesheet" href="css/style_main.css">
-
-<div class="item_photo">
-    <ul id = "listObjects">
-        <li ng-repeat="place in places" ng-click="open_place(place)">
-            <img ng-src="{{ place.image_url }}">
-            <h3>{{ place.name }}</h3>
-            <p>{{ place.type }}, {{ place.rating}}</p>
-        </li>
-    </ul>
+<div class="list-wrapper">
+    <div class="item_photo">
+        <ul>
+            <li ng-repeat="place in places | orderBy : place.dist_from_me" ng-click="open_place(place)">
+                <img ng-src="{{ place.image_url }}">
+                <h3>{{ place.name }}</h3>
+                <p ng-show="state.includes('**.home.**')">{{ place.type }}, ☆{{ place.rating}}</p>
+                <p ng-show="!state.includes('**.home.**')">{{ place.dist_from_me | number : 2 }} Km From You<br>{{ place.rating}}☆</p>
+            </li>
+        </ul>
+        <button ng-click="show_more_clicked()">Show More..</button>
+    </div>
 </div>

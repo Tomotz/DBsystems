@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.views.generic.base import TemplateView
 import settings
 from users.views import LoginView
-from places.views import FoodView, BarView, ClubView, HotelView, ShopView, GeneralPlacesView
+from places.views import FoodView, BarView, ClubView, HotelView, ShopView, GeneralPlacesView, PlaceDetailsView
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -34,4 +34,5 @@ urlpatterns = [
     url(r'^places/hotels/$', HotelView.as_view()),
     url(r'^places/clubs/$', ClubView.as_view()),
     url(r'^places/shops/$', ShopView.as_view()),
+    url(r'^places/details/(?P<google_place_id>\w+)/$', PlaceDetailsView.as_view()),
 ]
