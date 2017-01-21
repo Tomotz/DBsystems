@@ -35,7 +35,6 @@ class Serializers:
 
     @classmethod
     def PlaceSerializer(cls, data):
-        # TODO - implement light places serializer and full single place serializer
         data = list(data)
 
         results = []
@@ -56,3 +55,21 @@ class Serializers:
             results.append(obj)
 
         return json.dumps(results)
+
+    @classmethod
+    def FullPlaceSerializer(cls, place_row):
+        print "**********************************************", place_row
+        #image_url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&maxheight=1000&photoreference=%s&key=AIzaSyD_nf1ob13G9wRi_cupAAaJ9iun2vcBGgo" % place_row[6]
+        image_url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&maxheight=1000&photoreference=%s&key=AIzaSyBmNli_ISnmyJxWcPYjCPLB2P8Rbm5dUAQ" % place_row[6]
+        obj = {
+            "id"           : place_row[0],
+            "address"      : cls.AddressSerializer(DBUtils.getAddrById(place_row[1]), stringify=False),
+            "name"         : place_row[2],
+            "rating"       : place_row[3],
+            "google_id"    : place_row[4],
+            "type"         : place_row[5],
+            "image_url"    : image_url,
+            "dist_from_me" : place_row[7],
+        }
+
+        return json.dumps(obj)

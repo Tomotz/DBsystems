@@ -63,6 +63,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
             radius: $scope.selected_radius
         };
         
+        $scope.show_list = true;
         $scope.places = [];
         get_places(params).then(function (data) {
             console.log("PlacesController: got places - ", data);
@@ -77,8 +78,9 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
 
         $scope.open_place = function (place) {
             console.log("OPENING ", place);
-            PlacesService.get_place_data(params).then(function (data) {
-                console.log("PlacesController: got places - ", data);
+            PlacesService.get_place_data(place.google_id).then(function (data) {
+                console.log("PlacesController: got place details - ", data);
+                $scope.show_list = false;
             })
         }
     });

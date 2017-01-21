@@ -76,10 +76,10 @@ PlacesService.service('PlacesService', ['$http', '$q', function($http, $q) {
         return deferred.promise;
     };
 
-    this.get_place_data = function (params) {
-        console.log("PlacesService get_place_data params - ", params);
+    this.get_place_data = function (place_id) {
+        console.log("PlacesService get_place_data place_id - ", place_id);
         var deferred = $q.defer();
-        $http.post('/places/details/', params).then(function (result) {
+        $http.get('/places/details/' + place_id + '/').then(function (result) {
             deferred.resolve(result.data);
         }, function (result) {
             console.log("Error getting place data!", result);

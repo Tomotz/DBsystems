@@ -91,3 +91,13 @@ class ShopView(APIView):
 
         return HttpResponse(Serializers.PlaceSerializer(data))
 
+
+class PlaceDetailsView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, google_place_id):
+
+        data = DBUtils.getAllDetails(google_place_id)
+
+        return HttpResponse(Serializers.FullPlaceSerializer(data))
+
