@@ -31,7 +31,7 @@ WHERE googlePlaceId = %s
 #input - (googlePlaceId,)
 getReviews = """
 SELECT idReviews, rating, text, googlePlaceId
-FROM OpenHours
+FROM Reviews
 WHERE googlePlaceId = %s
 """
 
