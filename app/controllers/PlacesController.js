@@ -82,6 +82,27 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
                 console.log("PlacesController: got place details - ", data);
                 $scope.show_list = false;
             })
+        };
+        
+        $scope.feeling_lucky_clicked = function () {
+            console.log("feeling_lucky_clicked ");
+            PlacesService.get_good_avg_rating_places().then(function (data) {
+                console.log("PlacesController: got feeling lucky places - ", data);
+                all_places = data;
+                $scope.places = all_places.slice(0, 10);
+                $scope.data_loaded = true;
+            })
+        };
+        
+        $scope.search_review = function () {
+            console.log("search_review text - ", $scope.review_text);
+            params = {
+                "text": $scope.review_text
+            };
+            PlacesService.get_places_by_review(params).then(function (data) {
+                console.log("PlacesController: got places  - ", data);
+                $scope.show_list = false;
+            })
         }
     });
 

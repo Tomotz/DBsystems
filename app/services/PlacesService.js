@@ -2,7 +2,7 @@
 
 var PlacesService = angular.module('DBApp.PlacesService', ['ngRoute']);
 
-PlacesService.service('PlacesService', ['$http', '$q', function($http, $q) {
+PlacesService.service('PlacesService', ['$rootScope', '$http', '$q', function($rootScope, $http, $q) {
 
     this.get_places_home = function (params) {
         console.log("PlacesService get_places_home params - ", params);
@@ -83,6 +83,30 @@ PlacesService.service('PlacesService', ['$http', '$q', function($http, $q) {
             deferred.resolve(result.data);
         }, function (result) {
             console.log("Error getting place data!", result);
+            deferred.resolve(false);
+        });
+        return deferred.promise;
+    };
+
+    this.get_good_avg_rating_places = function () {
+        console.log("PlacesService get_good_avg_rating_places");
+        var deferred = $q.defer();
+        $http.get('/places/feeling_lucky/' + $rootScope.my_user.address.location.lat + '/' + $rootScope.my_user.address.location.lng + '/').then(function (result) {
+            deferred.resolve(result.data);
+        }, function (result) {
+            console.log("Error getting feeling lucky places!", result);
+            deferred.resolve(false);
+        });
+        return deferred.promise;
+    };
+
+    this.get_places_by_review = function (params) {
+        console.log("PlacesService get_places_by_review, search text - ", search_text);
+        var deferred = $q.defer();
+        $http.post('/places/review_text/', params).then(function (result) {
+            deferred.resolve(result.data);
+        }, function (result) {
+            console.log("Error getting feeling lucky places!", result);
             deferred.resolve(false);
         });
         return deferred.promise;

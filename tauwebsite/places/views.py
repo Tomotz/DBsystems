@@ -19,6 +19,11 @@ class PLACE_TYPES:
 class GeneralPlacesView(APIView):
     permission_classes = (permissions.AllowAny,)
 
+    def get(self, request, lat, lng):
+        data = DBUtils.chooseWhatIWantToDo(lat, lng)
+
+        return HttpResponse(Serializers.PlaceSerializer(data))
+
     def post(self, request, *args, **kwargs):
         lat = request.data.get("lat")
         lng = request.data.get("lng")
@@ -96,7 +101,7 @@ class PlaceDetailsView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, google_place_id):
-
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%", google_place_id
         data = DBUtils.getAllDetails(google_place_id)
 
         return HttpResponse(Serializers.FullPlaceSerializer(data))

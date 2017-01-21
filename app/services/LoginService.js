@@ -12,6 +12,7 @@ LoginService.service('LoginService', ['$http', '$q', '$rootScope', function($htt
             current_user = result.data;
             $rootScope.my_user = current_user;
             window.localStorage.setItem("my_user_name", current_user.username);
+            console.log("LoginService logged in - ", current_user);
             deferred.resolve(current_user);
         }, function (result) {
             console.log("no user");

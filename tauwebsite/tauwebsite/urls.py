@@ -29,10 +29,11 @@ urlpatterns = [
 
     # Places API
     url(r'^places/general/$', GeneralPlacesView.as_view()),
+    url(r'^places/feeling_lucky/(?P<lat>[\w\.]+)/(?P<lng>[\w\.]+)/$', GeneralPlacesView.as_view()),
     url(r'^places/food/$', FoodView.as_view()),
     url(r'^places/bars/$', BarView.as_view()),
     url(r'^places/hotels/$', HotelView.as_view()),
     url(r'^places/clubs/$', ClubView.as_view()),
     url(r'^places/shops/$', ShopView.as_view()),
-    url(r'^places/details/(?P<google_place_id>\w+)/$', PlaceDetailsView.as_view()),
+    url(r'^places/details/(?P<google_place_id>[\w\-]+)/$', PlaceDetailsView.as_view()),
 ]

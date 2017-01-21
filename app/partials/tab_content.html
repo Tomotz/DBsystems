@@ -1,5 +1,13 @@
 <div class="list-wrapper">
     <div class="item_photo">
+        <div ng-show="state.includes('**.home.**')">
+            Don't know what you want to do? Search a place by review!
+            <input type="text"
+                   ng-model="review_text"
+                   placeholder="Text to search"><br>
+            <button ng-click="search_review()">Find</button>
+            <button ng-click="feeling_lucky_clicked()">I'm Feeling Lucky..</button>
+        </div>
         <ul>
             <li ng-repeat="place in places | orderBy : place.dist_from_me" ng-click="open_place(place)">
                 <img ng-src="{{ place.image_url }}">
