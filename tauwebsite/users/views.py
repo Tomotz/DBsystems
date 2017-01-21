@@ -21,8 +21,15 @@ class LoginView(APIView):
         first_name = request.data.get("first_name")
         last_name = request.data.get("last_name")
         address = request.data.get("address")
+        is_update = request.data.get("is_update")
+
         print "Got data for new user: username '%s', first name '%s', last name '%s', address %s" % (user_name, first_name, last_name, address)
-        user = DBUtils.createNewUser(user_name, first_name, last_name, address)
+
+        if is_update:
+            user = DBUtils.updateUser(user_name, first_name, last_name, address)
+        else:
+            user = DBUtils.createNewUser(user_name, first_name, last_name, address)
+
         if user is None:
             return HttpResponseBadRequest()
         else:

@@ -36,3 +36,9 @@ function get_autocomplete(element_id) {
 
     return new google.maps.places.Autocomplete(addr_input, options);
 }
+
+function fix_time(secs) {
+    var res = new Date(0,0,0,0,0,0,0);
+    res.setSeconds(secs);
+    return res;
+}

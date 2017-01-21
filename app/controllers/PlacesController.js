@@ -10,9 +10,11 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
     // event listener for address changes
     google.maps.event.addListener(autocomplete, 'place_changed', function () {
         var new_addr = autocomplete.getPlace();
+        new_addr.lat = new_addr.geometry.location.lat();
+        new_addr.lng = new_addr.geometry.location.lng();
         var params = {
-            lat : new_addr.geometry.location.lat(),
-            lng : new_addr.geometry.location.lng(),
+            lat : new_addr.lat,
+            lng : new_addr.lng,
             radius : $scope.selected_radius
         };
         $scope.data_loaded = false;
@@ -22,6 +24,16 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
             $scope.places = all_places.slice(0, 10);
             $scope.data_loaded = true;
         });
+
+        // update user address, no need to wait for response
+        var user_details = {
+            "user_name"  : $scope.my_user.username,
+            "first_name" : $scope.my_user.first_name,
+            "last_name"  : $scope.my_user.last_name,
+            "address"    : new_addr,
+            "is_update"  : true
+        };
+        LoginService.user_signup(user_details);
     });
 
     // init tab-related vars 
@@ -72,6 +84,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
             $scope.data_loaded = true;
         });
 
+
         $scope.show_more_clicked = function () {
             $scope.places = $scope.places.concat(all_places.slice($scope.places.length, $scope.places.length + 10));
         };
@@ -79,29 +92,48 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
         $scope.open_place = function (place) {
             console.log("OPENING ", place);
             PlacesService.get_place_data(place.google_id).then(function (data) {
-                console.log("PlacesController: got place details - ", data);
-                $scope.show_list = false;
+                if (data){
+                    console.log("PlacesController: got place details - ", data);
+                    $scope.place_to_show = data;
+                    $scope.show_list = false;
+                }
             })
         };
-        
+
         $scope.feeling_lucky_clicked = function () {
             console.log("feeling_lucky_clicked ");
             PlacesService.get_good_avg_rating_places().then(function (data) {
-                console.log("PlacesController: got feeling lucky places - ", data);
-                all_places = data;
-                $scope.places = all_places.slice(0, 10);
-                $scope.data_loaded = true;
+                if (data) {
+                    console.log("PlacesController: got feeling lucky places - ", data);
+                    all_places = data;
+                    $scope.places = all_places.slice(0, 10);
+                    $scope.data_loaded = true;
+                }
             })
         };
-        
+
+        $scope.get_photogenic_places_clicked = function () {
+            console.log("get_photografic_places (hardcoded 30 pics)");
+            PlacesService.get_photogenic_places(5).then(function (data) {
+                if (data) {
+                    console.log("PlacesController: got photogenic places - ", data);
+                    all_places = data;
+                    $scope.places = all_places.slice(0, 10);
+                    $scope.data_loaded = true;
+                }
+            })
+        };
+
         $scope.search_review = function () {
             console.log("search_review text - ", $scope.review_text);
             params = {
                 "text": $scope.review_text
             };
             PlacesService.get_places_by_review(params).then(function (data) {
-                console.log("PlacesController: got places  - ", data);
-                $scope.show_list = false;
+                if (data) {
+                    console.log("PlacesController: got places  - ", data);
+                    $scope.show_list = false;
+                }
             })
         }
     });

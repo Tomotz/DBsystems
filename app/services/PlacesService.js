@@ -100,8 +100,20 @@ PlacesService.service('PlacesService', ['$rootScope', '$http', '$q', function($r
         return deferred.promise;
     };
 
+    this.get_photogenic_places = function (num) {
+        console.log("PlacesService get_photogenic_places");
+        var deferred = $q.defer();
+        $http.get('/places/photogenic/' + num + '/').then(function (result) {
+            deferred.resolve(result.data);
+        }, function (result) {
+            console.log("Error getting photogenic places!", result);
+            deferred.resolve(false);
+        });
+        return deferred.promise;
+    };
+
     this.get_places_by_review = function (params) {
-        console.log("PlacesService get_places_by_review, search text - ", search_text);
+        console.log("PlacesService get_places_by_review, search text - ", params);
         var deferred = $q.defer();
         $http.post('/places/review_text/', params).then(function (result) {
             deferred.resolve(result.data);

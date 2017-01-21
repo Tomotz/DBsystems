@@ -1,4 +1,4 @@
-<div class="list-wrapper">
+<div class="list-wrapper" ng-show="show_list">
     <div class="item_photo">
         <div ng-show="state.includes('**.home.**')">
             Don't know what you want to do? Search a place by review!
@@ -7,15 +7,41 @@
                    placeholder="Text to search"><br>
             <button ng-click="search_review()">Find</button>
             <button ng-click="feeling_lucky_clicked()">I'm Feeling Lucky..</button>
+            <br>
+            You know what? just show me places with a lot of <a ng-click="get_photogenic_places_clicked()">pictures</a>
         </div>
         <ul>
             <li ng-repeat="place in places | orderBy : place.dist_from_me" ng-click="open_place(place)">
                 <img ng-src="{{ place.image_url }}">
                 <h3>{{ place.name }}</h3>
-                <p ng-show="state.includes('**.home.**')">{{ place.type }}, ☆{{ place.rating}}</p>
-                <p ng-show="!state.includes('**.home.**')">{{ place.dist_from_me | number : 2 }} Km From You<br>{{ place.rating}}☆</p>
+                <p ng-show="state.includes('**.home.**')">{{ place.type }}<span ng-if="place.rating">, ☆{{ place.rating}}</span></p>
+                <p ng-show="!state.includes('**.home.**')">{{ place.dist_from_me | number : 2 }} Km From You<span ng-if="place.rating"><br>☆{{ place.rating}}</span></p>
             </li>
         </ul>
         <button ng-click="show_more_clicked()">Show More..</button>
     </div>
+</div>
+
+<!-- Specific place page -->
+<div class="list-wrapper" ng-show="!show_list">
+    <button ng-click="show_list = true;">Back</button>
+
+    <div ng-repeat="photo_url in place_to_show.photos">
+        <img ng-src="{{ photo_url }}">
+    </div>
+
+    {{ place_to_show.name }}, {{ place_to_show.phone }}, {{ place_to_show.website }}<br>
+    {{ place_to_show.address.street }} {{ place_to_show.address.number }}, {{ place_to_show.address.city }}<br>
+
+    <span ng-show="place_to_show.is_open">Open Now!</span>
+    <div ng-repeat="hours in place_to_show.open_hours">
+        <!--{{ hours.day }}: {{ fix_time(hours.open) | date : 'HH:MM' }} - {{ fix_time(hours.close) | date : 'shortTime' }}-->
+        {{ hours.day }}: {{ hours.open }} - {{ hours.close }}
+    </div>
+
+    <div ng-repeat="review in place_to_show.reviews">
+        Rating:  ☆{{ review.rating }}<br>
+        {{ review.review }}
+    </div>
+
 </div>

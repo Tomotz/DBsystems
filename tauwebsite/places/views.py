@@ -16,6 +16,14 @@ class PLACE_TYPES:
     CLUB  = "Club"
     HOTEL = "Hotel"
 
+class PhotograficPlacesView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, num):
+        data = DBUtils.photographicPlaces(num)
+
+        return HttpResponse(Serializers.PlaceSerializer(data))
+
 class GeneralPlacesView(APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -29,6 +37,16 @@ class GeneralPlacesView(APIView):
         lng = request.data.get("lng")
 
         data = DBUtils.topNotch(lat, lng)
+
+        return HttpResponse(Serializers.PlaceSerializer(data))
+
+class PlacesByReviewView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        text = request.data.get("text")
+
+        data = DBUtils.getReviewByText(text)
 
         return HttpResponse(Serializers.PlaceSerializer(data))
 
@@ -101,7 +119,6 @@ class PlaceDetailsView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, google_place_id):
-        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%", google_place_id
         data = DBUtils.getAllDetails(google_place_id)
 
         return HttpResponse(Serializers.FullPlaceSerializer(data))

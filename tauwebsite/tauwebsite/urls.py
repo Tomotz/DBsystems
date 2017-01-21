@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.views.generic.base import TemplateView
 import settings
 from users.views import LoginView
-from places.views import FoodView, BarView, ClubView, HotelView, ShopView, GeneralPlacesView, PlaceDetailsView
+from places.views import FoodView, BarView, ClubView, HotelView, ShopView, GeneralPlacesView, PlaceDetailsView, PlacesByReviewView, PhotograficPlacesView
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -26,10 +26,13 @@ urlpatterns = [
     # Users API
     url(r'^users/login/(?P<user_name>\w+)/$', LoginView.as_view()),
     url(r'^users/signup/$', LoginView.as_view()),
+    # url(r'^users/update/$', LoginView.as_view()),
 
     # Places API
     url(r'^places/general/$', GeneralPlacesView.as_view()),
     url(r'^places/feeling_lucky/(?P<lat>[\w\.]+)/(?P<lng>[\w\.]+)/$', GeneralPlacesView.as_view()),
+    url(r'^places/photogenic/(?P<num>\d+)/$', PhotograficPlacesView.as_view()),
+    url(r'^places/review_text/$', PlacesByReviewView.as_view()),
     url(r'^places/food/$', FoodView.as_view()),
     url(r'^places/bars/$', BarView.as_view()),
     url(r'^places/hotels/$', HotelView.as_view()),
