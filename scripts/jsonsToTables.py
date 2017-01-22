@@ -318,13 +318,29 @@ isOpenQuery = """SELECT DISTINCT googlePlaceId,
   )as isOpen
 FROM OpenHours
 WHERE dayOfWeek = %s
+AND googlePlaceId = %s
 """
+
+dayOfWeek = {0:"Monday", 1:"Tuesday", 2:"Wednesday", 3:"Thursday", 4:"Friday", 5:"Saturday", 6:"Sunday"}
 def do_stuff(conn):
 	cur = conn.cursor()	
 	curHHMMSS = "100000"
-	cur.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, "Monday"))
-	print cur.fetchone()
+	print openNow(conn, 1, curHHMMSS, "ChIJ-4EMAWRLHRUR2jwEYdnSUpE")
 	print "done"
+
+def openNow(conn, curDay, curHHMMSS, googlePlaceId):
+    """Gets all places that are open now
+    curDay should be a key for dayOfWeek dictionary (0 for monday and so on)
+    cur HHMMSS should be a string in the format HHMMSS"""
+    cursor = conn.cursor()
+    if type(curDay) is not int or curDay > 6:
+        return None
+    cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, dayOfWeek[curDay], googlePlaceId))
+    answer = cursor.fetchone()
+    if answer == None:
+        return None
+    else:
+        return answer[1]
 
 
 if __name__ == "__main__":

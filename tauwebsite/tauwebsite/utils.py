@@ -5,6 +5,7 @@
 from settings import LOCAL_DB_PASS, DB_CONN
 import MySQLdb as mdb
 import time
+from datetime import datetime, timedelta
 
 
 MAX_RESULTS = 1000 #the maximum number of results to return from a query.
@@ -242,8 +243,9 @@ class DBUtils:
         openHours - all the places's opening hours.
         """
         cursor = cls.conn.cursor()
-        curHour = (time.strftime("%H%M%S"))
-        curDay = (time.strftime("%A"))
+        nowTime = datetime.utcnow() + timedelta(0,60*60*2) #add israel GMT
+        curHour = nowTime.strftime("%H%M%S")
+        curDay = nowTime.strftime("%A")
         isOpen = cls.openNow(curDay, curHour, googlePlaceId)
         cursor.execute(getTopDetails, (googlePlaceId, curDay, googlePlaceId))
         topDetails = cursor.fetchone()
@@ -260,13 +262,13 @@ class DBUtils:
 
     @classmethod
     def openNow(cls, curDay, curHHMMSS, googlePlaceId):
-        """Gets all places that are open now
-        curDay should be a key for dayOfWeek dictionary (0 for monday and so on)
+        """checks if a given place is currently open. Assumes that if the closing hour is 0-6 am it is in the following day.
+        curDay should be the day's name with a capital latter
         cur HHMMSS should be a string in the format HHMMSS"""
         cursor = cls.conn.cursor()
         if type(curDay) is not int or curDay > 6:
             return None
-        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, dayOfWeek[curDay], googlePlaceId))
+        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curDay, googlePlaceId))
         answer = cursor.fetchone()
         if answer == None:
             return None
@@ -342,7 +344,7 @@ class DBUtils:
         cursor = cls.conn.cursor()
         userRow = cls.getUserByUname(username)
         if userRow == None or len(userRow) < 1:
-            return None
+            return None #User does not exist.
         idUser = userRow[0]
         idAddr = cls.getOrCreateAddrId(address)
         if None == idAddr:
@@ -350,11 +352,11 @@ class DBUtils:
             return None
         try:
             cursor.execute(updateUserQuery, (idAddr, username, firstName, lastName, idUser))
+            cls.conn.commit()
         except Exception, e:
             print "There was an unsupported character in the input"
             print str(e)
             return None
-        cls.conn.commit()
         return cls.getUserByUname(username)
 
 
@@ -438,12 +440,17 @@ class DBUtils:
         """
         Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
         input - a location object returned from google
-        output - the addrId from Addr table matching the given address
+        output - the idAddr from Addr table matching the given address
         """
         cursor = cls.conn.cursor()
         if "place_id" not in address:
             return None
         googlePlaceId = address["place_id"]
+        if len(googlePlaceId) > 200:
+            #data will be truncated
+            print "google place_id to long! ignoring address. "
+            print "We only save 200 chars for googlePlaceId. All the addresses in Tel-Aviv's area are short enough for it"
+            return None
 
         cursor.execute(getAddrIdQuery, (googlePlaceId,))
         fetched = cursor.fetchone()
