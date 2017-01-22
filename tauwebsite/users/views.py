@@ -31,6 +31,8 @@ class LoginView(APIView):
             user = DBUtils.createNewUser(user_name, first_name, last_name, address)
 
         if user is None:
+            print "user is NONE!!"
             return HttpResponseBadRequest()
         else:
+            print "finished, user - %s" % str(user)
             return HttpResponse(Serializers.UserSerizlizer(user))

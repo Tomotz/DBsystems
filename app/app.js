@@ -30,27 +30,27 @@ DBApp.config(function($stateProvider) {
             controller: 'MainController'
         }).state('main.home', {
             url: '/',
-            template: templates[3],
+            template: templates[2],
             controller: 'PlacesController'
         }).state('main.rests', {
             url: '/rests',
-            template: templates[3],
+            template: templates[2],
             controller: 'PlacesController'
         }).state('main.bars', {
             url: '/bars',
-            template: templates[3],
+            template: templates[2],
             controller: 'PlacesController'
         }).state('main.clubs', {
             url: '/clubs',
-            template: templates[3],
+            template: templates[2],
             controller: 'PlacesController'
         }).state('main.shops', {
             url: '/shops',
-            template: templates[3],
+            template: templates[2],
             controller: 'PlacesController'
         }).state('main.hotels', {
             url: '/hotels',
-            template: templates[3],
+            template: templates[2],
             controller: 'PlacesController'
         });
     

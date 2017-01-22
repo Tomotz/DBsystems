@@ -1,47 +1,100 @@
-<div class="list-wrapper" ng-show="show_list">
-    <div class="item_photo">
-        <div ng-show="state.includes('**.home.**')">
+<div>
+    <!--div class="list-wrapper" ng-show="show_list"-->
+    <div ng-show="show_list">
+        <!--button class = "showMoreButton" ng-click="show_more_clicked()">Show More..</button-->
+        <div class="buttons-location">
+            <div ng-show="!state.includes('**.home.**')">
+                How are you getting there?
+                <div class="pure-button-group" role="group">
+                    <button class="pure-button"
+                            ng-class="{'pure-button-active': selected_radius == 2}"
+                            ng-click="selected_radius = 2; refresh_places();">By Foot</button>
+                    <button class="pure-button"
+                            ng-class="{'pure-button-active': selected_radius == 5}"
+                            ng-click="selected_radius = 5; refresh_places();">By Bicycle</button>
+                    <button class="pure-button"
+                            ng-class="{'pure-button-active': selected_radius == 10}"
+                            ng-click="selected_radius = 10; refresh_places();">By Car</button>
+                    <!--<button class="showMoreButton radiusSelectionButton1" ng-click="selected_radius = 2; refresh_places();">By Foot</button>-->
+                    <!--<button class="showMoreButton radiusSelectionButton2" ng-click="selected_radius = 5; refresh_places();">By Bicycle</button>-->
+                    <!--<button class="showMoreButton radiusSelectionButton3" ng-click="selected_radius = 10; refresh_places();">By Car</button>-->
+                </div>
+            </div>
+        </div>
+    <div class="list-wrapper" ng-show="show_list">
+
+        <div class="FeelingLucky" ng-show="state.includes('**.home.**')">
             Don't know what you want to do? Search a place by review!
-            <input type="text"
+            <input class="fl_input" type="text"
                    ng-model="review_text"
-                   placeholder="Text to search"><br>
+                   placeholder="Text to search">
             <button ng-click="search_review()">Find</button>
             <button ng-click="feeling_lucky_clicked()">I'm Feeling Lucky..</button>
             <br>
             You know what? just show me places with a lot of <a ng-click="get_photogenic_places_clicked()">pictures</a>
         </div>
-        <ul>
-            <li ng-repeat="place in places | orderBy : place.dist_from_me" ng-click="open_place(place)">
-                <img ng-src="{{ place.image_url }}">
-                <h3>{{ place.name }}</h3>
-                <p ng-show="state.includes('**.home.**')">{{ place.type }}<span ng-if="place.rating">, ☆{{ place.rating}}</span></p>
-                <p ng-show="!state.includes('**.home.**')">{{ place.dist_from_me | number : 2 }} Km From You<span ng-if="place.rating"><br>☆{{ place.rating}}</span></p>
-            </li>
-        </ul>
-        <button ng-click="show_more_clicked()">Show More..</button>
-    </div>
 </div>
+        <div class="show-more">
+                    Showing {{ places.length }} out of {{ all_places_len }} places
+                    <button class="pure-button"
+                            ng-class="{'pure-button-disabled': places.length == all_places_len}"
+                            ng-click="show_more_clicked()">Show More..</button>
+        </div>
 
-<!-- Specific place page -->
-<div class="list-wrapper" ng-show="!show_list">
-    <button ng-click="show_list = true;">Back</button>
+        <div class="list-wrapper item_photo">
+            <div class="loader" ng-show="!data_loaded">Loading...</div>
+            <div ng-show="data_loaded">
 
-    <div ng-repeat="photo_url in place_to_show.photos">
-        <img ng-src="{{ photo_url }}">
+                <ul>
+                    <li ng-repeat="place in places | orderBy : place.dist_from_me" ng-click="open_place(place)">
+                        <img ng-src="{{ place.image_url }}">
+                        <h3>{{ place.name }}</h3>
+                        <p ng-show="state.includes('**.home.**')">{{ place.type }}<span ng-if="place.rating">, ☆{{ place.rating}}</span></p>
+                        <p ng-show="!state.includes('**.home.**')">{{ place.dist_from_me | number : 2 }} Km From You<span ng-if="place.rating"><br>☆{{ place.rating}}</span></p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
     </div>
 
-    {{ place_to_show.name }}, {{ place_to_show.phone }}, {{ place_to_show.website }}<br>
-    {{ place_to_show.address.street }} {{ place_to_show.address.number }}, {{ place_to_show.address.city }}<br>
+    <!-- Specific place page -->
+    <div ng-show="!show_list">
+        <div class="buttons-location">
+            <button class="pure-button" ng-click="show_list = true;">Back</button>
+        </div>
+        <div class="list-wrapper">
 
-    <span ng-show="place_to_show.is_open">Open Now!</span>
-    <div ng-repeat="hours in place_to_show.open_hours">
-        <!--{{ hours.day }}: {{ fix_time(hours.open) | date : 'HH:MM' }} - {{ fix_time(hours.close) | date : 'shortTime' }}-->
-        {{ hours.day }}: {{ hours.open }} - {{ hours.close }}
+            <div class="place_page_list">
+
+                <div class="place_details">
+                    Name: {{ place_to_show.name }}<br>Phone: {{ place_to_show.phone }}<br>Website: {{ place_to_show.website }}<br>
+                    Address: {{ place_to_show.address.street }} {{ place_to_show.address.number }}, {{ place_to_show.address.city }}<br>
+                </div>
+
+                <div class = "place_reviews" ng-repeat="review in place_to_show.reviews">
+                    <!--Rating:  -->☆{{ review.rating }}  "<!--<br>-->{{ review.review }}"<br><br>
+                </div>
+
+                <div class="opening_hours">
+                    <span ng-show="place_to_show.is_open">Open Now!</span>
+                    <div ng-repeat="hours in place_to_show.open_hours">
+                        <!--{{ hours.day }}: {{ fix_time(hours.open) | date : 'HH:MM' }} - {{ fix_time(hours.close) | date : 'shortTime' }}-->
+                        {{ hours.day }}: {{ hours.open }} - {{ hours.close }}
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="place_photo_list">
+                <div class="item_photo">
+                    <ul>
+                        <li ng-repeat="photo_url in place_to_show.photos">
+                            <img ng-src="{{ photo_url }}">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div ng-repeat="review in place_to_show.reviews">
-        Rating:  ☆{{ review.rating }}<br>
-        {{ review.review }}
-    </div>
-
 </div>

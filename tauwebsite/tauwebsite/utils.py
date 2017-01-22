@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from settings import LOCAL_DB_PASS
+from settings import LOCAL_DB_PASS, DB_CONN
 import MySQLdb as mdb
 import time
 from datetime import datetime, timedelta
@@ -139,7 +139,7 @@ AND Reviews.googlePlaceId = Addr.googlePlaceId
 AND match(Reviews.text) Against('%s' IN BOOLEAN MODE)
 """
 
-#input - (min_num_of_pictures,)
+#input - (lat, lat, lng, min_num_of_pictures)
 #this query gets all the pictures from places that has more than a given number of pictures
 getPictures = """SELECT DISTINCT idPlaces, Places.addr_id, Places.name, rating, Places.googlePlaceId, type, url, """+distances+""" AS distanceInKM
 FROM Pics, Places, Addr,
@@ -154,35 +154,44 @@ AND sub.googlePlaceId = Pics.googlePlaceId
 AND Addr.googlePlaceId = Pics.googlePlaceId
 ORDER BY sub.num_pictures desc"""
 
-dayOfWeek = {0:"Monday", 1:"Tuesday", 2:"Wednesday", 3:"Thursday", 4:"Friday", 5:"Saturday", 6:"Sunday"}
-
 #input - (time_now, time_now, time_now, time_now, time_now, time_now, day_of_week, googlePlaceId)
 #this query checks if a place is currently open. Matches places using googlePlaceId
 #now time should be in format of HHMMSS, and dayOfWeek should be one of the dayOfWeek dict
 #hours before 6am count as the previous day.
-isOpenQuery = """SELECT DISTINCT googlePlaceId,
-    (
-    (%s > hourOpen
-        OR %s < "60000")
-    AND
-    (
-        hourClose > "60000"
-        AND
-        (
-            %s < hourClose
-            AND %s > "60000"
-        )
-    OR
-    (
-        hourClose < "60000"
-        AND
-        (
-            %s > "60000"
-            OR %s < hourClose
-        )
-    )
-    )
-  )as isOpen
+# isOpenQuery = """SELECT DISTINCT googlePlaceId,
+#     (
+#     (%s > hourOpen
+#         OR %s < "60000")
+#     AND
+#     (
+#         hourClose > "60000"
+#         AND
+#         (
+#             %s < hourClose
+#             AND %s > "60000"
+#         )
+#     OR
+#     (
+#         hourClose < "60000"
+#         AND
+#         (
+#             %s > "60000"
+#             OR %s < hourClose
+#         )
+#     )
+#     )
+#   )as isOpen
+# FROM OpenHours
+# WHERE dayOfWeek = %s
+# AND googlePlaceId = %s
+# """
+
+#input - (time_now, time_now, time_now, time_now, day_of_week, googlePlaceId)
+#this query checks if a place is currently open. Matches places using googlePlaceId
+#now time should be in format of HH:MM:SS, and dayOfWeek should be capitalized full day string.
+isOpenQuery = """
+SELECT DISTINCT googlePlaceId,
+(( %s > hourOpen and %s < hourClose ) or (hourClose < hourOpen and (%s < hourClose or %s > hourOpen))) as is_open
 FROM OpenHours
 WHERE dayOfWeek = %s
 AND googlePlaceId = %s
@@ -227,7 +236,7 @@ ON      r.googlePlaceId = p.googlePlaceId
 
 
 class DBUtils:
-    conn = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
+    conn = DB_CONN
 
 
     @classmethod
@@ -243,8 +252,8 @@ class DBUtils:
         openHours - all the places's opening hours.
         """
         cursor = cls.conn.cursor()
-        nowTime = datetime.utcnow() + timedelta(0,60*60*2) #add israel GMT
-        curHour = nowTime.strftime("%H%M%S")
+        nowTime = datetime.utcnow() + timedelta(hours=2) #add israel GMT
+        curHour = nowTime.strftime("%H:%M:%S")
         curDay = nowTime.strftime("%A")
         isOpen = cls.openNow(curDay, curHour, googlePlaceId)
         cursor.execute(getTopDetails, (googlePlaceId, curDay, googlePlaceId))
@@ -263,18 +272,16 @@ class DBUtils:
     @classmethod
     def openNow(cls, curDay, curHHMMSS, googlePlaceId):
         """checks if a given place is currently open. Assumes that if the closing hour is 0-6 am it is in the following day.
-        curDay should be the day's name with a capital latter
+        curDay should be the day's name with a capital letter
         cur HHMMSS should be a string in the format HHMMSS"""
         cursor = cls.conn.cursor()
-        if type(curDay) is not int or curDay > 6:
-            return None
-        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curDay, googlePlaceId))
+        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curDay, googlePlaceId))
         answer = cursor.fetchone()
         if answer == None:
             return None
         else:
             return answer[1]
-            
+
     @classmethod
     def GooglePlaceIdFromIdPlaces(cls, idPlaces):
         """translates an idPlaces to a googlePlaceId"""
@@ -302,7 +309,8 @@ class DBUtils:
         '''
         cursor = cls.conn.cursor()
         cursor.execute(getUserQuery, (username,))
-        return cursor.fetchone()
+        res = cursor.fetchone()
+        return res
 
 
     @classmethod
@@ -425,12 +433,12 @@ class DBUtils:
 
 
     @classmethod
-    def photographicPlaces(cls, min_num_pics):
+    def photographicPlaces(cls, min_num_pics, my_lat, my_lon):
         """
         Gets all the photos from restaurants who have min_num_pics or more pictures
         """
         cursor = cls.conn.cursor()
-        cursor.execute(getPictures, (min_num_pics, ))
+        cursor.execute(getPictures, (my_lat, my_lat, my_lon, min_num_pics))
         return cursor.fetchall() #we would like to get more than 30 pictures
 
 
@@ -470,8 +478,7 @@ class DBUtils:
         house = None
         city = None
         if "formatted_address" in address:
-            addr = address["formatted_address"]
-            for field in addr.split(","):
+            for field in address["formatted_address"].split(","):
                 if " St " in field:
                     street = field.split(" St ")[0]
                     house = field.split(" St ")[1]
@@ -479,6 +486,10 @@ class DBUtils:
                         house = None
                 if "Tel Aviv-Yafo" in field:
                     city = "Tel Aviv-Yafo"
+
+            # in case formatted address won't split up nicely, save it in the street
+            if street is None:
+                street = address["formatted_address"]
         try:
             cursor.execute(insertAddrQuery, (googlePlaceId, city, street, house, lat, lon))
         except Exception, e:
