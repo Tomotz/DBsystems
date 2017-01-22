@@ -42,7 +42,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
         console.log("PlacesController: getting general");
         get_places = PlacesService.get_places_home;
         $scope.tab_class = "home_tab";
-        $scope.selected_radius = 3;
+        $scope.selected_radius = 5;
     } else if ($state.includes("**.rests.**")){
         console.log("PlacesController: getting rests");
         get_places = PlacesService.get_places_food;
