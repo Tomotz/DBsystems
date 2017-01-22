@@ -5,7 +5,7 @@
 from settings import LOCAL_DB_PASS
 import MySQLdb as mdb
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 MAX_RESULTS = 1000 #the maximum number of results to return from a query.
@@ -243,7 +243,7 @@ class DBUtils:
         openHours - all the places's opening hours.
         """
         cursor = cls.conn.cursor()
-        nowTime = datetime.utcnow()
+        nowTime = datetime.utcnow() + timedelta(0,60*60*2) #add israel GMT
         curHour = nowTime.strftime("%H%M%S")
         curDay = nowTime.strftime("%A")
         isOpen = cls.openNow(curDay, curHour, googlePlaceId)
@@ -263,12 +263,12 @@ class DBUtils:
     @classmethod
     def openNow(cls, curDay, curHHMMSS, googlePlaceId):
         """checks if a given place is currently open. Assumes that if the closing hour is 0-6 am it is in the following day.
-        curDay should be a key for dayOfWeek dictionary (0 for monday and so on)
+        curDay should be the day's name with a capital latter
         cur HHMMSS should be a string in the format HHMMSS"""
         cursor = cls.conn.cursor()
         if type(curDay) is not int or curDay > 6:
             return None
-        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, dayOfWeek[curDay], googlePlaceId))
+        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curDay, googlePlaceId))
         answer = cursor.fetchone()
         if answer == None:
             return None
