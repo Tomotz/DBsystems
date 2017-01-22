@@ -2,7 +2,6 @@
 var paths = [
     "partials/login_signup.html",
     "partials/main.html",
-    "partials/home.html",
     "partials/tab_content.html"
 ];
 
