@@ -2,7 +2,7 @@
 
 var PlacesController = angular.module('DBApp.PlacesController', ['ngRoute']);
 
-PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state', 'PlacesService', 'LoginService', function($scope, $rootScope, $state, PlacesService, LoginService) {
+PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state', '$timeout', 'PlacesService', 'LoginService', function($scope, $rootScope, $state, $timeout, PlacesService, LoginService) {
     console.log("PlacesController init");
 
     // Controller Init
@@ -26,7 +26,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
             console.log("PlacesController: got places - ", data);
             all_places = data;
             $scope.places = all_places.slice(0, 10);
-            $scope.data_loaded = true;
+            $timeout(function () {$scope.data_loaded = true;}, 200);
 
             // update user address, no need to wait for response
             var user_details = {
@@ -96,7 +96,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
             all_places = data;
             $scope.places = all_places.slice(0, 10);
             $scope.all_places_len = all_places.length;
-            $scope.data_loaded = true;
+            $timeout(function () {$scope.data_loaded = true;}, 200);
         });
     };
 
@@ -122,7 +122,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
                 console.log("PlacesController: got feeling lucky places - ", data);
                 all_places = data;
                 $scope.places = all_places.slice(0, 10);
-                $scope.data_loaded = true;
+                $timeout(function () {$scope.data_loaded = true;}, 200);
             }
         })
     };
@@ -139,7 +139,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
                 console.log("PlacesController: got photogenic places - ", data);
                 all_places = data;
                 $scope.places = all_places.slice(0, 10);
-                $scope.data_loaded = true;
+                $timeout(function () {$scope.data_loaded = true;}, 200);
             }
         })
     };
