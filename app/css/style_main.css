@@ -107,10 +107,10 @@ input:focus {
   outline: none;
 }
 .main_class{
-  /*
   background-image: url("http://spasique.com/wp-content/uploads/2015/10/132210_1.jpg");
-  */
+  /*
   background: rgba(31, 132, 236, 0.61);
+  */
   background-size:cover;
   /*
   background-attachment: fixed;
@@ -337,6 +337,7 @@ ul li
     height: 100%;
     overflow-y: scroll;
 }*/
+
 .list-wrapper{
 position: absolute;
   
@@ -352,7 +353,7 @@ overflow-x: hidden;
   height: 100%;*/
 }
 .list-wrapper .FeelingLucky{
-  top: 12.5%;
+  top: 7%;
   width: 85%;
   left: 10%;
   position: fixed;
@@ -426,17 +427,25 @@ overflow-x: hidden;
 .show-more {
     margin-left: 4rem;
     font-size: 20px;
+  position: absolute;
+  top:15%;
 }
 .buttons-location{
     font-size: 20px;
-    margin-top: 7rem;
+    margin-top: 6rem;
+      /*
+      margin-left: 10rem;
+      */
+
     text-align: center;
 }
 
 .list-wrapper .place_page_list{
   position: absolute;
   width: 50%;
+  /*
   top: 12.5%;
+  */
   left: 15px;
   height: 100%;
   bottom: 0;
@@ -449,8 +458,10 @@ overflow-x: hidden;
   bottom: 0;
 }
 .list-wrapper .place_photo_list .item_photo{
-position: absolute;
+position: relative;
+    /*
     top: 10%;
+    */
     bottom: 0;
     left: -17px;
     right: -17px; /* Increase/Decrease this value for cross-browser compatibility */
@@ -521,16 +532,12 @@ background: rgba(237, 249, 221, 0.61);
 }
 .list-wrapper .place_page_list .place_reviews{
   background: rgba(237, 249, 221, 0.61);
-  /*
-  position: absolute;
-  */
-  /*
-  top: 12%;
-  */
+
   border: 2px transparent;
   padding: 0 20px;
   margin-top: 5px;
   margin-bottom: 5px;
+  margin-left: 5px;
 
   overflow: hidden;
   -webkit-border-radius: 21px;
@@ -539,16 +546,7 @@ background: rgba(237, 249, 221, 0.61);
   color: #000000;
   position: relative;
 
-  /*
-  display: block;
-  */
-  /*
-  width: 75%;
-  left: 12%;
-
-  */
- /*width: 50%;
-  left: 20%;*/}
+ }
 
 .list-wrapper .place_page_list .place_details{
 /*  position: absolute;
@@ -569,21 +567,9 @@ background: rgba(237, 249, 221, 0.61);
   display: block;
   position: relative;  /*top: 12%;*/
 
- /*
-  width: 75%;
-  left: 12%;
 
-  */
- /*width: 50%;
-  left: 20%;*/
 }
 
-/*.opening_hours{
-
-}*/
-/*
-* {margin: 0; padding: 0;}
-*/
 .item_photo ul {
 
     width: 95%;
