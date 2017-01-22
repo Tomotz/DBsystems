@@ -343,7 +343,7 @@ class DBUtils:
         cursor = cls.conn.cursor()
         userRow = cls.getUserByUname(username)
         if userRow == None or len(userRow) < 1:
-            return None
+            return None #User does not exist.
         idUser = userRow[0]
         idAddr = cls.getOrCreateAddrId(address)
         if None == idAddr:
@@ -351,11 +351,11 @@ class DBUtils:
             return None
         try:
             cursor.execute(updateUserQuery, (idAddr, username, firstName, lastName, idUser))
+            cls.conn.commit()
         except Exception, e:
             print "There was an unsupported character in the input"
             print str(e)
             return None
-        cls.conn.commit()
         return cls.getUserByUname(username)
 
 
@@ -439,7 +439,7 @@ class DBUtils:
         """
         Gets the idAddr of the row in the table mathching the input address. If the row does not exist, it is created.
         input - a location object returned from google
-        output - the addrId from Addr table matching the given address
+        output - the idAddr from Addr table matching the given address
         """
         cursor = cls.conn.cursor()
         if "place_id" not in address:
