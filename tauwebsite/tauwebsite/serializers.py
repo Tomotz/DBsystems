@@ -58,16 +58,6 @@ class Serializers:
 
     @classmethod
     def FullPlaceSerializer(cls, place_row):
-        # Gets all the details we have on a certain place
-        # Returns a tuple of (isOpen, topDetails, photos, reviews, openHours) where
-        # isOpen - boolean that is true iff the place is currently open. If we don't have the needed openning hours in the DB, None is returned
-        # topDetails - a tuple of results about the place from getTopDetails query. googlePlaceId,
-        #     name, city, street, house_number, lat, lon, phone, website, hourOpen, hourClose, rating, reviews_rating
-        # photos - all the photos of the given place
-        # reviews - all the reviews about the given place
-        # openHours - all the places's opening hours.
-        import datetime
-        print "**********************************************", place_row
         pics = []
         for img in place_row[2]:
             image_url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&maxheight=1000&photoreference=%s&key=AIzaSyD_nf1ob13G9wRi_cupAAaJ9iun2vcBGgo" % img[2]
@@ -110,8 +100,6 @@ class Serializers:
             "website"      : place_row[1][8],
             "hour_open"    : str(place_row[1][9]),
             "hour_closed"  : str(place_row[1][10]),
-            # "hour_open"    : place_row[1][9].seconds if place_row[1][9] is not None else None,
-            # "hour_closed"  : place_row[1][10].seconds if place_row[1][10] is not None else None,
             "rating"       : place_row[1][11],
             "rev_rating"   : float(place_row[1][12]) if place_row[1][12] is not None else None,
             "photos"       : pics,

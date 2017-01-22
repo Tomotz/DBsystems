@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from settings import LOCAL_DB_PASS
+from settings import LOCAL_DB_PASS, DB_CONN
 import MySQLdb as mdb
 import time
 
@@ -226,7 +226,7 @@ ON      r.googlePlaceId = p.googlePlaceId
 
 
 class DBUtils:
-    conn = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
+    conn = DB_CONN
 
 
     @classmethod
@@ -272,7 +272,7 @@ class DBUtils:
             return None
         else:
             return answer[1]
-            
+
     @classmethod
     def GooglePlaceIdFromIdPlaces(cls, idPlaces):
         """translates an idPlaces to a googlePlaceId"""
@@ -300,7 +300,8 @@ class DBUtils:
         '''
         cursor = cls.conn.cursor()
         cursor.execute(getUserQuery, (username,))
-        return cursor.fetchone()
+        res = cursor.fetchone()
+        return res
 
 
     @classmethod
@@ -423,12 +424,12 @@ class DBUtils:
 
 
     @classmethod
-    def photographicPlaces(cls, min_num_pics):
+    def photographicPlaces(cls, min_num_pics, my_lat, my_lon):
         """
         Gets all the photos from restaurants who have min_num_pics or more pictures
         """
         cursor = cls.conn.cursor()
-        cursor.execute(getPictures, (min_num_pics, ))
+        cursor.execute(getPictures, (my_lat, my_lat, my_lon, min_num_pics))
         return cursor.fetchall() #we would like to get more than 30 pictures
 
 
@@ -463,8 +464,7 @@ class DBUtils:
         house = None
         city = None
         if "formatted_address" in address:
-            addr = address["formatted_address"]
-            for field in addr.split(","):
+            for field in address["formatted_address"].split(","):
                 if " St " in field:
                     street = field.split(" St ")[0]
                     house = field.split(" St ")[1]
@@ -472,6 +472,10 @@ class DBUtils:
                         house = None
                 if "Tel Aviv-Yafo" in field:
                     city = "Tel Aviv-Yafo"
+
+            # in case formatted address won't split up nicely, save it in the street
+            if street is None:
+                street = address["formatted_address"]
         try:
             cursor.execute(insertAddrQuery, (googlePlaceId, city, street, house, lat, lon))
         except Exception, e:
