@@ -4,7 +4,9 @@ html, body {
     position: relative;
     width:100%;
     height:100%;
-
+/*
+background: rgba(216,220,236,0.61);
+*/
     /*overflow: hidden;*/
     overflow-x:hidden;
 }
@@ -106,14 +108,110 @@ input:focus {
 }
 .main_class{
   background-image: url("http://spasique.com/wp-content/uploads/2015/10/132210_1.jpg");
+  /*
+  background: rgba(31, 132, 236, 0.61);
+  */
   background-size:cover;
+  /*
   background-attachment: fixed;
+  */
 }
-/*#content-main{
-  background-image: url("http://spasique.com/wp-content/uploads/2015/10/132210_1.jpg");
-  background-size:cover;
-  background-attachment: fixed;
-}*/
+/*
+
+.navigation {
+  !* critical sizing and position styles *!
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+
+  !* non-critical appearance styles *!
+  list-style: none;
+  background: #111;
+}
+
+!* Navigation Menu - List items *!
+.nav-item {
+  !* non-critical appearance styles *!
+  width: 200px;
+  border-top: 1px solid #111;
+  border-bottom: 1px solid #000;
+}
+
+.nav-item a {
+  !* non-critical appearance styles *!
+  display: block;
+  padding: 1em;
+  background: linear-gradient(135deg, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%);
+  color: white;
+  font-size: 1.2em;
+  text-decoration: none;
+  transition: color 0.2s, background 0.5s;
+}
+
+.nav-item a:hover {
+  color: #c74438;
+  background: linear-gradient(135deg, rgba(0,0,0,0) 0%,rgba(75,20,20,0.65) 100%);
+}
+
+!* Site Wrapper - Everything that isn't navigation *!
+.site-wrap {
+  !* Critical position and size styles *!
+  min-height: 100%;
+  min-width: 100%;
+  background-color: white; !* Needs a background or else the nav will show through *!
+  position: relative;
+  top: 0;
+  bottom: 100%;
+  left: 0;
+  z-index: 1;
+
+  !* non-critical apperance styles *!
+  padding: 4em;
+  background-image: linear-gradient(135deg, rgb(254,255,255) 0%,rgb(221,241,249) 35%,rgb(160,216,239) 100%);
+  background-size: 200%;
+}
+
+!* Nav Trigger *!
+.nav-trigger {
+  !* critical styles - hide the checkbox input *!
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+}
+
+label[for="nav-trigger"] {
+  !* critical positioning styles *!
+  position: fixed;
+  left: 15px; top: 15px;
+  z-index: 2;
+
+  !* non-critical apperance styles *!
+  height: 30px;
+  width: 30px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' x='0px' y='0px' width='30px' height='30px' viewBox='0 0 30 30' enable-background='new 0 0 30 30' xml:space='preserve'><rect width='30' height='6'/><rect y='24' width='30' height='6'/><rect y='12' width='30' height='6'/></svg>");
+  background-size: contain;
+}
+
+!* Make the Magic Happen *!
+.nav-trigger + label, .site-wrap {
+  transition: left 0.2s;
+}
+
+.nav-trigger:checked + label {
+  left: 215px;
+}
+
+.nav-trigger:checked ~ .site-wrap {
+  left: 200px;
+  box-shadow: 0 0 5px 5px rgba(0,0,0,0.5);
+}
+*/
+
 .menu_bar{
   float: left;
     /*
@@ -200,13 +298,14 @@ a:hover
 { text-decoration: none;
   color: #5D5D5D;}
 
-/*ul
-{ margin: 2px 0px 22px 17px;}*/
+ul
+{ margin: 2px 0px 22px 17px;}
 
-/*ul li
+ul li
 { list-style-type: circle;
   margin: 0 0 6px 0;
-  padding: 0 0 4px 5px;}*/
+  padding: 0 0 4px 5px;}
+
 /********************************************/
 
 /*
@@ -238,8 +337,10 @@ a:hover
     height: 100%;
     overflow-y: scroll;
 }*/
+
 .list-wrapper{
 position: absolute;
+  
     top: 25%;
     bottom: 0;
     left: -17px;
@@ -251,8 +352,8 @@ overflow-x: hidden;
   width: 100%;
   height: 100%;*/
 }
-.FeelingLucky{
-  top: 12.5%;
+.list-wrapper .FeelingLucky{
+  top: 7%;
   width: 85%;
   left: 10%;
   position: fixed;
@@ -304,7 +405,7 @@ overflow-x: hidden;
   /*
   top: 70px;
   */
-top:12.5%;
+  top:12.5%;
   width: 100px;
   -webkit-border-radius: 21px;
   border-radius:15px;
@@ -326,17 +427,25 @@ top:12.5%;
 .show-more {
     margin-left: 4rem;
     font-size: 20px;
+  position: absolute;
+  top:15%;
 }
 .buttons-location{
     font-size: 20px;
-    margin-top: 7rem;
+    margin-top: 6rem;
+      /*
+      margin-left: 10rem;
+      */
+
     text-align: center;
 }
 
 .list-wrapper .place_page_list{
   position: absolute;
   width: 50%;
+  /*
   top: 12.5%;
+  */
   left: 15px;
   height: 100%;
   bottom: 0;
@@ -348,14 +457,16 @@ top:12.5%;
   right: 0;
   bottom: 0;
 }
-.list-wrapper place_photo_list .item_photo{
-position: absolute;
+.list-wrapper .place_photo_list .item_photo{
+position: relative;
+    /*
     top: 10%;
+    */
     bottom: 0;
     left: -17px;
     right: -17px; /* Increase/Decrease this value for cross-browser compatibility */
     overflow-y: scroll;
-    /*overflow-x: hidden;*/
+    overflow-x: hidden;
   /*position: absolute;
      overflow: scroll;
     overflow-y: scroll;
@@ -421,16 +532,12 @@ background: rgba(237, 249, 221, 0.61);
 }
 .list-wrapper .place_page_list .place_reviews{
   background: rgba(237, 249, 221, 0.61);
-  /*
-  position: absolute;
-  */
-  /*
-  top: 12%;
-  */
+
   border: 2px transparent;
   padding: 0 20px;
   margin-top: 5px;
   margin-bottom: 5px;
+  margin-left: 5px;
 
   overflow: hidden;
   -webkit-border-radius: 21px;
@@ -439,16 +546,7 @@ background: rgba(237, 249, 221, 0.61);
   color: #000000;
   position: relative;
 
-  /*
-  display: block;
-  */
-  /*
-  width: 75%;
-  left: 12%;
-
-  */
- /*width: 50%;
-  left: 20%;*/}
+ }
 
 .list-wrapper .place_page_list .place_details{
 /*  position: absolute;
@@ -469,21 +567,9 @@ background: rgba(237, 249, 221, 0.61);
   display: block;
   position: relative;  /*top: 12%;*/
 
- /*
-  width: 75%;
-  left: 12%;
 
-  */
- /*width: 50%;
-  left: 20%;*/
 }
 
-/*.opening_hours{
-
-}*/
-/*
-* {margin: 0; padding: 0;}
-*/
 .item_photo ul {
 
     width: 95%;

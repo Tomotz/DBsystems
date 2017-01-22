@@ -60,8 +60,8 @@ class Serializers:
     def FullPlaceSerializer(cls, place_row):
         pics = []
         for img in place_row[2]:
-            image_url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&maxheight=1000&photoreference=%s&key=AIzaSyD_nf1ob13G9wRi_cupAAaJ9iun2vcBGgo" % img[2]
-            #image_url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&maxheight=1000&photoreference=%s&key=AIzaSyBmNli_ISnmyJxWcPYjCPLB2P8Rbm5dUAQ" % img[2]
+            #image_url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&maxheight=1000&photoreference=%s&key=AIzaSyD_nf1ob13G9wRi_cupAAaJ9iun2vcBGgo" % img[2]
+            image_url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1000&maxheight=1000&photoreference=%s&key=AIzaSyBmNli_ISnmyJxWcPYjCPLB2P8Rbm5dUAQ" % img[2]
             pics.append(image_url)
 
         reviews = []

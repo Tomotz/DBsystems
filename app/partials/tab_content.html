@@ -21,6 +21,7 @@
                 </div>
             </div>
         </div>
+    <div class="list-wrapper" ng-show="show_list">
 
         <div class="FeelingLucky" ng-show="state.includes('**.home.**')">
             Don't know what you want to do? Search a place by review!
@@ -32,16 +33,18 @@
             <br>
             You know what? just show me places with a lot of <a ng-click="get_photogenic_places_clicked()">pictures</a>
         </div>
-
-        <div class="list-wrapper item_photo">
-            <div class="loader" ng-show="!data_loaded">Loading...</div>
-            <div ng-show="data_loaded">
-                <div class="show-more">
+</div>
+        <div class="show-more">
                     Showing {{ places.length }} out of {{ all_places_len }} places
                     <button class="pure-button"
                             ng-class="{'pure-button-disabled': places.length == all_places_len}"
                             ng-click="show_more_clicked()">Show More..</button>
-                </div>
+        </div>
+
+        <div class="list-wrapper item_photo">
+            <div class="loader" ng-show="!data_loaded">Loading...</div>
+            <div ng-show="data_loaded">
+
                 <ul>
                     <li ng-repeat="place in places | orderBy : place.dist_from_me" ng-click="open_place(place)">
                         <img ng-src="{{ place.image_url }}">
