@@ -100,10 +100,11 @@ PlacesService.service('PlacesService', ['$rootScope', '$http', '$q', function($r
         return deferred.promise;
     };
 
-    this.get_photogenic_places = function (num) {
-        console.log("PlacesService get_photogenic_places");
+    this.get_photogenic_places = function (params) {
+        console.log("PlacesService get_photogenic_places - ", params);
         var deferred = $q.defer();
-        $http.get('/places/photogenic/' + num + '/').then(function (result) {
+        // $http.get('/places/photogenic/' + num + '/').then(function (result) {
+        $http.post('/places/photogenic/', params).then(function (result) {
             deferred.resolve(result.data);
         }, function (result) {
             console.log("Error getting photogenic places!", result);

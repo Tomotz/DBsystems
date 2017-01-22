@@ -23,17 +23,18 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
             all_places = data;
             $scope.places = all_places.slice(0, 10);
             $scope.data_loaded = true;
+
+            // update user address, no need to wait for response
+            var user_details = {
+                "user_name"  : $scope.my_user.username,
+                "first_name" : $scope.my_user.first_name,
+                "last_name"  : $scope.my_user.last_name,
+                "address"    : new_addr,
+                "is_update"  : true
+            };
+            LoginService.user_signup(user_details);
         });
 
-        // update user address, no need to wait for response
-        var user_details = {
-            "user_name"  : $scope.my_user.username,
-            "first_name" : $scope.my_user.first_name,
-            "last_name"  : $scope.my_user.last_name,
-            "address"    : new_addr,
-            "is_update"  : true
-        };
-        LoginService.user_signup(user_details);
     });
 
     // init tab-related vars 
@@ -114,7 +115,12 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
 
         $scope.get_photogenic_places_clicked = function () {
             console.log("get_photografic_places (hardcoded 30 pics)");
-            PlacesService.get_photogenic_places(5).then(function (data) {
+            params = {
+                lat: $rootScope.my_user.address.location.lat,
+                lng: $rootScope.my_user.address.location.lng,
+                num_of_pics: 10
+            };
+            PlacesService.get_photogenic_places(params).then(function (data) {
                 if (data) {
                     console.log("PlacesController: got photogenic places - ", data);
                     all_places = data;

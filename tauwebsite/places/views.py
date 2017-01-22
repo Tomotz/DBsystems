@@ -19,8 +19,12 @@ class PLACE_TYPES:
 class PhotograficPlacesView(APIView):
     permission_classes = (permissions.AllowAny,)
 
-    def get(self, request, num):
-        data = DBUtils.photographicPlaces(num)
+    def post(self, request, *args, **kwargs):
+        lat = request.data.get("lat")
+        lng = request.data.get("lng")
+        num = request.data.get("num_of_pics")
+
+        data = DBUtils.photographicPlaces(num, lat, lng)
 
         return HttpResponse(Serializers.PlaceSerializer(data))
 

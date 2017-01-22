@@ -33,11 +33,11 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'places.apps.PlacesConfig',
     'users.apps.UsersConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
+    # 'django.contrib.admin',
+    # 'django.contrib.auth',
+    # 'django.contrib.contenttypes',
+    # 'django.contrib.sessions',
+    # 'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
 
@@ -72,9 +72,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'tauwebsite.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/dev/ref/settings/#databases
 LOCAL_DB_PASS = os.environ.get('LOCAL_DB_PASS')
+
+# Django DB configuration ---UNUSED---
+# https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -86,7 +87,27 @@ DATABASES = {
     }
 }
 
+# Manual DB connection, in use
+import MySQLdb as mdb
+DB_CONN = mdb.connect(DATABASES['default']['HOST'], DATABASES['default']['USER'], DATABASES['default']['PASSWORD'], DATABASES['default']['NAME'], port=int(DATABASES['default']['PORT']), use_unicode=True, charset="utf8")
+# DB_CONN = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
 
+LOGGING = {
+    'version': 1,
+    'handlers': {
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers':['console'],
+            'propagate': True,
+            'level':'DEBUG',
+        }
+    },
+}
 # Password validation
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
 
@@ -124,8 +145,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_FILES_FULL_PATH = os.environ.get('DBMS_PATH')
+# STATIC_FILES_FULL_PATH = r"C:\Users\liadwg\Desktop\liad\CS\DBMS APP\DBsystems\app",
 
 STATICFILES_DIRS = (
-    os.environ.get('DBMS_PATH'),
-    # r"C:\Users\liadwg\Desktop\liad\CS\DBMS APP\DBsystems\app",
+    STATIC_FILES_FULL_PATH,
 )

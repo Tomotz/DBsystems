@@ -31,7 +31,7 @@ urlpatterns = [
     # Places API
     url(r'^places/general/$', GeneralPlacesView.as_view()),
     url(r'^places/feeling_lucky/(?P<lat>[\w\.]+)/(?P<lng>[\w\.]+)/$', GeneralPlacesView.as_view()),
-    url(r'^places/photogenic/(?P<num>\d+)/$', PhotograficPlacesView.as_view()),
+    url(r'^places/photogenic/$', PhotograficPlacesView.as_view()),
     url(r'^places/review_text/$', PlacesByReviewView.as_view()),
     url(r'^places/food/$', FoodView.as_view()),
     url(r'^places/bars/$', BarView.as_view()),
