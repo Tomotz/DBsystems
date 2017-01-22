@@ -5,8 +5,12 @@ var PlacesController = angular.module('DBApp.PlacesController', ['ngRoute']);
 PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state', 'PlacesService', 'LoginService', function($scope, $rootScope, $state, PlacesService, LoginService) {
     console.log("PlacesController init");
 
+    // Controller Init
+    // ===============
     var autocomplete = get_autocomplete('autocomplete_address_inner');
     var all_places;
+    var params;
+
     // event listener for address changes
     google.maps.event.addListener(autocomplete, 'place_changed', function () {
         var new_addr = autocomplete.getPlace();
@@ -37,7 +41,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
 
     });
 
-    // init tab-related vars 
+    // init tab-related vars
     var get_places = null;
     if ($state.includes("**.home.**")) {
         console.log("PlacesController: getting general");
@@ -68,80 +72,89 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
 
     LoginService.get_my_user().then(function (data) {
         // default radius
-        $scope.selected_radius = 1;
+        $scope.selected_radius = 2;
 
-        var params = {
+        params = {
             lat: $rootScope.my_user.address.location.lat,
             lng: $rootScope.my_user.address.location.lng,
             radius: $scope.selected_radius
         };
-        
+
         $scope.show_list = true;
         $scope.places = [];
+        $scope.refresh_places();
+    });
+
+
+    // Controller Functions
+    // ====================
+    $scope.refresh_places = function () {
+        params.radius = $scope.selected_radius;
+        $scope.data_loaded = false;
         get_places(params).then(function (data) {
             console.log("PlacesController: got places - ", data);
             all_places = data;
             $scope.places = all_places.slice(0, 10);
+            $scope.all_places_len = all_places.length;
             $scope.data_loaded = true;
         });
+    };
 
+    $scope.show_more_clicked = function () {
+        $scope.places = $scope.places.concat(all_places.slice($scope.places.length, $scope.places.length + 10));
+    };
 
-        $scope.show_more_clicked = function () {
-            $scope.places = $scope.places.concat(all_places.slice($scope.places.length, $scope.places.length + 10));
+    $scope.open_place = function (place) {
+        console.log("OPENING ", place);
+        PlacesService.get_place_data(place.google_id).then(function (data) {
+            if (data){
+                console.log("PlacesController: got place details - ", data);
+                $scope.place_to_show = data;
+                $scope.show_list = false;
+            }
+        })
+    };
+
+    $scope.feeling_lucky_clicked = function () {
+        console.log("feeling_lucky_clicked ");
+        PlacesService.get_good_avg_rating_places().then(function (data) {
+            if (data) {
+                console.log("PlacesController: got feeling lucky places - ", data);
+                all_places = data;
+                $scope.places = all_places.slice(0, 10);
+                $scope.data_loaded = true;
+            }
+        })
+    };
+
+    $scope.get_photogenic_places_clicked = function () {
+        console.log("get_photografic_places (hardcoded 30 pics)");
+        params = {
+            lat: $rootScope.my_user.address.location.lat,
+            lng: $rootScope.my_user.address.location.lng,
+            num_of_pics: 10
         };
+        PlacesService.get_photogenic_places(params).then(function (data) {
+            if (data) {
+                console.log("PlacesController: got photogenic places - ", data);
+                all_places = data;
+                $scope.places = all_places.slice(0, 10);
+                $scope.data_loaded = true;
+            }
+        })
+    };
 
-        $scope.open_place = function (place) {
-            console.log("OPENING ", place);
-            PlacesService.get_place_data(place.google_id).then(function (data) {
-                if (data){
-                    console.log("PlacesController: got place details - ", data);
-                    $scope.place_to_show = data;
-                    $scope.show_list = false;
-                }
-            })
+    $scope.search_review = function () {
+        console.log("search_review text - ", $scope.review_text);
+        params = {
+            "text": $scope.review_text
         };
-
-        $scope.feeling_lucky_clicked = function () {
-            console.log("feeling_lucky_clicked ");
-            PlacesService.get_good_avg_rating_places().then(function (data) {
-                if (data) {
-                    console.log("PlacesController: got feeling lucky places - ", data);
-                    all_places = data;
-                    $scope.places = all_places.slice(0, 10);
-                    $scope.data_loaded = true;
-                }
-            })
-        };
-
-        $scope.get_photogenic_places_clicked = function () {
-            console.log("get_photografic_places (hardcoded 30 pics)");
-            params = {
-                lat: $rootScope.my_user.address.location.lat,
-                lng: $rootScope.my_user.address.location.lng,
-                num_of_pics: 10
-            };
-            PlacesService.get_photogenic_places(params).then(function (data) {
-                if (data) {
-                    console.log("PlacesController: got photogenic places - ", data);
-                    all_places = data;
-                    $scope.places = all_places.slice(0, 10);
-                    $scope.data_loaded = true;
-                }
-            })
-        };
-
-        $scope.search_review = function () {
-            console.log("search_review text - ", $scope.review_text);
-            params = {
-                "text": $scope.review_text
-            };
-            PlacesService.get_places_by_review(params).then(function (data) {
-                if (data) {
-                    console.log("PlacesController: got places  - ", data);
-                    $scope.show_list = false;
-                }
-            })
-        }
-    });
+        PlacesService.get_places_by_review(params).then(function (data) {
+            if (data) {
+                console.log("PlacesController: got places  - ", data);
+                $scope.show_list = false;
+            }
+        })
+    }
 
 }]);

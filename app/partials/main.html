@@ -1,41 +1,25 @@
-    <div class="menu_bar">
-
-        <ul id="menu">
-          <!--li><a ui-sref=".rests" ui-sref-active="active">EAT</a></li-->
-          <li ng-class="{'selected': state.includes('**.home.**')}"><a ui-sref=".home">HOME</a></li>
-          <li ng-class="{'selected': state.includes('**.rests.**')}"><a ui-sref=".rests">EAT</a></li>
-          <li ng-class="{'selected': state.includes('**.bars.**')}"><a ui-sref=".bars">DRINK</a></li>
-          <li ng-class="{'selected': state.includes('**.clubs.**')}"><a ui-sref=".clubs">DANCE</a></li>
-          <li ng-class="{'selected': state.includes('**.shops.**')}"><a ui-sref=".shops">SHOP</a></li>
-          <li ng-class="{'selected': state.includes('**.hotels.**')}"><a ui-sref=".hotels">SLEEP</a></li>
-        </ul>
+<div class="menu_bar">
+    <ul id="menu">
+      <!--li><a ui-sref=".rests" ui-sref-active="active">EAT</a></li-->
+      <li ng-class="{'selected': state.includes('**.home.**')}"><a ui-sref=".home">HOME</a></li>
+      <li ng-class="{'selected': state.includes('**.rests.**')}"><a ui-sref=".rests">EAT</a></li>
+      <li ng-class="{'selected': state.includes('**.bars.**')}"><a ui-sref=".bars">DRINK</a></li>
+      <li ng-class="{'selected': state.includes('**.clubs.**')}"><a ui-sref=".clubs">DANCE</a></li>
+      <li ng-class="{'selected': state.includes('**.shops.**')}"><a ui-sref=".shops">SHOP</a></li>
+      <li ng-class="{'selected': state.includes('**.hotels.**')}"><a ui-sref=".hotels">SLEEP</a></li>
+    </ul>
+</div>
+<div class="search_input">
+    <div class="whereto"><!--Where to?-->
+        <span><!--TLV--></span>
     </div>
+        <!--input class="button" placeholder="Search..." />
+        <script src='http://use.edgefonts.net/amaranth.js'></script-->
+    <input class="button"
+           id="autocomplete_address_inner"
+           type="text"
+           ng-class="{'input_err' : addr_err}"
+           placeholder="Search address...">
+</div>
 
-<!--    <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-    <label for="nav-trigger"></label>
-
-   <ul class="navigation">
-       <li class="nav-item" ng-class="{'selected': state.includes('**.home.**')}"><a ui-sref=".home">HOME</a></li>
-       <li class="nav-item" ng-class="{'selected': state.includes('**.rests.**')}"><a ui-sref=".rests">EAT</a></li>
-       <li class="nav-item" ng-class="{'selected': state.includes('**.bars.**')}"><a ui-sref=".bars">DRINK</a></li>
-       <li class="nav-item" ng-class="{'selected': state.includes('**.clubs.**')}"><a ui-sref=".clubs">DANCE</a></li>
-       <li class="nav-item" ng-class="{'selected': state.includes('**.shops.**')}"><a ui-sref=".shops">SHOP</a></li>
-       <li class="nav-item" ng-class="{'selected': state.includes('**.hotels.**')}"><a ui-sref=".hotels">SLEEP</a></li>
-    </ul>-->
-
-
-    <div class="search_input">
-        <div class="whereto"><!--Where to?-->
-            <span><!--TLV--></span>
-        </div>
-            <!--input class="button" placeholder="Search..." />
-            <script src='http://use.edgefonts.net/amaranth.js'></script-->
-        <input class="button"
-               id="autocomplete_address_inner"
-               type="text"
-               ng-class="{'input_err' : addr_err}"
-               placeholder="Search address...">
-    </div>
-    <ui-view></ui-view>
-
-
+<ui-view></ui-view>
