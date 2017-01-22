@@ -5,6 +5,7 @@
 from settings import LOCAL_DB_PASS
 import MySQLdb as mdb
 import time
+from datetime import datetime
 
 
 MAX_RESULTS = 1000 #the maximum number of results to return from a query.
@@ -242,8 +243,9 @@ class DBUtils:
         openHours - all the places's opening hours.
         """
         cursor = cls.conn.cursor()
-        curHour = (time.strftime("%H%M%S"))
-        curDay = (time.strftime("%A"))
+        nowTime = datetime.utcnow()
+        curHour = nowTime.strftime("%H%M%S")
+        curDay = nowTime.strftime("%A")
         isOpen = cls.openNow(curDay, curHour, googlePlaceId)
         cursor.execute(getTopDetails, (googlePlaceId, curDay, googlePlaceId))
         topDetails = cursor.fetchone()
@@ -260,7 +262,7 @@ class DBUtils:
 
     @classmethod
     def openNow(cls, curDay, curHHMMSS, googlePlaceId):
-        """Gets all places that are open now
+        """checks if a given place is currently open. Assumes that if the closing hour is 0-6 am it is in the following day.
         curDay should be a key for dayOfWeek dictionary (0 for monday and so on)
         cur HHMMSS should be a string in the format HHMMSS"""
         cursor = cls.conn.cursor()
@@ -443,6 +445,11 @@ class DBUtils:
         if "place_id" not in address:
             return None
         googlePlaceId = address["place_id"]
+        if len(googlePlaceId) > 200:
+            #data will be truncated
+            print "google place_id to long! ignoring address. "
+            print "We only save 200 chars for googlePlaceId. All the addresses in Tel-Aviv's area are short enough for it"
+            return None
 
         cursor.execute(getAddrIdQuery, (googlePlaceId,))
         fetched = cursor.fetchone()
