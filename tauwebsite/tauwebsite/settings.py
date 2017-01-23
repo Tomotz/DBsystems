@@ -33,11 +33,11 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'places.apps.PlacesConfig',
     'users.apps.UsersConfig',
-    #'django.contrib.admin',
-    #'django.contrib.auth',
-    #'django.contrib.contenttypes',
-    #'django.contrib.sessions',
-    #'django.contrib.messages',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
 
@@ -72,7 +72,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'tauwebsite.wsgi.application'
 
 
-LOCAL_DB_PASS = os.environ.get('LOCAL_DB_PASS')
+LOCAL_DB_PASS = 'DbMysql17'# os.environ.get('LOCAL_DB_PASS')
 
 # Django DB configuration ---UNUSED---
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -153,7 +153,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_FILES_FULL_PATH = os.environ.get('DBMS_PATH')
+STATIC_FILES_FULL_PATH = "/specific/scratch/tommottes/django/html/project/app"
 # STATIC_FILES_FULL_PATH = r"C:\Users\liadwg\Desktop\liad\CS\DBMS APP\DBsystems\app",
 
 STATICFILES_DIRS = (
