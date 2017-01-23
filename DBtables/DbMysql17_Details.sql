@@ -28,7 +28,8 @@ CREATE TABLE `Details` (
   `website` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL,
   `googlePlaceId` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`idDetails`),
-  UNIQUE KEY `idDetails_UNIQUE` (`idDetails`)
+  UNIQUE KEY `idDetails_UNIQUE` (`idDetails`),
+  KEY `googlePlaceId_INDEX` (`googlePlaceId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24568 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -51,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-20 11:31:23
+-- Dump completed on 2017-01-23 13:34:24

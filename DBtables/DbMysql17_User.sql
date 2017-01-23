@@ -33,7 +33,7 @@ CREATE TABLE `User` (
   UNIQUE KEY `user_name_UNIQUE` (`user_name`),
   KEY `addr_id_idx` (`addr_id`),
   CONSTRAINT `addr_id` FOREIGN KEY (`addr_id`) REFERENCES `Addr` (`idAddr`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,6 +42,7 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
+INSERT INTO `User` VALUES (1,26783,'tom','tom','tom'),(2,26783,'liad','Liad','Wainberg'),(3,26784,'r','r','r');
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-20 11:31:24
+-- Dump completed on 2017-01-23 13:34:31

@@ -29,7 +29,8 @@ CREATE TABLE `OpenHours` (
   `hourClose` time DEFAULT NULL,
   `googlePlaceId` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`idOpenHours`),
-  UNIQUE KEY `idOpenHours_UNIQUE` (`idOpenHours`)
+  UNIQUE KEY `idOpenHours_UNIQUE` (`idOpenHours`),
+  KEY `googlePlaceId_index` (`googlePlaceId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=38975 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -52,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-20 11:31:18
+-- Dump completed on 2017-01-23 13:34:23
