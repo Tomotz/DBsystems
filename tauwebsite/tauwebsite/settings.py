@@ -33,11 +33,11 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'places.apps.PlacesConfig',
     'users.apps.UsersConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
+    #'django.contrib.admin',
+    #'django.contrib.auth',
+    #'django.contrib.contenttypes',
+    #'django.contrib.sessions',
+    #'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
 
@@ -77,12 +77,20 @@ LOCAL_DB_PASS = os.environ.get('LOCAL_DB_PASS')
 # Django DB configuration ---UNUSED---
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
+    #'default': {
+    #    'ENGINE': 'django.db.backends.mysql',
+    #    'NAME': 'DbMysql17',
+    #    'USER': 'root',
+    #    'PASSWORD': LOCAL_DB_PASS,
+    #    'HOST': 'localhost',
+    #    'PORT': '3306'
+    #}
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'DbMysql17',
-        'USER': 'root',
-        'PASSWORD': LOCAL_DB_PASS,
-        'HOST': 'localhost',
+        'USER': 'DbMysql17',
+        'PASSWORD': 'DbMysql17',
+        'HOST': 'mysqlsrv.cs.tau.ac.il',
         'PORT': '3306'
     }
 }

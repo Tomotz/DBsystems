@@ -292,65 +292,13 @@ def disconnectDB(conn):
 	conn.commit()
 	conn.close()
 
-#hours before 6am count as the previous day.
-isOpenQuery = """SELECT DISTINCT googlePlaceId,
-    (
-    (%s > hourOpen
-        OR %s < "60000")
-    AND
-    (
-        hourClose > "60000"
-        AND
-        (
-            %s < hourClose
-            AND %s > "60000"
-        )
-    OR
-    (
-        hourClose < "60000"
-        AND
-        (
-            %s > "60000"
-            OR %s < hourClose
-        )
-    )
-    )
-  )as isOpen
-FROM OpenHours
-WHERE dayOfWeek = %s
-AND googlePlaceId = %s
-"""
-
-dayOfWeek = {0:"Monday", 1:"Tuesday", 2:"Wednesday", 3:"Thursday", 4:"Friday", 5:"Saturday", 6:"Sunday"}
-def do_stuff(conn):
-	cur = conn.cursor()	
-	curHHMMSS = "100000"
-	print openNow(conn, 1, curHHMMSS, "ChIJ-4EMAWRLHRUR2jwEYdnSUpE")
-	print "done"
-
-def openNow(conn, curDay, curHHMMSS, googlePlaceId):
-    """Gets all places that are open now
-    curDay should be a key for dayOfWeek dictionary (0 for monday and so on)
-    cur HHMMSS should be a string in the format HHMMSS"""
-    cursor = conn.cursor()
-    if type(curDay) is not int or curDay > 6:
-        return None
-    cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, dayOfWeek[curDay], googlePlaceId))
-    answer = cursor.fetchone()
-    if answer == None:
-        return None
-    else:
-        return answer[1]
-
-
 if __name__ == "__main__":
 	conn = connectToDB()
-	do_stuff(conn)
-	# if False:
-	# 	print "DELETING ALL TABLES!"
-	# 	resetAllTables(conn)
-	# else:
-	# 	addFromJsons(conn)
+	if False:
+		print "DELETING ALL TABLES!"
+		resetAllTables(conn)
+	else:
+		addFromJsons(conn)
 	disconnectDB(conn)
 
 
