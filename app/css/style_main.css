@@ -107,14 +107,13 @@ input:focus {
   outline: none;
 }
 .main_class{
+  /*
   background-image: url("http://spasique.com/wp-content/uploads/2015/10/132210_1.jpg");
-  /*
-  background: rgba(31, 132, 236, 0.61);
-  */
-  background-size:cover;
-  /*
   background-attachment: fixed;
   */
+ background-color: #82d4f8;
+  background-size:cover;
+
 }
 /*
 
@@ -492,6 +491,15 @@ position: relative;
 
     column-fill: auto;
 }
+.place_photo_list .item_photo li{
+  display: inline-block;
+  break-inside: avoid-column;
+  -webkit-column-break-inside: avoid;
+  background: white;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+  padding: 10px;
+}
+
 .list-wrapper .place_page_list .opening_hours {
 background: rgba(237, 249, 221, 0.61);
   /*
@@ -569,7 +577,6 @@ background: rgba(237, 249, 221, 0.61);
 
 
 }
-
 .item_photo ul {
 
     width: 95%;
@@ -592,17 +599,19 @@ background: rgba(237, 249, 221, 0.61);
   list-style-type: none;
 }
 .item_photo li {
-/*  position: absolute;
-  top: 50%;*/
-  /*
-  min-height: 350px;
-  */
+ /* position: absolute;
+  top: 50%;
+  min-height: 350px;*/
   display: inline-block;
   break-inside: avoid-column;
   -webkit-column-break-inside: avoid;
-  background: rgba(200, 191, 181, 0.7);
+  /*background: rgba(200, 191, 181, 0.7);
   margin-left:   15px ;
   margin-bottom: 30px ;
+  position: absolute;
+  */background: white;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+  padding: 10px;
 }
 .item_photo h3 {
   color: #000000;
@@ -642,26 +651,22 @@ background: rgba(237, 249, 221, 0.61);
   height: auto;
 
 }
-
+/*
 
 .item_photo li {
   display: inline-block;
   float: left;
-  /*
-  margin: 0 5px;
-  */
 
-  /*
-  padding: 5px;
-  */
-  /*
-  overflow: auto;
-  */
-}
+}*/
 
-.item_photo li:hover {
-  background: rgba(101,101,67,0.64);
-  cursor: pointer;
+.item_photo ul :hover {
+box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+/*  margin-top: -5px;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  */cursor: pointer;
 }
 
 .loader,
@@ -705,3 +710,38 @@ background: rgba(237, 249, 221, 0.61);
     transform: rotate(360deg);
   }
 }
+/*
+#pinBoot {
+  position: relative;
+  max-width: 100%;
+  width: 100%;
+}
+img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+.white-panel {
+  position: absolute;
+  background: white;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+  padding: 10px;
+}
+!*
+stylize any heading tags withing white-panel below
+*!
+
+.white-panel h1 {
+  font-size: 1em;
+}
+.white-panel h1 a {
+  color: #A92733;
+}
+.white-panel:hover {
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+  margin-top: -5px;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}*/
