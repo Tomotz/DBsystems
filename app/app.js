@@ -6,7 +6,6 @@ var DBApp = angular.module('DBApp', [
     'ui.router',
     'DBApp.MainController',
     'DBApp.PlacesController',
-    'DBApp.view2',
     'DBApp.LoginController',
     'DBApp.LoginService',
     'DBApp.PlacesService'
