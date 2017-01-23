@@ -1,0 +1,132 @@
+with type_explode as(
+                    select  id,
+                            place_id,
+                            name,
+                            formatted_address,
+                            location,
+                            icon,
+                            open_now,
+                            price_level,
+                            rating,
+                            photos,
+                            reference,
+                            type
+                    from search_full_results
+                    lateral view explode(types) a as type)
+select type, count(*) as count
+from type_explode
+group by type
+order by count(*) desc
+
+
+
+select  id,
+        place_id,
+        name,
+        formatted_address,
+        geometry.*,
+        icon,
+        opening_hours.*,
+        price_level,
+        rating,
+        photos,
+        reference,
+        types
+from(
+    select result.*
+    from all_search_results
+    lateral view explode (results) a as result)
+
+
+
+with details as(
+                select result.*
+                from(
+                    select parsedJsonObject.result
+                    from google_places_details)),
+     photos as(
+                select id, place_id, photo.photo_reference, photo.width, photo.height
+                from details
+                lateral view explode (photos) b as photo),
+     raw_addresses as(
+                select id, place_id, address.*
+                from details
+                lateral view explode(address_components) b as address),
+     addresses as(
+                select id, place_id, long_name, address_type
+                from raw_addresses
+                lateral view explode(types) b as address_type),
+     country as(
+                select  id,
+                        place_id,
+                        long_name as country
+                from (select * from addresses where address_type like '%country%')
+                ),
+     city as(
+                select  id,
+                        place_id,
+                        long_name as city
+                from (select * from addresses where address_type like '%locality%')
+                ),
+     street as(
+                select  id,
+                        place_id,
+                        long_name as street
+                from (select * from addresses where address_type like '%route%')
+                ),
+     street_num as(
+                select  id,
+                        place_id,
+                        long_name as street_num
+                from (select * from addresses where address_type like '%street_number%')
+                ),
+     formatted_addresses as(
+                select distinct c.*, ci.city, s.street, sn.street_num
+                from country c
+                left join city ci
+                on c.place_id = ci.place_id
+                left join street s
+                on c.place_id = s.place_id
+                left join street_num sn
+                on c.place_id = sn.place_id),
+     coordinates as(
+                select id, place_id, geometry.location from
+                details),
+    full_addresses as (
+                select distinct f.*, c.location
+                from formatted_addresses f
+                left join coordinates c
+                on f.place_id = c.place_id),
+    open_hours as(
+                select id, place_id, day_week as day, open_hour, time as close_hour
+                from(
+                    select id, place_id,
+                           case when day = 0 then 'Monday'
+                                when day = 1 then 'Tuesday'
+                                when day = 2 then 'Wednesday'
+                                when day = 3 then 'Thursday'
+                                when day = 4 then 'Friday'
+                                when day = 5 then 'Saturday'
+                                when day = 6 then 'Sunday'
+                            end as day_week,
+                            time as open_hour,
+                            close.*
+                    from(
+                        select id, place_id, period.open.*, period.close
+                        from (select id, place_id, opening_hours.*
+                              from details)
+                        lateral view explode(periods) a as period)
+                )),
+    reviews as(
+                select review.*
+                from details
+                lateral view explode(reviews) a as review)
+-- select id,
+--       place_id,
+--       formatted_phone_number as phone,
+--       url as google_map_url,
+--       website,
+--       types
+select count(distinct place_id)
+from details
+

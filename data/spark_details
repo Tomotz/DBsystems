@@ -1,0 +1,25 @@
+def getDetailsUrl(placeId : String): String = {
+    return "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + placeId + "&key=AIzaSyD_nf1ob13G9wRi_cupAAaJ9iun2vcBGgo"
+}
+
+var delivery_stream = "google_places_details"
+createDeliveryStreamIfNotExists(delivery_stream, "asyncexecutor", 10, 600)
+
+
+sqlContext.sql("""
+select distinct place_id as pid
+from(
+    select result.*
+    from new_search_results
+    lateral view explode (results) a as result)
+order by pid desc
+limit 900
+""").select("pid")
+    .foreach( a=> {
+        var url_to_execute = getDetailsUrl(a.getAs[String]("pid"))
+        asyncExecuteApiRequestAsync(url_to_execute, delivery_stream, 0)
+    })
+
+
+sqlContext.read.json("s3a://asyncexecutor/google_places_details/2017/01/16/17").createOrReplaceTempView("google_places_details")
+sqlContext.read.option("samplingRatio", "0.01").json("s3a://asyncexecutor/google_places_details/*/*/*/*/*").createOrReplaceTempView("google_places_details")
