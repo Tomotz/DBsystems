@@ -136,7 +136,7 @@ searchInReviewsQuery = """SELECT Places.name, Addr.idAddr, Reviews.text, Reviews
 FROM Reviews, Places, Addr
 WHERE Places.addr_id = Addr.idAddr
 AND Reviews.googlePlaceId = Addr.googlePlaceId
-AND match(Reviews.text) Against('%s' IN BOOLEAN MODE)
+AND match(Reviews.text) Against(%s IN BOOLEAN MODE)
 """
 
 #input - (lat, lat, lng, min_num_of_pictures)
