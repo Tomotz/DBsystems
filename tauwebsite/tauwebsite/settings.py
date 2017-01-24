@@ -153,7 +153,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_FILES_FULL_PATH = "/specific/scratch/tommottes/django/html/project/app"
+STATIC_FILES_FULL_PATH = "/specific/scratch/tommottes/django/app"
 # STATIC_FILES_FULL_PATH = r"C:\Users\liadwg\Desktop\liad\CS\DBMS APP\DBsystems\app",
 
 STATICFILES_DIRS = (
