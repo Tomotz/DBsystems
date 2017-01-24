@@ -132,9 +132,10 @@ AND distanceInKM <= %s
 
 #input - (my_lat, my_lat, my_lon, review_text,)
 #FULL TEXT SEARCH QUERY - this query allows the user to search freely for review text
-searchInReviewsQuery = """SELECT DISTINCT idPlaces, Places.addr_id, Places.name, rating, Places.googlePlaceId, type, url, """+distances+""" AS distanceInKM
-FROM Pics, Places, Addr
-WHERE Places.idPlaces in
+searchInReviewsQuery = """SELECT DISTINCT idPlaces, addr_id, name, rating, placePic.googlePlaceId, type, url, """+distances+""" AS distanceInKM
+FROM """+placeAndPics+""" as placePic, Addr
+WHERE Addr.idAddr = placePic.addr_id
+AND idPlaces in
 (
     SELECT Places.idPlaces
     FROM Reviews, Places, Addr
@@ -142,8 +143,6 @@ WHERE Places.idPlaces in
     AND Reviews.googlePlaceId = Addr.googlePlaceId
     AND match(Reviews.text) Against(%s IN BOOLEAN MODE)
 )
-AND Pics.googlePlaceId = Places.googlePlaceId
-AND Addr.googlePlaceId = Pics.googlePlaceId
 """
 
 #input - (lat, lat, lng, min_num_of_pictures)
