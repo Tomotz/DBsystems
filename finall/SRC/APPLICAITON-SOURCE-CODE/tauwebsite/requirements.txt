@@ -1,0 +1,3 @@
+pytz==2016.10
+virtualenv==15.1.0
+virtualenvwrapper-win==1.2.1
