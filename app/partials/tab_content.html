@@ -43,10 +43,12 @@
 
                 <ul>
                     <li ng-repeat="place in places | orderBy : place.dist_from_me" ng-click="open_place(place)">
-                        <img ng-src="{{ place.image_url }}">
-                        <h3>{{ place.name }}</h3>
-                        <p ng-show="state.includes('**.home.**')">{{ place.type }}<span ng-if="place.rating">, ☆{{ place.rating}}</span></p>
-                        <p ng-show="!state.includes('**.home.**')">{{ place.dist_from_me | number : 2 }} Km From You<span ng-if="place.rating"><br>☆{{ place.rating}}</span></p>
+                        <span class="hover-unshadow">
+                            <img ng-src="{{ place.image_url }}">
+                            <h3>{{ place.name }}</h3>
+                            <p ng-show="state.includes('**.home.**')">{{ place.type }}<span ng-if="place.rating">, ☆{{ place.rating}}</span></p>
+                            <p ng-show="!state.includes('**.home.**')">{{ place.dist_from_me | number : 2 }} Km From You<span ng-if="place.rating"><br>☆{{ place.rating}}</span></p>
+                        </span>
                     </li>
                 </ul>
             </div>
@@ -86,7 +88,9 @@
                 <div class="item_photo">
                     <ul>
                         <li ng-repeat="photo_url in place_to_show.photos">
-                            <img ng-src="{{ photo_url }}">
+                            <span class="hover-unshadow">
+                                <img ng-src="{{ photo_url }}">
+                            </span>
                         </li>
                     </ul>
                 </div>
