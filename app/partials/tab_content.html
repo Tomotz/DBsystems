@@ -1,7 +1,5 @@
 <div>
-    <!--div class="list-wrapper" ng-show="show_list"-->
     <div ng-show="show_list">
-        <!--button class = "showMoreButton" ng-click="show_more_clicked()">Show More..</button-->
         <div class="buttons-location">
             <div ng-show="!state.includes('**.home.**')">
                 How are you getting there?
@@ -15,9 +13,6 @@
                     <button class="pure-button"
                             ng-class="{'pure-button-active': selected_radius == 10}"
                             ng-click="selected_radius = 10; refresh_places();">By Car</button>
-                    <!--<button class="showMoreButton radiusSelectionButton1" ng-click="selected_radius = 2; refresh_places();">By Foot</button>-->
-                    <!--<button class="showMoreButton radiusSelectionButton2" ng-click="selected_radius = 5; refresh_places();">By Bicycle</button>-->
-                    <!--<button class="showMoreButton radiusSelectionButton3" ng-click="selected_radius = 10; refresh_places();">By Car</button>-->
                 </div>
             </div>
         </div>
@@ -32,6 +27,7 @@
             <button ng-click="feeling_lucky_clicked()">I'm Feeling Lucky..</button>
             <br>
             You know what? just show me places with a lot of <a ng-click="get_photogenic_places_clicked()">pictures</a>
+            <span ng-show="found_nothing"><br>No Results! Try searching for something else..</span>
         </div>
 </div>
         <div class="show-more">

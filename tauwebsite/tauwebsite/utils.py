@@ -392,13 +392,13 @@ class DBUtils:
 
 
     @classmethod
-    def getReviewByText(cls, review_text):
+    def getReviewByText(cls, review_text, lat, lng):
         """
         Gets all the places that has given input words in their text.
         """
         cursor = cls.conn.cursor()
         try:
-            cursor.execute(searchInReviewsQuery, (review_text,))
+            cursor.execute(searchInReviewsQuery, (lat, lat, lng, review_text))
         except Exception, e:
             print "There was an unsupported character in the input"
             print str(e)

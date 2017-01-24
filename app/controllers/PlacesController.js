@@ -122,6 +122,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
                 console.log("PlacesController: got feeling lucky places - ", data);
                 all_places = data;
                 $scope.places = all_places.slice(0, 10);
+                $scope.all_places_len = all_places.length;
                 $timeout(function () {$scope.data_loaded = true;}, 200);
             }
         })
@@ -139,20 +140,29 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
                 console.log("PlacesController: got photogenic places - ", data);
                 all_places = data;
                 $scope.places = all_places.slice(0, 10);
+                $scope.all_places_len = all_places.length;
                 $timeout(function () {$scope.data_loaded = true;}, 200);
             }
         })
     };
 
     $scope.search_review = function () {
+        $scope.found_nothing = false;
         console.log("search_review text - ", $scope.review_text);
         params = {
-            "text": $scope.review_text
+            lat: $rootScope.my_user.address.location.lat,
+            lng: $rootScope.my_user.address.location.lng,
+            text: $scope.review_text
         };
         PlacesService.get_places_by_review(params).then(function (data) {
             if (data) {
                 console.log("PlacesController: got places  - ", data);
-                $scope.show_list = false;
+                all_places = data;
+                $scope.places = all_places.slice(0, 10);
+                $scope.all_places_len = all_places.length;
+                $timeout(function () {$scope.data_loaded = true;}, 200);
+            } else {
+                $scope.found_nothing = true;
             }
         })
     }
