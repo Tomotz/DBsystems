@@ -72,27 +72,28 @@ TEMPLATES = [
 WSGI_APPLICATION = 'tauwebsite.wsgi.application'
 
 
-LOCAL_DB_PASS = 'DbMysql17'# os.environ.get('LOCAL_DB_PASS')
+# LOCAL_DB_PASS = 'DbMysql17'
+LOCAL_DB_PASS = os.environ.get('LOCAL_DB_PASS')
 
 # Django DB configuration ---UNUSED---
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    #'default': {
-    #    'ENGINE': 'django.db.backends.mysql',
-    #    'NAME': 'DbMysql17',
-    #    'USER': 'root',
-    #    'PASSWORD': LOCAL_DB_PASS,
-    #    'HOST': 'localhost',
-    #    'PORT': '3306'
-    #}
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DbMysql17',
-        'USER': 'DbMysql17',
-        'PASSWORD': 'DbMysql17',
-        'HOST': 'mysqlsrv.cs.tau.ac.il',
-        'PORT': '3306'
+       'ENGINE': 'django.db.backends.mysql',
+       'NAME': 'DbMysql17',
+       'USER': 'root',
+       'PASSWORD': LOCAL_DB_PASS,
+       'HOST': 'localhost',
+       'PORT': '3306'
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'DbMysql17',
+    #     'USER': 'DbMysql17',
+    #     'PASSWORD': 'DbMysql17',
+    #     'HOST': 'mysqlsrv.cs.tau.ac.il',
+    #     'PORT': '3306'
+    # }
 }
 
 # Manual DB connection, in use
@@ -153,8 +154,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_FILES_FULL_PATH = "/specific/scratch/tommottes/django/html/project/app"
-# STATIC_FILES_FULL_PATH = r"C:\Users\liadwg\Desktop\liad\CS\DBMS APP\DBsystems\app",
+# STATIC_FILES_FULL_PATH = "/specific/scratch/tommottes/django/html/project/app"
+STATIC_FILES_FULL_PATH = os.environ.get('DBMS_PATH')
 
 STATICFILES_DIRS = (
     STATIC_FILES_FULL_PATH,

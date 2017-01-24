@@ -186,15 +186,19 @@ ORDER BY sub.num_pictures desc"""
 # AND googlePlaceId = %s
 # """
 
-#input - (time_now, time_now, time_now, time_now, day_of_week, googlePlaceId)
+#input - (time_now, time_now, day_of_week, time_now, yesterday, time_now, day_of_week, googlePlaceId)
 #this query checks if a place is currently open. Matches places using googlePlaceId
 #now time should be in format of HH:MM:SS, and dayOfWeek should be capitalized full day string.
 isOpenQuery = """
-SELECT DISTINCT googlePlaceId,
-(( %s > hourOpen and %s < hourClose ) or (hourClose < hourOpen and (%s < hourClose or %s > hourOpen))) as is_open
-FROM OpenHours
-WHERE dayOfWeek = %s
-AND googlePlaceId = %s
+SELECT sum(is_open)
+FROM
+	(SELECT DISTINCT googlePlaceId,
+    (( %s > hourOpen and %s < hourClose and dayOfWeek = %s)
+     or (hourClose < hourOpen and
+            ((%s < hourClose and dayOfWeek = %s) or
+            (%s > hourOpen and dayOfWeek = %s)))) as is_open
+    FROM OpenHours
+    WHERE googlePlaceId = %s) sub;
 """
 
 #input - (googlePlaceId, day_of_week, googlePlaceId)
@@ -255,7 +259,8 @@ class DBUtils:
         nowTime = datetime.utcnow() + timedelta(hours=2) #add israel GMT
         curHour = nowTime.strftime("%H:%M:%S")
         curDay = nowTime.strftime("%A")
-        isOpen = cls.openNow(curDay, curHour, googlePlaceId)
+        yesterday = (nowTime - timedelta(days=1)).strftime("%A")
+        isOpen = cls.openNow(curDay, yesterday, curHour, googlePlaceId)
         cursor.execute(getTopDetails, (googlePlaceId, curDay, googlePlaceId))
         topDetails = cursor.fetchone()
         cursor.execute(getPhotos, (googlePlaceId, ))
@@ -270,17 +275,17 @@ class DBUtils:
 
 
     @classmethod
-    def openNow(cls, curDay, curHHMMSS, googlePlaceId):
+    def openNow(cls, curDay, yesterday, curHHMMSS, googlePlaceId):
         """checks if a given place is currently open. Assumes that if the closing hour is 0-6 am it is in the following day.
         curDay should be the day's name with a capital letter
         cur HHMMSS should be a string in the format HHMMSS"""
         cursor = cls.conn.cursor()
-        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curDay, googlePlaceId))
+        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curDay, curHHMMSS, yesterday, curHHMMSS, curDay, googlePlaceId))
         answer = cursor.fetchone()
         if answer == None:
             return None
         else:
-            return answer[1]
+            return int(answer[0])
 
     @classmethod
     def GooglePlaceIdFromIdPlaces(cls, idPlaces):
