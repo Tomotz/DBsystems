@@ -130,7 +130,7 @@ WHERE placePic.idPlaces = sub.idPlaces
 AND distanceInKM <= %s
 """
 
-#input - (review_text,)
+#input - (my_lat, my_lat, my_lon, review_text,)
 #FULL TEXT SEARCH QUERY - this query allows the user to search freely for review text
 searchInReviewsQuery = """SELECT DISTINCT idPlaces, Places.addr_id, Places.name, rating, Places.googlePlaceId, type, url, """+distances+""" AS distanceInKM
 FROM Pics, Places, Addr
@@ -161,37 +161,7 @@ AND sub.googlePlaceId = Pics.googlePlaceId
 AND Addr.googlePlaceId = Pics.googlePlaceId
 ORDER BY sub.num_pictures desc"""
 
-#input - (time_now, time_now, time_now, time_now, time_now, time_now, day_of_week, googlePlaceId)
-#this query checks if a place is currently open. Matches places using googlePlaceId
-#now time should be in format of HHMMSS, and dayOfWeek should be one of the dayOfWeek dict
-#hours before 6am count as the previous day.
-# isOpenQuery = """SELECT DISTINCT googlePlaceId,
-#     (
-#     (%s > hourOpen
-#         OR %s < "60000")
-#     AND
-#     (
-#         hourClose > "60000"
-#         AND
-#         (
-#             %s < hourClose
-#             AND %s > "60000"
-#         )
-#     OR
-#     (
-#         hourClose < "60000"
-#         AND
-#         (
-#             %s > "60000"
-#             OR %s < hourClose
-#         )
-#     )
-#     )
-#   )as isOpen
-# FROM OpenHours
-# WHERE dayOfWeek = %s
-# AND googlePlaceId = %s
-# """
+
 
 #input - (time_now, time_now, day_of_week, time_now, yesterday, time_now, day_of_week, googlePlaceId)
 #this query checks if a place is currently open. Matches places using googlePlaceId
