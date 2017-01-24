@@ -26,7 +26,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
             console.log("PlacesController: got places - ", data);
             all_places = data;
             $scope.places = all_places.slice(0, 10);
-            $timeout(function () {$scope.data_loaded = true;}, 200);
+            data_ready($scope, $timeout);
 
             // update user address, no need to wait for response
             var user_details = {
@@ -96,7 +96,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
             all_places = data;
             $scope.places = all_places.slice(0, 10);
             $scope.all_places_len = all_places.length;
-            $timeout(function () {$scope.data_loaded = true;}, 200);
+            data_ready($scope, $timeout);
         });
     };
 
@@ -106,11 +106,13 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
 
     $scope.open_place = function (place) {
         console.log("OPENING ", place);
+        $scope.data_loaded = false;
         PlacesService.get_place_data(place.google_id).then(function (data) {
             if (data){
                 console.log("PlacesController: got place details - ", data);
                 $scope.place_to_show = data;
                 $scope.show_list = false;
+                data_ready($scope, $timeout, 500);
             }
         })
     };
@@ -123,7 +125,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
                 all_places = data;
                 $scope.places = all_places.slice(0, 10);
                 $scope.all_places_len = all_places.length;
-                $timeout(function () {$scope.data_loaded = true;}, 200);
+                data_ready($scope, $timeout);
             }
         })
     };
@@ -141,7 +143,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
                 all_places = data;
                 $scope.places = all_places.slice(0, 10);
                 $scope.all_places_len = all_places.length;
-                $timeout(function () {$scope.data_loaded = true;}, 200);
+                data_ready($scope, $timeout);
             }
         })
     };
@@ -160,7 +162,7 @@ PlacesController.controller('PlacesController', ['$scope', '$rootScope', '$state
                 all_places = data;
                 $scope.places = all_places.slice(0, 10);
                 $scope.all_places_len = all_places.length;
-                $timeout(function () {$scope.data_loaded = true;}, 200);
+                data_ready($scope, $timeout);
             } else {
                 $scope.found_nothing = true;
             }

@@ -259,7 +259,7 @@ class DBUtils:
         cursor = cls.conn.cursor()
         cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curDay, curHHMMSS, yesterday, curHHMMSS, curDay, googlePlaceId))
         answer = cursor.fetchone()
-        if answer == None:
+        if answer is None or answer[0] is None:
             return None
         else:
             return int(answer[0])

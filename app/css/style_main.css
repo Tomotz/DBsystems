@@ -107,11 +107,11 @@ input:focus {
   outline: none;
 }
 .main_class{
-  /*
+  /*!**/
   background-image: url("http://spasique.com/wp-content/uploads/2015/10/132210_1.jpg");
   background-attachment: fixed;
-  */
- background-color: #82d4f8;
+  /**!*/
+ /*background-color: #82d4f8;*/
   background-size:cover;
 
 }
