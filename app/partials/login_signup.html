@@ -11,11 +11,12 @@
                ng-model="username"
                ng-class="{'input_err' : user_name_err}"
                placeholder="username"
+               style="margin-top: 2rem;"
                name="user"><br>
-        <input type="password"
+        <!--input type="password"
                ng-model="password"
                placeholder="password"
-               name="password"><br>
+               name="password"><br-->
         <input type="button" value="Login" ng-click="submit_login(username)">
     </div>
     <div ng-show="show_signup_form"

@@ -107,11 +107,11 @@ input:focus {
   outline: none;
 }
 .main_class{
-  /*
+  /*!**/
   background-image: url("http://spasique.com/wp-content/uploads/2015/10/132210_1.jpg");
   background-attachment: fixed;
-  */
- background-color: #82d4f8;
+  /**!*/
+ /*background-color: #82d4f8;*/
   background-size:cover;
 
 }
@@ -667,6 +667,11 @@ box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
   -o-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
   */cursor: pointer;
+}
+.hover-unshadow :hover{
+	-webkit-box-shadow: none !important;
+	-moz-box-shadow: none !important;
+	box-shadow: none !important;
 }
 
 .loader,

@@ -130,13 +130,19 @@ WHERE placePic.idPlaces = sub.idPlaces
 AND distanceInKM <= %s
 """
 
-#input - (review_text,)
+#input - (my_lat, my_lat, my_lon, review_text,)
 #FULL TEXT SEARCH QUERY - this query allows the user to search freely for review text
-searchInReviewsQuery = """SELECT Places.name, Addr.idAddr, Reviews.text, Reviews.rating 
-FROM Reviews, Places, Addr
-WHERE Places.addr_id = Addr.idAddr
-AND Reviews.googlePlaceId = Addr.googlePlaceId
-AND match(Reviews.text) Against('%s' IN BOOLEAN MODE)
+searchInReviewsQuery = """SELECT DISTINCT idPlaces, addr_id, name, rating, placePic.googlePlaceId, type, url, """+distances+""" AS distanceInKM
+FROM """+placeAndPics+""" as placePic, Addr
+WHERE Addr.idAddr = placePic.addr_id
+AND idPlaces in
+(
+    SELECT Places.idPlaces
+    FROM Reviews, Places, Addr
+    WHERE Places.addr_id = Addr.idAddr
+    AND Reviews.googlePlaceId = Addr.googlePlaceId
+    AND match(Reviews.text) Against(%s IN BOOLEAN MODE)
+)
 """
 
 #input - (lat, lat, lng, min_num_of_pictures)
@@ -154,47 +160,21 @@ AND sub.googlePlaceId = Pics.googlePlaceId
 AND Addr.googlePlaceId = Pics.googlePlaceId
 ORDER BY sub.num_pictures desc"""
 
-#input - (time_now, time_now, time_now, time_now, time_now, time_now, day_of_week, googlePlaceId)
-#this query checks if a place is currently open. Matches places using googlePlaceId
-#now time should be in format of HHMMSS, and dayOfWeek should be one of the dayOfWeek dict
-#hours before 6am count as the previous day.
-# isOpenQuery = """SELECT DISTINCT googlePlaceId,
-#     (
-#     (%s > hourOpen
-#         OR %s < "60000")
-#     AND
-#     (
-#         hourClose > "60000"
-#         AND
-#         (
-#             %s < hourClose
-#             AND %s > "60000"
-#         )
-#     OR
-#     (
-#         hourClose < "60000"
-#         AND
-#         (
-#             %s > "60000"
-#             OR %s < hourClose
-#         )
-#     )
-#     )
-#   )as isOpen
-# FROM OpenHours
-# WHERE dayOfWeek = %s
-# AND googlePlaceId = %s
-# """
 
-#input - (time_now, time_now, time_now, time_now, day_of_week, googlePlaceId)
+
+#input - (time_now, time_now, day_of_week, time_now, yesterday, time_now, day_of_week, googlePlaceId)
 #this query checks if a place is currently open. Matches places using googlePlaceId
 #now time should be in format of HH:MM:SS, and dayOfWeek should be capitalized full day string.
 isOpenQuery = """
-SELECT DISTINCT googlePlaceId,
-(( %s > hourOpen and %s < hourClose ) or (hourClose < hourOpen and (%s < hourClose or %s > hourOpen))) as is_open
-FROM OpenHours
-WHERE dayOfWeek = %s
-AND googlePlaceId = %s
+SELECT sum(is_open)
+FROM
+	(SELECT DISTINCT googlePlaceId,
+    (( %s > hourOpen and %s < hourClose and dayOfWeek = %s)
+     or (hourClose < hourOpen and
+            ((%s < hourClose and dayOfWeek = %s) or
+            (%s > hourOpen and dayOfWeek = %s)))) as is_open
+    FROM OpenHours
+    WHERE googlePlaceId = %s) sub;
 """
 
 #input - (googlePlaceId, day_of_week, googlePlaceId)
@@ -255,7 +235,8 @@ class DBUtils:
         nowTime = datetime.utcnow() + timedelta(hours=2) #add israel GMT
         curHour = nowTime.strftime("%H:%M:%S")
         curDay = nowTime.strftime("%A")
-        isOpen = cls.openNow(curDay, curHour, googlePlaceId)
+        yesterday = (nowTime - timedelta(days=1)).strftime("%A")
+        isOpen = cls.openNow(curDay, yesterday, curHour, googlePlaceId)
         cursor.execute(getTopDetails, (googlePlaceId, curDay, googlePlaceId))
         topDetails = cursor.fetchone()
         cursor.execute(getPhotos, (googlePlaceId, ))
@@ -270,17 +251,17 @@ class DBUtils:
 
 
     @classmethod
-    def openNow(cls, curDay, curHHMMSS, googlePlaceId):
+    def openNow(cls, curDay, yesterday, curHHMMSS, googlePlaceId):
         """checks if a given place is currently open. Assumes that if the closing hour is 0-6 am it is in the following day.
         curDay should be the day's name with a capital letter
         cur HHMMSS should be a string in the format HHMMSS"""
         cursor = cls.conn.cursor()
-        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curHHMMSS, curHHMMSS, curDay, googlePlaceId))
+        cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curDay, curHHMMSS, yesterday, curHHMMSS, curDay, googlePlaceId))
         answer = cursor.fetchone()
-        if answer == None:
+        if answer is None or answer[0] is None:
             return None
         else:
-            return answer[1]
+            return int(answer[0])
 
     @classmethod
     def GooglePlaceIdFromIdPlaces(cls, idPlaces):
@@ -380,13 +361,13 @@ class DBUtils:
 
 
     @classmethod
-    def getReviewByText(cls, review_text):
+    def getReviewByText(cls, review_text, lat, lng):
         """
         Gets all the places that has given input words in their text.
         """
         cursor = cls.conn.cursor()
         try:
-            cursor.execute(searchInReviewsQuery, (review_text,))
+            cursor.execute(searchInReviewsQuery, (lat, lat, lng, review_text))
         except Exception, e:
             print "There was an unsupported character in the input"
             print str(e)

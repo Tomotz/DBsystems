@@ -48,10 +48,14 @@ class PlacesByReviewView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
+        lat = request.data.get("lat")
+        lng = request.data.get("lng")
         text = request.data.get("text")
 
-        data = DBUtils.getReviewByText(text)
-
+        data = DBUtils.getReviewByText(text, lat, lng)
+        if data is None or len(data) == 0:
+            print "No places found!"
+            return HttpResponseBadRequest()
         return HttpResponse(Serializers.PlaceSerializer(data))
 
 class FoodView(APIView):

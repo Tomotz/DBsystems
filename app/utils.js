@@ -41,3 +41,10 @@ function fix_time(secs) {
     res.setSeconds(secs);
     return res;
 }
+
+function data_ready(scope, $timeout, time) {
+    if (time == null) {
+        time = 300;
+    }
+    $timeout(function () {scope.data_loaded = true;}, time);
+}

@@ -72,7 +72,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'tauwebsite.wsgi.application'
 
 
-LOCAL_DB_PASS =  os.environ.get('LOCAL_DB_PASS')
+# LOCAL_DB_PASS = 'DbMysql17'
+LOCAL_DB_PASS = os.environ.get('LOCAL_DB_PASS')
 
 # Django DB configuration ---UNUSED---
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -97,10 +98,8 @@ DATABASES = {
 
 # Manual DB connection, in use
 import MySQLdb as mdb
-
-
-#DB_CONN = mdb.connect(DATABASES['default']['HOST'], DATABASES['default']['USER'], DATABASES['default']['PASSWORD'], DATABASES['default']['NAME'], port=int(DATABASES['default']['PORT']), use_unicode=True, charset="utf8")
-DB_CONN = mdb.connect("localhost", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
+DB_CONN = mdb.connect(DATABASES['default']['HOST'], DATABASES['default']['USER'], DATABASES['default']['PASSWORD'], DATABASES['default']['NAME'], port=int(DATABASES['default']['PORT']), use_unicode=True, charset="utf8")
+# DB_CONN = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
 
 LOGGING = {
     'version': 1,
@@ -155,8 +154,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
-#STATIC_FILES_FULL_PATH = "/specific/scratch/tommottes/django/html/project/app"
-STATIC_FILES_FULL_PATH = "C:\\Users\\ruths\\Desktop\\DBsystems\\DBsystems\\app"
+# STATIC_FILES_FULL_PATH = "/specific/scratch/tommottes/django/app"
+STATIC_FILES_FULL_PATH = os.environ.get('DBMS_PATH')
 
 STATICFILES_DIRS = (
     STATIC_FILES_FULL_PATH,

@@ -119,7 +119,7 @@ PlacesService.service('PlacesService', ['$rootScope', '$http', '$q', function($r
         $http.post('/places/review_text/', params).then(function (result) {
             deferred.resolve(result.data);
         }, function (result) {
-            console.log("Error getting feeling lucky places!", result);
+            console.log("Error getting places by review!", result);
             deferred.resolve(false);
         });
         return deferred.promise;
