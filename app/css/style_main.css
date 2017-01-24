@@ -668,6 +668,11 @@ box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease-in-out;
   */cursor: pointer;
 }
+.hover-unshadow :hover{
+	-webkit-box-shadow: none !important;
+	-moz-box-shadow: none !important;
+	box-shadow: none !important;
+}
 
 .loader,
 .loader:after {
