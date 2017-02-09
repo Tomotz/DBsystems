@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from settings import LOCAL_DB_PASS, DB_CONN
+from settings import LOCAL_DB_PASS, getCursor, closeConn
 import MySQLdb as mdb
 import time
 from datetime import datetime, timedelta
@@ -216,7 +216,6 @@ ON      r.googlePlaceId = p.googlePlaceId
 
 
 class DBUtils:
-    conn = DB_CONN
 
 
     @classmethod
@@ -231,7 +230,7 @@ class DBUtils:
         reviews - all the reviews about the given place
         openHours - all the places's opening hours.
         """
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         nowTime = datetime.utcnow() + timedelta(hours=2) #add israel GMT
         curHour = nowTime.strftime("%H:%M:%S")
         curDay = nowTime.strftime("%A")
@@ -245,7 +244,7 @@ class DBUtils:
         reviews = cursor.fetchmany(MAX_RESULTS)
         cursor.execute(getOpenHours, (googlePlaceId, ))
         openHours = cursor.fetchmany(MAX_RESULTS)
-
+        closeConn()
 
         return (isOpen, topDetails, photos, reviews, openHours)
 
@@ -255,9 +254,10 @@ class DBUtils:
         """checks if a given place is currently open. Assumes that if the closing hour is 0-6 am it is in the following day.
         curDay should be the day's name with a capital letter
         cur HHMMSS should be a string in the format HHMMSS"""
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         cursor.execute(isOpenQuery, (curHHMMSS, curHHMMSS, curDay, curHHMMSS, yesterday, curHHMMSS, curDay, googlePlaceId))
         answer = cursor.fetchone()
+        closeConn()
         if answer is None or answer[0] is None:
             return None
         else:
@@ -266,7 +266,7 @@ class DBUtils:
     @classmethod
     def GooglePlaceIdFromIdPlaces(cls, idPlaces):
         """translates an idPlaces to a googlePlaceId"""
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         cursor.execute(getGoogleIdFromPlace, (idPlaces, ))
         return cursor.fetchone()
 
@@ -274,9 +274,10 @@ class DBUtils:
     @classmethod
     def chooseWhatIWantToDo(cls, my_lat, my_lon):
         """This functions gives the user all the results around him from the type of place with the highest rating"""
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         cursor.execute(bestAvgTypeQuery)
         placeType = cursor.fetchone()
+        closeConn()
         if placeType == None:
             return None
         return cls.aroundMe(my_lat, my_lon, placeType[0], 3)
@@ -288,9 +289,10 @@ class DBUtils:
         Queries the DB about a specific user.
         Returns the full row matching the user if user was found. Otherwise returns None
         '''
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         cursor.execute(getUserQuery, (username,))
         res = cursor.fetchone()
+        closeConn()
         return res
 
 
@@ -302,7 +304,6 @@ class DBUtils:
         returns None of failure, otherwise returns the row of the user in the DB.
         address - a google location object matching the user location.
         '''
-        cursor = cls.conn.cursor()
         userRow = cls.getUserByUname(username)
         if userRow != None:
             #user already exists!
@@ -312,13 +313,16 @@ class DBUtils:
         if None == idAddr:
             #failed to add the address of the user!
             return None
+        cursor = getCursor()
         try:
             cursor.execute(insertUserQuery, (idAddr, username, firstName, lastName))
             cls.conn.commit()
         except Exception, e:
+            closeConn()
             print "There was an unsupported character in the input"
             print str(e)
             return None
+        closeConn()
         return cls.getUserByUname(username)
 
 
@@ -329,22 +333,25 @@ class DBUtils:
         returns None of failure, otherwise returns the row of the user in the DB.
         address - a google location object matching the user location.
         '''
-        cursor = cls.conn.cursor()
         userRow = cls.getUserByUname(username)
         if userRow == None or len(userRow) < 1:
+            closeConn()
             return None #User does not exist.
         idUser = userRow[0]
         idAddr = cls.getOrCreateAddrId(address)
         if None == idAddr:
             #failed to add the address of the user!
             return None
+        cursor = getCursor()
         try:
             cursor.execute(updateUserQuery, (idAddr, username, firstName, lastName, idUser))
             cls.conn.commit()
         except Exception, e:
+            closeConn()
             print "There was an unsupported character in the input"
             print str(e)
             return None
+        closeConn()
         return cls.getUserByUname(username)
 
 
@@ -355,8 +362,9 @@ class DBUtils:
         input - a location object returned from google
         output - the addrId from Addr table matching the given address
         """
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         cursor.execute(getAddrQuery, (idAddr,))
+        closeConn()
         return cursor.fetchone()
 
 
@@ -365,13 +373,15 @@ class DBUtils:
         """
         Gets all the places that has given input words in their text.
         """
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         try:
             cursor.execute(searchInReviewsQuery, (lat, lat, lng, review_text))
         except Exception, e:
+            closeConn()
             print "There was an unsupported character in the input"
             print str(e)
             return None
+        closeConn()
         return cursor.fetchmany(MAX_RESULTS)
 
 
@@ -385,14 +395,16 @@ class DBUtils:
         returns a tuple where each item in the tuple is a tuple itself, containing a line of results.
         If no results match the query, an empty tuple would be returned
         """
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         placesInDistQuery_orderedByDist = placesInDistQuery + "\nORDER BY distanceInKM"
         try:
             cursor.execute(placesInDistQuery_orderedByDist, (my_lat, my_lat, my_lon, place_type, radius_in_km))
         except Exception, e:
+            closeConn()
             print "There was an unsupported character in the input"
             print str(e)
             return tuple()
+        closeConn()
         return cursor.fetchmany(MAX_RESULTS)
 
 
@@ -401,7 +413,7 @@ class DBUtils:
         """
         Gets the best result of each type in radius 3km around the user
         """
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         places = []
         for place_type in ["Restaurant", "Bar", "Club", "Hotel", "Shop"]:
             placesInDistQuery_orderedByDist = placesInDistQuery + "\nORDER BY rating desc"
@@ -410,6 +422,7 @@ class DBUtils:
                 topCatagory = cursor.fetchone()
                 if topCatagory != None:
                     places.append(topCatagory)
+        closeConn()
         return places
 
 
@@ -418,8 +431,9 @@ class DBUtils:
         """
         Gets all the photos from restaurants who have min_num_pics or more pictures
         """
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         cursor.execute(getPictures, (my_lat, my_lat, my_lon, min_num_pics))
+        closeConn()
         return cursor.fetchall() #we would like to get more than 30 pictures
 
 
@@ -430,12 +444,13 @@ class DBUtils:
         input - a location object returned from google
         output - the idAddr from Addr table matching the given address
         """
-        cursor = cls.conn.cursor()
+        cursor = getCursor()
         if "place_id" not in address:
             return None
         googlePlaceId = address["place_id"]
         if len(googlePlaceId) > 200:
             #data will be truncated
+            closeConn()
             print "google place_id to long! ignoring address. "
             print "We only save 200 chars for googlePlaceId. All the addresses in Tel-Aviv's area are short enough for it"
             return None
@@ -443,6 +458,7 @@ class DBUtils:
         cursor.execute(getAddrIdQuery, (googlePlaceId,))
         fetched = cursor.fetchone()
         if fetched != None:
+            closeConn()
             #address was found in the DB. Return it.
             if type(fetched) == long:
                 return fetched
@@ -452,6 +468,7 @@ class DBUtils:
             lat = address["lat"]
             lon = address["lng"]
         else:
+            closeConn()
             #user have no lat/lng which is bad.
             return None
 
@@ -474,12 +491,14 @@ class DBUtils:
         try:
             cursor.execute(insertAddrQuery, (googlePlaceId, city, street, house, lat, lon))
         except Exception, e:
+            closeConn()
             print "There was an unsupported character in the input"
             print str(e)
             return None
         cls.conn.commit()
         cursor.execute(getAddrIdQuery, (googlePlaceId,))
         fetched = cursor.fetchone()[0]
+        closeConn()
         if type(fetched) in (type(None), long):
             return fetched
         return fetched[0]

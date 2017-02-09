@@ -98,7 +98,13 @@ DATABASES = {
 
 # Manual DB connection, in use
 import MySQLdb as mdb
-DB_CONN = mdb.connect(DATABASES['default']['HOST'], DATABASES['default']['USER'], DATABASES['default']['PASSWORD'], DATABASES['default']['NAME'], port=int(DATABASES['default']['PORT']), use_unicode=True, charset="utf8")
+DB_CONN = None # mdb.connect(DATABASES['default']['HOST'], DATABASES['default']['USER'], DATABASES['default']['PASSWORD'], DATABASES['default']['NAME'], port=int(DATABASES['default']['PORT']), use_unicode=True, charset="utf8")
+def getCursor():
+    DB_CONN = mdb.connect(DATABASES['default']['HOST'], DATABASES['default']['USER'], DATABASES['default']['PASSWORD'], DATABASES['default']['NAME'], port=int(DATABASES['default']['PORT']), use_unicode=True, charset="utf8")
+    return DB_CONN.cursor()
+def closeConn():
+    DB_CONN.close()
+
 # DB_CONN = mdb.connect("127.0.0.1", "root", LOCAL_DB_PASS, "DbMysql17", port=3306, use_unicode=True, charset="utf8")
 
 LOGGING = {
